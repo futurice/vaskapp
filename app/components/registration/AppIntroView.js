@@ -39,16 +39,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
 
-class RegistrationView extends Component {
-  propTypes: {
-    name: PropTypes.string.isRequired,
-    teams: PropTypes.any,
-    selectedTeam: PropTypes.number.isRequired,
-    isRegistrationViewOpen: PropTypes.bool.isRequired,
-    isRegistrationInfoValid: PropTypes.bool.isRequired,
-    dispatch: PropTypes.func.isRequired
-  }
-
+class AppIntroView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -105,11 +96,11 @@ class RegistrationView extends Component {
     }
   }
 
-  renderAppIntro() {
+  render() {
 
     return (
       <ModalBox
-        isOpen={true || this.props.isRegistrationViewOpen}
+        isOpen={!this.props.isUserLogged}
         swipeToClose={false}
         backdropPressToClose={false}
         animationDuration={0}
@@ -174,12 +165,6 @@ class RegistrationView extends Component {
         </AppIntro>
       </ModalBox>
     );
-  }
-
-  render() {
-    const { isUserLogged } = this.props;
-
-    return !isUserLogged ? this.renderAppIntro() : null;
   }
 
 }
@@ -276,6 +261,12 @@ const styles = StyleSheet.create({
   },
 });
 
+AppIntroView.propTypes =  {
+  selectedTeam: PropTypes.number.isRequired,
+  isRegistrationViewOpen: PropTypes.bool.isRequired,
+  isRegistrationInfoValid: PropTypes.bool.isRequired,
+};
+
 const mapDispatchToProps = {
   putUser,
   reset,
@@ -298,8 +289,8 @@ const select = store => {
     isChooseTeamViewOpen: store.team.get('isChooseTeamViewOpen'),
     isRegistrationInfoValid: !!store.registration.get('name') &&
       !!store.registration.get('selectedTeam'),
-    isUserLogged: isUserLoggedIn(store)
+    isUserLogged: isUserLoggedIn(store),
   };
 };
 
-export default connect(select, mapDispatchToProps)(RegistrationView);
+export default connect(select, mapDispatchToProps)(AppIntroView);

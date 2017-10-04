@@ -47,17 +47,16 @@ class MainView extends Component {
           }
           initialRoute={{
             component: IOSTabNavigation,
-            name: 'Prague'
+            name: 'Vaskapp'
           }}
           renderScene={this.renderScene}
           configureScene={() => sceneConfig}
         />
 
 
-        <LightBox />
         <AppIntroView />
+        <LightBox />
         <ProfileEditor />
-        <CheckInActionView />
         <TextActionView />
       </View>
     );
