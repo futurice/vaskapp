@@ -4,6 +4,7 @@ import {
   Easing,
   StyleSheet,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { toArray } from 'lodash';
@@ -57,15 +58,19 @@ class SortSelector extends Component {
       height: indicatorAnimation.interpolate({ inputRange: [0, 0.5, 1], outputRange: [6, 14, 6] }),
     };
 
+    const onSortSelectorPress = () => this.props.setFeedSortType(nextSortTypeItem);
+
     return (
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={() => this.props.setFeedSortType(nextSortTypeItem)}
+        onPress={onSortSelectorPress}
       >
         <View style={styles.sortSelector}>
-          <Text style={styles.filterText}>
-            {sortTypeTitles[selectedSortType]}
-          </Text>
+          <TouchableOpacity onPress={onSortSelectorPress}>
+            <Text style={styles.filterText}>
+              {sortTypeTitles[selectedSortType]}
+            </Text>
+          </TouchableOpacity>
           <View style={styles.indicators}>
             {sortTypeOptions.map((type, index) =>
               <View
