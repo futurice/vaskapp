@@ -32,9 +32,7 @@ Basically it means that you order two expensive bottles of champagne (or any oth
 
 **BEFORE JUMPING TO IOS OR ANDROID GUIDE, FOLLOW THESE GUIDES:**
 
-* https://facebook.github.io/react-native/docs/getting-started.html
-* (Optional) https://facebook.github.io/react-native/docs/debugging.html#content
-* `npm install` (you might need to use npm@2 version)
+* `npm install`
 * `cp env.example.js env.js` and fill in the blank secrets in the file
 * `react-native link`
 
