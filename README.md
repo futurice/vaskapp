@@ -44,8 +44,9 @@ The xcode-project is expecting that you have nvm installed. It can be reconfigur
 `Build Phases > Bundle React Native code and images`.
 
 - [Install Cocoapods](https://guides.cocoapods.org/using/getting-started.html#installation)
-- `cd ios && pod install`
-- `open prahappclient.xcworkspace`
+- `cd ios && pod update && pod install`
+- Run app with `react-native run-ios`
+- Or with xcode `open prahappclient.xcworkspace`
 
   **Note:** Use the .xworkspace instead of .xcodeproj!
 
