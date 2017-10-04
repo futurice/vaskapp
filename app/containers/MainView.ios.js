@@ -17,7 +17,6 @@ import ProfileEditor from '../components/registration/ProfileEditor';
 import CheckInActionView from '../components/actions/CheckInActionView';
 import TextActionView from '../components/actions/TextActionView';
 import LightBox from '../components/lightbox/Lightbox';
-import CitySelector from '../components/header/CitySelector';
 
 const theme = require('../style/theme');
 

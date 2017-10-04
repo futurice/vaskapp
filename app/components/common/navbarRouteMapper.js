@@ -23,7 +23,6 @@ import {
 
 
 import theme from '../../style/theme';
-import CityToggle from '../header/CityToggle';
 import SortSelector from '../header/SortSelector';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Tabs from '../../constants/Tabs';
