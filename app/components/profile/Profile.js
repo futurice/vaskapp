@@ -161,26 +161,6 @@ const styles = StyleSheet.create({
     height:1,
     backgroundColor:'#f4f4f4'
   },
-  madeby: {
-    padding: 7,
-    backgroundColor: '#FFF',
-    paddingTop: 12,
-    paddingBottom: 17,
-    justifyContent: 'space-around',
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  madebyIcon: {
-    tintColor: theme.dark,
-    width: 100,
-    height: 20,
-  },
-  madebyText: {
-    padding: 2,
-    color: theme.blue2,
-    fontSize: 28,
-    fontWeight: '300'
-  },
   listItemHeroIcon:{
     backgroundColor: theme.transparent,
     borderRadius: 0,
