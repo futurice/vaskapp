@@ -85,7 +85,7 @@ function getDistance(userLocation, eventLocation) {
   return '' + round(distanceInKilometres, 1) + ' km';
 }
 
-function getDiscanceInMeters(userLocation, eventLocation) {
+function getDistanceInMeters(userLocation, eventLocation) {
   if (isNil(userLocation) || isNil(eventLocation) || isNil(eventLocation.latitude) || isNil(eventLocation.longitude)) {
     return '';
   }
@@ -99,5 +99,5 @@ export default {
   getLocation,
   getGeoUrl,
   getDistance,
-  getDiscanceInMeters
+  getDistanceInMeters
 };

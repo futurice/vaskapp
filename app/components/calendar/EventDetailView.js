@@ -340,7 +340,7 @@ const EventDetail = React.createClass({
     const { userLocation } = this.props;
 
     if ( userLocation && event.location ) {
-      const distance = locationService.getDiscanceInMeters(userLocation, event.location);
+      const distance = locationService.getDistanceInMeters(userLocation, event.location);
       const isLocationValid = event.radius > distance;
       return isLocationValid
     }

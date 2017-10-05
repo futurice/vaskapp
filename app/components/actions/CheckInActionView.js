@@ -124,7 +124,7 @@ class CheckInActionView extends Component {
     let distanceInKm = null;
 
     if ( userLocation && item.location ) {
-      const distance = location.getDiscanceInMeters(userLocation, item.location);
+      const distance = location.getDistanceInMeters(userLocation, item.location);
       validLocation = item.radius > distance;
       distanceInKm = location.getDistance(userLocation, item.location);
     }
