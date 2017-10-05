@@ -227,7 +227,6 @@ class ImageEditor extends Component {
           onEndEditing={() => this.setState({ editing: false })}
           onFocus={() => this.setState({ editing: true })}
           onBlur={() => this.setState({ editing: false })}
-          // onSubmitEditing={this.sendImage}
           style={styles.inputField}
           onChangeText={this.onChangeText}
           numberOfLines={1}
