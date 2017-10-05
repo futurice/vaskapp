@@ -36,6 +36,7 @@ import MARKER_IMAGES, { ICONS } from '../../constants/MarkerImages';
 import permissions from '../../services/android-permissions';
 import location from '../../services/location';
 
+import { CITY_CATEGORIES, HELSINKI } from '../../constants/Cities';
 
 import {
   mapViewData,
@@ -48,43 +49,7 @@ import {
 } from '../../concepts/map';
 
 const disableMap = false;
-const CITY_COORDS = {
-  tampere: {
-    latitude: 61.4931758,
-    longitude: 23.7602363,
-  },
-  otaniemi: {
-    latitude: 60.1841396,
-    longitude: 24.827895
-  },
-  prague: {
-    latitude: 50.093277,
-    longitude: 14.4376183
-  }
-};
 const { width, height } = Dimensions.get('window');
-
-const PLACEHOLDER_FACE_IMAGES = [
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/cbe98cb2845a0c95686eb07400ba5036bea3af4a7f9cb223db1727172113627f/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/211b6a4206550ae9954090b57e8541d914beabab57f3830f64fad9e1e294520b/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/e0ade99c12d8e10c4d46b6b73e6dfee4/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/303c39969a62dc8535de803bd1d89bbbb728c708a4d7d7c314dd74b0ede5139a/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/3f9508f987e1e96f4ce74b3fffa6d3d489cb0e199c73f8ffc78e4e270be26437/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/da04161761cbe3dd9ee2803204be2b83d5d56bcd125f247ab827af9f159976a5/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/da04161761cbe3dd9ee2803204be2b83d5d56bcd125f247ab827af9f159976a5/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/33f7981a2fc934b7a20eda0b76b813cce78a99225224906c8b53677e668b3b9c/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/33f7981a2fc934b7a20eda0b76b813cce78a99225224906c8b53677e668b3b9c/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/33f7981a2fc934b7a20eda0b76b813cce78a99225224906c8b53677e668b3b9c/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/da8c59a354411894526f668dd9becd8aae3e360d08f20581b5913defebd1eb57/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/dce27e1a07914e1ad5d329bd8fa019880b26f5f0b6debe9580f4026bc0dbf866/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/472a1f5631d616323c61a058d778d0cf97eec9779bae1b2d1bfde56ffbcf9c8e/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/4389af968efc6cfec108637eafa4ab84/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/d18f229be70ec871e05b53587567054612ccc68d9b8bb0f636c501460f40330c/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/eed54e63dcfa9a86bb1df0bcedf42fa925b2ba932ed961cc6a8944782d17c5e0/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/cc552e32fa5f2d6838e55c18f86b9523ca2a91feffc8b15ab62b674da0ce9061/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/1f5165d96f74095ff2b216814a81c8b6b1d9a003e97a7dc8f63ef798a07d8bc3/80',
-  'https://d2cxspbh1aoie1.cloudfront.net/avatars/local/58ddac442c6d1ee6016d047f81842060666a99619f4305ea87bda2cc4c41bbcc/80'
-];
 
 const calloutHeight = 140;
 
@@ -105,11 +70,11 @@ class EventMap extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentCity, selectedMarker } = this.props;
+    const { selectedMarker, selectedCategory } = this.props;
 
     // Animate map when city is changed
-    if (currentCity && currentCity !== nextProps.currentCity) {
-      const cityCoords = this.getCityCoords(nextProps.currentCity);
+    if (selectedCategory && selectedCategory !== nextProps.selectedCategory) {
+      const cityCoords = this.getCityCoords(nextProps.selectedCategory);
       this.map.animateToCoordinate(cityCoords, 1);
     }
 
@@ -142,7 +107,7 @@ class EventMap extends Component {
 
   @autobind
   getCityCoords(city) {
-   return CITY_COORDS.tampere
+   return CITY_CATEGORIES[city]
   }
 
   @autobind
@@ -238,7 +203,7 @@ class EventMap extends Component {
         >
           <View style={styles.callout}>
             {
-              location && location.get('type') === 'OFFICE'
+              location && this.props.categories.indexOf(location.get('type')) >= 0
                 ? this.renderMarkerCalloutContent(location)
                 : this.renderPostCalloutContent(location)
             }
@@ -366,8 +331,8 @@ class EventMap extends Component {
   @autobind
   fitMarkersToMap() {
     const { visiblemarkerCoords } = this.props;
-    if (this.map && visiblemarkerCoords && visiblemarkerCoords.length) {
-      const padding = visiblemarkerCoords.length <= 2 ? 60 : 30;
+    if (this.map && visiblemarkerCoords && visiblemarkerCoords.length > 1) {
+      const padding = visiblemarkerCoords.length <= 2 ? 100 : 30;
       const edgePadding = { top: padding, bottom: padding, left: padding, right: padding };
       this.map.fitToCoordinates(visiblemarkerCoords, { edgePadding }, false)
     }
@@ -409,23 +374,19 @@ class EventMap extends Component {
   }
 
   getMarker(marker, selectedMarker) {
-    if (marker && marker.type === 'HOTEL') {
-      return MARKER_IMAGES['HOME']
-    }
-    if (marker && marker.type === 'OFFICE') {
+    // if (marker && marker.type === 'HOTEL') {
+    //   return MARKER_IMAGES['HOME']
+    // }
+    if (marker && this.props.categories.indexOf(marker.type) >=0) {
       return MARKER_IMAGES['FUTU']
-    }
-    if (marker && marker.type === 'FUTUCAMP') {
-      return MARKER_IMAGES['FUTUCAMP']
     }
 
     return { uri: get(marker, ['author', 'profilePicture']) };
-    // return { uri: PLACEHOLDER_FACE_IMAGES[random(PLACEHOLDER_FACE_IMAGES.length - 1)] };
     // return MARKER_IMAGES[selectedMarker && marker.title === selectedMarker.get('title') ? 'SELECTED' : 'DEFAULT']
   }
 
   render() {
-    const { mapMarkers, firstFutureEvent, selectedMarker } = this.props;
+    const { mapMarkers, firstFutureEvent, selectedMarker, selectedCategory } = this.props;
     const markersJS = mapMarkers.toJS();
 
     const markers = markersJS.map((location, index) => {
@@ -456,7 +417,7 @@ class EventMap extends Component {
       return ( this.renderDisabledMapAnnouncement(firstFutureEvent) );
     }
 
-    const initialRegion = this.getCityRegion();
+    const initialRegion = this.getCityRegion(selectedCategory);
 
     return (
       <View style={{ flex:1 }}>

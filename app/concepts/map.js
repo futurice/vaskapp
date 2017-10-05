@@ -20,6 +20,8 @@ import { getAllPostsInStore } from '../reducers/feed';
 import LoadingStates from '../constants/LoadingStates';
 import MarkerImages from '../constants/MarkerImages';
 import time from '../utils/time';
+import location from '../services/location';
+import { HELSINKI, CITY_CATEGORIES, CITY_MAX_DISTANCE } from '../constants/Cities';
 
 // # Selectors
 const getSelectedCategory = state => state['map'].get('selectedCategory');
@@ -61,38 +63,47 @@ const getMarkers = createSelector(
   }
 )
 
+const locationFilter = (marker, category) => {
+  const markerLocation = marker.get('location').toJS();
+  const categoryCenter = CITY_CATEGORIES[category];
+
+  if (!markerLocation || !categoryCenter) {
+    return false;
+  }
+
+  return location.getDistanceInMeters(markerLocation, categoryCenter) <= CITY_MAX_DISTANCE;
+}
+
 const stickyMarkerCategories = ['HOTEL'];
 const getMapMarkers = createSelector(
   getMarkers, getSelectedCategory,
   (markers, categoryFilter) => {
 
     const validMarkers = markers
-      .filter(marker =>
-        categoryFilter === 'HELSINKI' ||
-        marker.get('type') === categoryFilter ||
-        stickyMarkerCategories.indexOf(marker.get('type')) >= 0
-      )
-      .filter(marker => marker.has('location'));
+      .filter(marker => marker.has('location'))
+      .filter(marker => locationFilter(marker, categoryFilter))
 
     return validMarkers;
-    // Filter markers which have correct type
-    // return validMarkers.filter(marker => has(MarkerImages, marker.get('type')));
 });
 
 const getMapMarkersCoords = createSelector(getMapMarkers, markers => {
   return markers.map(marker => marker.get('location')).toJS();
 });
 
-const getMarkerCategories = createSelector(
-  getMarkers, (markers) => {
 
-    const validCategories = markers
-      .map(marker => marker.get('type', 'CATEGORY').toUpperCase())
+
+const getMarkerCategories = createSelector(
+  m.getMarkers, (markers) => {
+    const validMarkers = markers
+      .map(marker => marker.get('type', '').toUpperCase())
       .toSet().toList(); // Immutable uniq
 
-    return validCategories.unshift('HELSINKI');
+    return validMarkers;
+    // return validMarkers.unshift('ALL');
   }
 );
+
+const cityCategories = fromJS(Object.keys(CITY_CATEGORIES))
 
 // View concept selector
 export const mapViewData = createStructuredSelector({
@@ -126,7 +137,7 @@ export const selectCategory = payload => (dispatch) => Promise.resolve(
 // # Reducer
 const initialState = fromJS({
   selectedMarker: null,
-  selectedCategory: 'HELSINKI',
+  selectedCategory: HELSINKI,
 });
 
 export default function map(state = initialState, action) {
