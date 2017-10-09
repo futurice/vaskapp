@@ -1,6 +1,7 @@
 'use strict';
 import { List, fromJS } from 'immutable';
 import { createSelector } from 'reselect';
+import LoadingStates from '../constants/LoadingStates';
 
 import {
   SET_MARKER_LIST,
@@ -33,11 +34,11 @@ export default function event(state = initialState, action) {
     case SET_MARKER_LIST:
       return state.set('list', fromJS(action.payload));
     case GET_MARKER_LIST_REQUEST:
-      return state.set('listState', 'loading');
+      return state.set('listState', LoadingStates.LOADING);
     case GET_MARKER_LIST_SUCCESS:
-      return state.set('listState', 'ready');
+      return state.set('listState', LoadingStates.READY);
     case GET_MARKER_LIST_FAILURE:
-      return state.set('listState', 'failed');
+      return state.set('listState', LoadingStates.FAILED);
     default:
       return state;
   }

@@ -11,7 +11,7 @@ import { fetchMoodData } from './mood';
 import { getTeams } from '../reducers/team';
 import { getUserTeamId } from '../reducers/registration';
 
-import STORAGE_KEYS from '../constants/StorageKeys';
+import StorageKeys from '../constants/StorageKeys';
 
 import { APP_STORAGE_KEY } from '../../env';
 
