@@ -13,13 +13,13 @@ const fetchMarkers = () => {
   return (dispatch) => {
     dispatch({ type: GET_MARKER_LIST_REQUEST });
 
-    api.fetchModels('markers')
+    return api.fetchModels('markers')
       .then(markers => {
-        dispatch({
+        dispatch({ type: GET_MARKER_LIST_SUCCESS });
+        return dispatch({
           type: SET_MARKER_LIST,
           payload: markers
         });
-        dispatch({ type: GET_MARKER_LIST_SUCCESS });
       })
       .catch(error => dispatch({ type: GET_MARKER_LIST_FAILURE, error: true, payload: error }));
   }
