@@ -14,7 +14,7 @@ import {
   fetchUserImages,
   isLoadingUserImages,
 } from '../../concepts/user';
-import { getUserName, getUserId } from '../../reducers/registration';
+import { getUserName, getUserInfo, getUserId } from '../../reducers/registration';
 import { openLightBox } from '../../actions/feed';
 
 import ParallaxView from 'react-native-parallax-view';
@@ -46,7 +46,7 @@ class UserView extends Component {
   render() {
 
     const { images, isLoading, totalVotes, totalSimas, timeSinceLastPost,
-      userTeam, userName, navigator, profilePicture } = this.props;
+      userTeam, userName, userInfo, navigator, profilePicture } = this.props;
     let { user } = this.props.route;
 
     // Show Current user if not user selected
@@ -88,6 +88,11 @@ class UserView extends Component {
               <Text style={styles.headerSubTitle}>
                 {userTeam || user.team}
               </Text>
+
+              <Text style={styles.profileInfoText}>
+                {userInfo}
+              </Text>
+
               <View style={styles.headerKpis}>
                 <View style={styles.headerKpi}>
                   <Text style={styles.headerKpiValue}>{!isLoading ? imagesCount : '-'}</Text>
@@ -184,10 +189,14 @@ const styles = StyleSheet.create({
   },
   headerSubTitle: {
     fontSize: 12,
+    marginBottom: 20,
     fontWeight: 'normal',
     textAlign: 'center',
     color: 'rgba(0,0,0,.5)',
-    opacity: 0.9,
+  },
+  profileInfoText: {
+    color: theme.primary,
+    fontSize: 12,
   },
   avatar: {
     marginBottom: 0,
@@ -273,6 +282,7 @@ const mapStateToProps = createStructuredSelector({
   totalVotes: getTotalVotesForUser,
   userId: getUserId,
   userName: getUserName,
+  userInfo: getUserInfo,
   userTeam: getUserTeam,
   timeSinceLastPost: getTimeSinceLastPost,
 });
