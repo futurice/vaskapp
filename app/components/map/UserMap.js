@@ -35,28 +35,31 @@ import MARKER_IMAGES, { ICONS } from '../../constants/MarkerImages';
 // import MAP_STYLE from '../../constants/MapStyle';
 import permissions from '../../services/android-permissions';
 import location from '../../services/location';
+import PostCallout from './Callout/Post';
+import CityCallout from './Callout/City';
 
 import { CITY_CATEGORIES, HELSINKI } from '../../constants/Cities';
 
 import {
   mapViewData,
-
-  fetchMarkers,
   selectMarker,
   selectCategory,
   toggleLocateMe,
   updateShowFilter,
 } from '../../concepts/map';
 
-const disableMap = false;
+import { openComments } from '../../concepts/comments';
+import { openLightBox } from '../../concepts/lightbox';
+
+
 const { width, height } = Dimensions.get('window');
 
 const calloutHeight = 140;
 
 const IOS = Platform.OS === 'ios';
-const VIEW_NAME = 'EventMap';
+const VIEW_NAME = 'UserMap';
 
-class EventMap extends Component {
+class UserMap extends Component {
 
   constructor(props) {
     super(props);
@@ -65,7 +68,6 @@ class EventMap extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchMarkers();
     analytics.viewOpened(VIEW_NAME);
   }
 
@@ -107,7 +109,8 @@ class EventMap extends Component {
 
   @autobind
   getCityCoords(city) {
-   return CITY_CATEGORIES[city]
+    const currentCityLocation = this.props.markerLocations.getIn([city, 'location']);
+    return currentCityLocation ? currentCityLocation.toJS() : {};
   }
 
   @autobind
@@ -117,40 +120,6 @@ class EventMap extends Component {
     } else {
       permissions.requestLocationPermission(this.props.toggleLocateMe);
     }
-  }
-
-  renderDisabledMapAnnouncement(event) {
-    return (<View style={styles.emptyWrap}>
-      <View style={styles.emptyIconWrap}>
-        <MDIcon name="nature-people" style={styles.emptyIcon} />
-      </View>
-      <View style={styles.emptyContent}>
-        <Text style={styles.emptyTitle}>Oh noes!</Text>
-        <Text style={styles.emptyText}>Event Map is not currently supported on your device. Be safe out there.</Text>
-      </View>
-    </View>);
-  }
-
-  renderEventMarker(event) {
-    return <MapView.Callout onPress={() => this.onEventMarkerPress(event)} style={{ flex: 1, position: 'relative' }}>
-      <TouchableHighlight
-        underlayColor='transparent'
-        style={styles.calloutTouchable}
-      >
-        <View style={styles.callout}>
-          <View>
-            <View style={styles.calloutTitleWrap}>
-              <Text style={styles.calloutTitle}>{event.name}</Text>
-              <Icon style={styles.calloutIcon} name='ios-arrow-forward' />
-            </View>
-            <Text style={[styles.calloutInfo,{color:'#aaa', marginBottom:10}]}>
-              {time.getEventDay(event.startTime)}
-            </Text>
-            <Text style={styles.calloutInfo}>{event.locationName}</Text>
-          </View>
-        </View>
-      </TouchableHighlight>
-    </MapView.Callout>;
   }
 
   @autobind
@@ -172,26 +141,19 @@ class EventMap extends Component {
     );
   }
 
+  @autobind
   renderCustomCallout(location) {
-
-    // if (!location) {
-    //   return null;
-    // }
-
     let calloutProps = {};
-    if (location && location.get('url')) {
-      calloutProps = {
-        onPress: () => Linking.openURL(location.get('url'))
-      }
-    }
+    // if (location && location.get('url')) {
+    //   calloutProps = {
+    //     onPress: () => Linking.openURL(location.get('url'))
+    //   }
+    // }
 
     const calloutAnimationStyles = {
       opacity: this.state.calloutAnimation,
       top: this.state.calloutAnimation.interpolate({ inputRange: [0, 1], outputRange: [calloutHeight, 0] }),
       height: this.state.calloutAnimation.interpolate({ inputRange: [0, 1], outputRange: [0, calloutHeight] }),
-      // transform: [
-      //   { translateY: this.state.calloutAnimation.interpolate({ inputRange: [0, 1], outputRange: [300, 0] })
-      // }]
     };
 
     return (
@@ -204,48 +166,17 @@ class EventMap extends Component {
           <View style={styles.callout}>
             {
               location && this.props.categories.indexOf(location.get('type')) >= 0
-                ? this.renderMarkerCalloutContent(location)
-                : this.renderPostCalloutContent(location)
+                ? <CityCallout item={location} />
+                : <PostCallout
+                    onImagePress={this.props.openLightBox}
+                    openComments={this.props.openComments}
+                    item={location}
+                  />
             }
           </View>
         </TouchableHighlight>
         }
       </Animated.View>
-    );
-  }
-
-  renderPostCalloutContent(location) {
-    return (
-      <View style={styles.calloutContent}>
-        <View style={styles.calloutImage}>
-          <Image
-            style={styles.postImage}
-            source={{ uri: location.get('url') }}
-          />
-        </View>
-        <View style={styles.postInfo} >
-          <Text style={styles.postAuthorName}>{location.getIn(['author','name'])}</Text>
-          <Text style={styles.postTextMessage}>{location.get('text')}</Text>
-          <Text style={styles.postDate}>{time.getTimeAgo(location.getIn(['createdAt']))} ago</Text>
-        </View>
-      </View>);
-  }
-
-  renderMarkerCalloutContent(location) {
-    return  (
-      <View style={styles.calloutContent}>
-        <View style={styles.calloutImage}>
-          <Image
-            style={styles.postImage}
-            source={{ uri: location.get('imageUrl') }}
-          />
-        </View>
-        <View style={styles.postInfo}>
-          <Text style={styles.postAuthorName}>{location.get('title')}</Text>
-          <Text style={styles.postTextMessage}>{location.get('subtitle')}</Text>
-          <Button style={styles.calloutButton}><MDIcon name="directions" /> Directions</Button>
-        </View>
-      </View>
     );
   }
 
@@ -298,7 +229,7 @@ class EventMap extends Component {
   onSelectMarker(marker) {
     const { selectMarker } = this.props;
 
-    selectMarker(marker);
+    selectMarker(marker.id, marker.type);
     this.map.animateToCoordinate(marker.location);
   }
 
@@ -309,7 +240,7 @@ class EventMap extends Component {
 
   @autobind
   onCategorySelect(category) {
-    const { categories, visiblemarkerCoords } = this.props;
+    const { categories } = this.props;
     const index = categories.findIndex(c => c === category);
 
     const total = categories.size;
@@ -324,6 +255,7 @@ class EventMap extends Component {
       this.categoryScroll.scrollToEnd();
     }
 
+    // Action for category
     this.props.selectCategory(category)
       .then(this.fitMarkersToMap);
   }
@@ -340,22 +272,22 @@ class EventMap extends Component {
 
   @autobind
   renderMarkerFilterButton({ item }) {
-    const { selectedCategory, selectCategory } = this.props;
+    const { selectedCategory } = this.props;
     return (
       <PlatformTouchable
         key={item}
         onPress={() => this.onCategorySelect(item)}
       >
         <View style={[styles.markerFilterButton, item === selectedCategory ? styles.activeButton : {}]}>
-          <Text style={[styles.markerFilterButtonText, item === selectedCategory ? styles.activeButtonText : {}]}>{item}</Text>
+          <Text style={[styles.markerFilterButtonText, item === selectedCategory ? styles.activeButtonText : {}]}>
+            {item}
+          </Text>
         </View>
       </PlatformTouchable>
     )
   }
 
   renderMarkerFilter() {
-    // const { categories } = this.props;
-    // const categories = fromJS(['HELSINKI', 'TAMMERFORCE', 'LONDON', 'AVALON', 'MUNICH', 'BERLIN']);
     const { categories } = this.props;
     const keyExtractor = (item, index) => item;
     return (
@@ -386,7 +318,7 @@ class EventMap extends Component {
   }
 
   render() {
-    const { mapMarkers, firstFutureEvent, selectedMarker, selectedCategory } = this.props;
+    const { mapMarkers, markerLocations, selectedMarker, selectedCategory } = this.props;
     const markersJS = mapMarkers.toJS();
 
     const markers = markersJS.map((location, index) => {
@@ -413,40 +345,38 @@ class EventMap extends Component {
       </MapView.Marker>;
     });
 
-    if (disableMap){
-      return ( this.renderDisabledMapAnnouncement(firstFutureEvent) );
-    }
-
     const initialRegion = this.getCityRegion(selectedCategory);
+    const areCategoriesReady = !markerLocations || !markerLocations.size <= 0;
 
     return (
       <View style={{ flex:1 }}>
         {this.renderMarkerFilter()}
         <View style={styles.mapWrap}>
           <View style={{ flex:1 }}>
-            <MapView
-              style={styles.map}
-              initialRegion={initialRegion}
-              showsUserLocation={this.props.locateMe}
-              showsPointsOfInterest={true}
-              showsBuildings={true}
-              showsIndoors={false}
-              rotateEnabled={false}
-              ref={(map) => { this.map = map; }}
-              // customMapStyle={MAP_STYLE} // TODO IOS Support
-              // https://github.com/airbnb/react-native-maps#customizing-the-map-style
-              // provider={PROVIDER_GOOGLE}
-            >
-              {markers}
-            </MapView>
+            {areCategoriesReady &&
+              <MapView
+                style={styles.map}
+                initialRegion={initialRegion}
+                showsUserLocation={this.props.locateMe}
+                showsPointsOfInterest={true}
+                showsBuildings={true}
+                showsIndoors={false}
+                rotateEnabled={false}
+                ref={(map) => { this.map = map; }}
+                // customMapStyle={MAP_STYLE} // TODO IOS Support
+                // https://github.com/airbnb/react-native-maps#customizing-the-map-style
+                // provider={PROVIDER_GOOGLE}
+              >
+                {markers}
+              </MapView>
+            }
           </View>
 
           {this.maybeRenderLoading()}
-
-          {this.renderCheckIn()}
           {this.renderLocateMe()}
-
           {this.renderCustomCallout(selectedMarker)}
+
+          {/*this.renderCheckIn() */}
           {/*this.renderCloseLayer(selectedMarker)*/}
         </View>
       </View>
@@ -456,9 +386,8 @@ class EventMap extends Component {
 
 }
 
-EventMap.propTypes = {
+UserMap.propTypes = {
   navigator: PropTypes.object.isRequired,
-  events: PropTypes.object.isRequired,
   markers: PropTypes.object.isRequired,
 }
 
@@ -470,7 +399,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     justifyContent: 'flex-start',
-    // alignItems: 'center',
   },
   mapWrap: {
     flexGrow: 1,
@@ -482,7 +410,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-
   avatarMarker: {
     width: 30,
     height: 30,
@@ -523,111 +450,22 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   customCallout: {
-    zIndex: 3,
+    zIndex: 10,
     width: width,
     position: 'relative',
     left: 0,
     bottom: 0,
     height: calloutHeight,
     backgroundColor: theme.white,
-    // borderRadius: 3,
-    // elevation: 2,
-    // shadowColor: '#000000',
-    // shadowOpacity: 0.25,
-    // shadowRadius: 1,
-    // shadowOffset: {
-    //   height: 1,
-    //   width: 0
-    // },
   },
   callout: {
     flexGrow: 1,
     flex: 1,
     flexDirection:'row',
-    overflow: 'hidden'
   },
   calloutTouchable: {
     padding: 0,
-    // flex: 1,
     flexGrow: 1,
-  },
-  calloutImageWrap: {
-    width: 120,
-    height: height / 4,
-    backgroundColor: theme.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  calloutImageIcon: {
-    fontSize: 50,
-    color: theme.blue1
-  },
-  calloutImage: {
-    width: 120,
-    height: height / 4,
-    backgroundColor: theme.white,
-  },
-  calloutContent: {
-    flex: 1,
-    padding: 15,
-    paddingBottom: 10,
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-  },
-  calloutTitleWrap: {
-    // flex: 1,
-    flexDirection:'row',
-  },
-  calloutImage: {
-    width: 110,
-  },
-  postImage: {
-    width: 110,
-    height: 110,
-    borderRadius: 3,
-  },
-  postInfo: {
-    flex: 1,
-    marginLeft: 20,
-    maxWidth: width - 130 - 0,
-  },
-  postAuthorName: {
-    fontWeight: '500',
-    color: theme.primary,
-    fontSize: 14,
-    paddingBottom: 8
-  },
-  postTextMessage: {
-    marginTop: 10,
-    fontSize: 12,
-    color: theme.dark,
-    backgroundColor: theme.transparent
-  },
-  postDate: {
-    marginTop: 10,
-    fontSize: 12,
-    color: '#888',
-    backgroundColor: theme.transparent
-  },
-  calloutButton: {
-    marginTop: 15,
-    height: 33,
-  },
-  calloutTitle: {
-    fontWeight: '500',
-    color: theme.dark,
-    fontSize: 14,
-    paddingBottom: 8
-  },
-  calloutInfo: {
-    fontSize: 12,
-    color: '#888',
-    backgroundColor: theme.transparent
-  },
-  calloutIcon:{
-    top: IOS ? 0 : 2,
-    fontSize:14,
-    color:theme.primary
   },
   checkIn: {
     position: 'absolute',
@@ -760,11 +598,12 @@ const styles = StyleSheet.create({
 });
 
 const mapDispatchToProps = {
-  fetchMarkers,
   selectMarker,
   selectCategory,
   toggleLocateMe,
   updateShowFilter,
+  openComments,
+  openLightBox,
 };
 
-export default connect(mapViewData, mapDispatchToProps)(EventMap);
+export default connect(mapViewData, mapDispatchToProps)(UserMap);
