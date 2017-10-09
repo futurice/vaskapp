@@ -1,12 +1,14 @@
 // # concepts/map
 // This is so called 'view concept'
 // that combines core concepts like 'marker' and 'event'
-
+import { AsyncStorage } from 'react-native';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { fromJS, List, Map } from 'immutable';
-import { has, chain } from 'lodash';
+import { keyBy, map } from 'lodash';
 import moment from 'moment';
+import { createRequestActionTypes } from '../actions';
 
+import SortTypes from '../constants/SortTypes';
 import { getCurrentCityName } from './city';
 import {
   updateShowFilter as _updateShowFilter,
@@ -14,22 +16,35 @@ import {
 } from '../actions/event';
 import { fetchMarkers as _fetchMarkers } from '../actions/marker';
 
+import { SET_COMMENTS } from './comments';
 import { isLocating, getShowFilter, getEvents, getEventListState } from '../reducers/event';
 import * as m from '../reducers/marker';
-import { getAllPostsInStore } from '../reducers/feed';
+import api from '../services/api';
 import LoadingStates from '../constants/LoadingStates';
 import MarkerImages from '../constants/MarkerImages';
 import time from '../utils/time';
-import location from '../services/location';
-import { HELSINKI, CITY_CATEGORIES, CITY_MAX_DISTANCE } from '../constants/Cities';
+import { TAMPERE, CITY_CATEGORIES, CITY_MAX_DISTANCE } from '../constants/Cities';
+import StorageKeys from '../constants/StorageKeys';
+
+const SET_POSTS = 'SET_POSTS';
+const APPEND_POSTS = 'APPEND_POSTS';
+const {
+  GET_POSTS_REQUEST,
+  GET_POSTS_SUCCESS,
+  GET_POSTS_FAILURE
+} = createRequestActionTypes('GET_POSTS');
+
 
 // # Selectors
-const getSelectedCategory = state => state['map'].get('selectedCategory');
-const getSelectedMarker = state => state['map'].get('selectedMarker');
+const getSelectedCategory = state => state.usermap.get('selectedCategory');
+const getSelectedMarkerId = state => state.usermap.get('selectedMarkerId');
+const getSelectedMarkerType = state => state.usermap.get('selectedMarkerType');
+const getMapPostsState = state => state.usermap.get('loadingPosts');
+export const getAllMapPostsInStore = state => state.usermap.get('posts') || List([]);
 
 const isMapLoading = createSelector(
-  m.getMarkerListState, getEventListState, (a, b) =>
-  a === LoadingStates.LOADING || b === LoadingStates.LOADING
+  m.getMarkerListState, getEventListState, getMapPostsState, (a, b, c) =>
+  a === LoadingStates.LOADING || b === LoadingStates.LOADING || c === LoadingStates.LOADING
 );
 
 const isEventBetweenSelectedTime = (event, firstFutureEvent, showFilter) => {
@@ -43,58 +58,36 @@ const isEventBetweenSelectedTime = (event, firstFutureEvent, showFilter) => {
   }
 }
 
-const getFirstFutureEvent = createSelector(
-  getEvents, (events) => {
-    const event = chain(events.toJS())
-      .filter(item => time.isEventInFuture(item.endTime))
-      .sortBy(item => time.getTimeStamp(item.endTime))
-      .head()
-      .value();
-
-    return fromJS(event);
-  }
-)
 
 const getMarkers = createSelector(
-  m.getMarkers, getAllPostsInStore,
-  (markers, posts) => {
+  m.getMarkers, getAllMapPostsInStore, getSelectedCategory,
+  (markers, posts, selectedCategory) => {
     const postMarkers = posts.filter(post => post.has('location'));
-    return postMarkers.concat(markers);
+
+    const categoryMarkers = getSelectedCategory
+      ? markers.filter(m => m.get('type') === selectedCategory)
+      : markers;
+
+    return postMarkers.concat(categoryMarkers);
   }
 )
 
-const locationFilter = (marker, category) => {
-  const markerLocation = marker.get('location').toJS();
-  const categoryCenter = CITY_CATEGORIES[category];
+// const postMarkerCategories = ['IMAGE', 'TEXT'];
 
-  if (!markerLocation || !categoryCenter) {
-    return false;
-  }
-
-  return location.getDistanceInMeters(markerLocation, categoryCenter) <= CITY_MAX_DISTANCE;
-}
-
-const stickyMarkerCategories = ['HOTEL'];
 const getMapMarkers = createSelector(
-  getMarkers, getSelectedCategory,
-  (markers, categoryFilter) => {
-
-    const validMarkers = markers
-      .filter(marker => marker.has('location'))
-      .filter(marker => locationFilter(marker, categoryFilter))
-
-    return validMarkers;
-});
+  getMarkers, (markers) => markers.filter(marker => marker.has('location')));
 
 const getMapMarkersCoords = createSelector(getMapMarkers, markers => {
   return markers.map(marker => marker.get('location')).toJS();
 });
 
 
-
+// Categories from markers got from marker endpoint only
+// Hence cities
 const getMarkerCategories = createSelector(
   m.getMarkers, (markers) => {
     const validMarkers = markers
+      .filter(marker => marker.has('location'))
       .map(marker => marker.get('type', '').toUpperCase())
       .toSet().toList(); // Immutable uniq
 
@@ -103,22 +96,42 @@ const getMarkerCategories = createSelector(
   }
 );
 
-const cityCategories = fromJS(Object.keys(CITY_CATEGORIES))
+// (City) Markers Keyed by city
+const getMarkerLocations = createSelector(
+  m.getMarkers, (markers) => {
+    const markersKeyByType = keyBy(markers.toJS(), 'type');
+
+    return fromJS(markersKeyByType);
+  }
+);
+
+const getSelectedMarker = createSelector(
+  getSelectedMarkerId,
+  getSelectedMarkerType,
+  getAllMapPostsInStore,
+  m.getMarkers,
+  getMarkerCategories,
+  (id, type, posts, markers, categories) => {
+    const isCategoryMarkerSelected = categories.indexOf(type) >= 0;
+    const markerHayStack = isCategoryMarkerSelected ? markers : posts;
+
+    return markerHayStack.find(post => post.get('id') === id);
+  });
+
 
 // View concept selector
 export const mapViewData = createStructuredSelector({
   currentCity: getCurrentCityName,
   locateMe: isLocating,
   showFilter: getShowFilter,
-  events: getEvents,
   markers: getMarkers,
   loading: isMapLoading,
   mapMarkers: getMapMarkers,
-  firstFutureEvent: getFirstFutureEvent,
   selectedMarker: getSelectedMarker,
   selectedCategory: getSelectedCategory,
   categories: getMarkerCategories,
-  visiblemarkerCoords: getMapMarkersCoords
+  markerLocations: getMarkerLocations,
+  visiblemarkerCoords: getMapMarkersCoords,
 })
 
 // # Action types & creators
@@ -129,28 +142,106 @@ export const fetchMarkers = _fetchMarkers;
 export const updateShowFilter = _updateShowFilter;
 export const toggleLocateMe = _toggleLocateMe;
 
-export const selectMarker = payload => ({ type: SELECT_MARKER, payload });
-export const selectCategory = payload => (dispatch) => Promise.resolve(
-  dispatch({ type: SELECT_CATEGORY, payload })
-);
+export const selectMarker = (markerId, markerType) => ({ type: SELECT_MARKER, markerId, markerType });
+
+export const selectCategory = payload => (dispatch) => {
+  AsyncStorage.setItem(StorageKeys.mapCategory, payload);
+
+  return Promise.resolve(dispatch({ type: SELECT_CATEGORY, payload }))
+    .then(() => dispatch(fetchPostsForCity()));
+};
+
+
+export const initializeUsersCitySelection = () => (dispatch, getState) => {
+  return AsyncStorage.getItem(StorageKeys.mapCategory)
+    .then(city => {
+      if (city) {
+        return dispatch(selectCategory(city))
+      }
+      return Promise.resolve();
+    })
+    .catch(error => { console.log('error when initializing map category') });
+};
+
+
+const fetchPostsForCity = () => (dispatch, getState) => {
+  const state = getState();
+
+  const cities = m.getMarkers(state);
+  const cityId = getSelectedCategory(state);
+
+  const selectedCity = cities.find(city => city.get('type', '').toUpperCase() === cityId);
+
+  if (!selectedCity || !selectedCity.has('location')) {
+    return false;
+  }
+  const cityLocation = selectedCity.get('location').toJS();
+
+  const sort = SortTypes.SORT_NEW;
+  dispatch({ type: GET_POSTS_REQUEST });
+
+  return api.fetchModels('feed', { sort, ...cityLocation, radius: 20000 })
+  .then(items => {
+    dispatch({
+      type: SET_POSTS,
+      payload: items
+    });
+
+    dispatch({ type: GET_POSTS_SUCCESS });
+  })
+  .catch(error => dispatch({ type: GET_POSTS_FAILURE, error: true, payload: error }));
+};
+
 
 // # Reducer
 const initialState = fromJS({
-  selectedMarker: null,
-  selectedCategory: HELSINKI,
+  selectedCategory: TAMPERE,
+  selectedMarkerId: null,
+  selectedMarkerType: null,
+  posts: [],
+  loadingPosts: false,
 });
 
-export default function map(state = initialState, action) {
+export default function usermap(state = initialState, action) {
   switch (action.type) {
     case SELECT_MARKER: {
-      return state.set('selectedMarker', fromJS(action.payload));
+      return state.merge({
+        selectedMarkerId: action.markerId,
+        selectedMarkerType: action.markerType,
+      });
     }
 
     case SELECT_CATEGORY: {
       return state.merge({
         selectedCategory: action.payload,
-        selectedMarker: null
+        selectedMarkerId: null,
+        selectedMarkerType: null,
       });
+    }
+
+    case SET_POSTS:
+      return state.set('posts', fromJS(action.payload));
+
+    case GET_POSTS_REQUEST:
+      return state.set('loadingPosts', LoadingStates.LOADING);
+
+    case GET_POSTS_SUCCESS:
+      return state.set('loadingPosts', LoadingStates.READY);
+
+    case GET_POSTS_FAILURE:
+      return state.set('loadingPosts', LoadingStates.FAILED);
+
+    case SET_COMMENTS: {
+      const list = state.get('posts');
+      const itemIndex = list.findIndex((item) => item.get('id') === action.payload.postId);
+
+      if (itemIndex < 0) {
+        console.log('Tried to update comment count for map post, but it was not found from state:', itemIndex);
+        return state;
+      } else {
+        console.log('updating comment count for map post', itemIndex);
+        return state.setIn(['posts', itemIndex, 'commentCount'], action.payload.comments.length || 0);
+      }
     }
 
     default: {
