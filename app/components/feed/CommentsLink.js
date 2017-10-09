@@ -1,26 +1,36 @@
 import React, { Component } from 'react';
+import { isFunction } from 'lodash';
 import { View, StyleSheet, Text, TouchableHighlight } from 'react-native';
 
 import PlatformTouchable from '../common/PlatformTouchable';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import theme from '../../style/theme';
 
 class CommentsLinks extends Component {
   render() {
-    const { commentCount, openComments } = this.props;
-
+    const { commentCount, openComments, compact } = this.props;
     const hasComments = commentCount > 0;
 
+
+    let calloutProps = {};
+    if (openComments && isFunction(openComments)) {
+      calloutProps = {
+        onPress: openComments
+      }
+    }
+
     return (
-      <PlatformTouchable style={styles.commentLink} onPress={openComments}>
+      <PlatformTouchable style={styles.commentLink} {...calloutProps}>
         <View style={styles.comment}>
-          <Text style={styles.commentText}>
-            {hasComments ? commentCount : ''}
-          </Text>
-          <Text style={[styles.commentText, styles.commentTextRight]}>
+          {(hasComments || !compact) &&
+            <Text style={[styles.commentText, compact && styles.compactText]}>
+              {hasComments ? commentCount : ''}
+            </Text>
+          }
+          <Text style={[styles.commentText, !compact && styles.commentTextRight]}>
             <Icon
               style={[styles.commentIcon, hasComments ? styles.activeCommentIcon : {}]}
-              name={hasComments ? 'chat-bubble' : 'chat-bubble-outline'}
+              name={'md-chatbubbles'}
             />
           </Text>
         </View>
@@ -47,8 +57,11 @@ const styles = StyleSheet.create({
   commentTextRight: {
     marginLeft: 7,
   },
+  compactText: {
+    marginRight: 3
+  },
   commentIcon: {
-    fontSize: 18,
+    fontSize: 20,
   },
   activeCommentIcon: {
     color: theme.secondaryLight,
