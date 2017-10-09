@@ -11,6 +11,8 @@ import * as reducers from '../reducers';
 import MainView from './MainView';
 import { checkUserLogin, refreshAuthToken } from '../concepts/auth';
 import { updateLocation, startLocationWatcher, stopLocationWatcher } from '../concepts/location';
+import { initializeUsersCitySelection } from '../concepts/map';
+import { fetchMarkers } from '../actions/marker';
 import permissions from '../services/android-permissions';
 
 const IOS = Platform.OS === 'ios';
@@ -28,7 +30,12 @@ const reducer = combineReducers(reducers);
 const store = createStoreWithMiddleware(reducer);
 
 
-// store.dispatch(refreshAuthToken());
+
+// Fetch all markers/categories for map
+store.dispatch(fetchMarkers())
+// load selectd city from local storage
+.then(() => store.dispatch(initializeUsersCitySelection()))
+
 
 class RootView extends Component {
   componentDidMount() {
