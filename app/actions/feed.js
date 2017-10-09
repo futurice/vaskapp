@@ -4,6 +4,7 @@ import { getCityId } from '../concepts/city';
 import { getFeedSortType } from '../concepts/sortType';
 import { getAllPostsInStore } from '../reducers/feed';
 import { SET_COMMENTS as _SET_COMMENTS } from '../concepts/comments';
+import { CITY_CATEGORIES, TAMPERE } from '../constants/Cities';
 
 const SET_FEED = 'SET_FEED';
 const APPEND_FEED = 'APPEND_FEED';
@@ -32,7 +33,7 @@ const fetchFeed = () => (dispatch, getState) => {
   const sort = getFeedSortType(getState());
 
   dispatch({ type: GET_FEED_REQUEST });
-  return api.fetchModels('feed', { sort })
+  return api.fetchModels('feed', { sort, ...CITY_CATEGORIES[TAMPERE], radius: 1000 })
   .then(items => {
     dispatch({
       type: SET_FEED,
@@ -130,11 +131,6 @@ const voteFeedItem = (feedItemId, value) => (dispatch, getState) => {
   .catch(error => console.log('Error when trying to vote feed item', error));
 }
 
-// Open image in Lightbox
-const OPEN_LIGHTBOX = 'OPEN_LIGHTBOX';
-const CLOSE_LIGHTBOX = 'CLOSE_LIGHTBOX';
-const openLightBox = (itemId) => ({ type: OPEN_LIGHTBOX, payload: itemId })
-const closeLightBox = () => ({ type: CLOSE_LIGHTBOX });
 
 export {
   SET_FEED,
@@ -147,8 +143,6 @@ export {
   REFRESH_FEED_REQUEST,
   REFRESH_FEED_SUCCESS,
   DELETE_FEED_ITEM,
-  OPEN_LIGHTBOX,
-  CLOSE_LIGHTBOX,
   SET_COMMENTS,
 
   fetchFeed,
@@ -156,6 +150,4 @@ export {
   loadMoreItems,
   removeFeedItem,
   voteFeedItem,
-  openLightBox,
-  closeLightBox
 };
