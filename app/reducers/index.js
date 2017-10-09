@@ -13,9 +13,10 @@ import mood from '../concepts/mood';
 import sortType from '../concepts/sortType';
 import user from '../concepts/user';
 import comments from '../concepts/comments';
-import map from '../concepts/map';
+import usermap from '../concepts/map';
 import auth from '../concepts/auth';
 import location from '../concepts/location';
+import lightbox from '../concepts/lightbox';
 
 export {
   errors,
@@ -26,6 +27,7 @@ export {
   registration,
   team,
   location,
+  lightbox,
   competition,
   announcement,
   profile,
@@ -34,6 +36,6 @@ export {
   sortType,
   user,
   comments,
-  map,
+  usermap,
   auth,
 };
