@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Navigator } from 'react-native-deprecated-custom-components';
@@ -17,6 +15,7 @@ import ProfileEditor from '../components/registration/ProfileEditor';
 import CheckInActionView from '../components/actions/CheckInActionView';
 import TextActionView from '../components/actions/TextActionView';
 import LightBox from '../components/lightbox/Lightbox';
+import CommentsView from '../components/comment/CommentsView';
 
 const theme = require('../style/theme');
 
@@ -58,6 +57,7 @@ class MainView extends Component {
         <LightBox />
         <ProfileEditor />
         <TextActionView />
+        <CommentsView />
       </View>
     );
   }

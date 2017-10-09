@@ -24,13 +24,10 @@ import { fetchFeed,
   loadMoreItems,
   removeFeedItem,
   voteFeedItem,
-  openLightBox
 } from '../../actions/feed';
 
-import {
-  openComments,
-  closeComments
-} from '../../concepts/comments';
+import { openLightBox } from '../../concepts/lightbox';
+import { openComments } from '../../concepts/comments';
 
 import { openRegistrationView } from '../../actions/registration';
 import { getUserTeam } from '../../reducers/registration';
@@ -42,7 +39,6 @@ import Notification from '../common/Notification';
 import UserView from '../user/UserView';
 import Loading from './Loading';
 import ActionButtons from './ActionButtons';
-import CommentsView from '../comment/CommentsView';
 import LoadingStates from '../../constants/LoadingStates';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -329,7 +325,6 @@ class FeedList extends Component {
                 openRegistrationView={this.props.openRegistrationView}
                 openUserPhotos={this.openUserPhotos}
                 openComments={this.props.openComments}
-                closeComments={this.props.closeComments}
                 openLightBox={this.props.openLightBox} />
               }
               style={[styles.listView]}
@@ -369,7 +364,6 @@ class FeedList extends Component {
           animationType={'fade'}
           image={this.props.editableImage}
         />
-        <CommentsView />
       </View>
     );
   }
@@ -396,7 +390,6 @@ const mapDispatchToProps = {
   setEditableImage,
   clearEditableImage,
   openComments,
-  closeComments,
   openRegistrationView,
 };
 
