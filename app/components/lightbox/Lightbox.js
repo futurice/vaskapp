@@ -15,8 +15,8 @@ import theme from '../../style/theme';
 // import ModalBox from 'react-native-modalbox';
 
 import { openRegistrationView } from '../../actions/registration';
-import { voteFeedItem, removeFeedItem, closeLightBox } from '../../actions/feed';
-import { getLightboxItem } from '../../reducers/feed';
+import { voteFeedItem, removeFeedItem } from '../../actions/feed';
+import { getLightboxItem, closeLightBox, isLightBoxOpen } from '../../concepts/lightbox';
 import abuse from '../../services/abuse';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -142,7 +142,7 @@ class LightBox extends Component {
         style={styles.modal}
         transparent={true}
         supportedOrientations={['portrait']}
-        animationType={IOS ? 'fade' : 'slide'}
+        animationType={IOS ? 'none' : 'slide'}
       >
         <ModalBackgroundView style={styles.container} blurType="dark" >
           {IOS
@@ -315,9 +315,8 @@ const styles = StyleSheet.create({
 
 const select = store => {
   return {
-    // lightBoxItem: store.feed.get('lightBoxItem'),
     lightBoxItem: getLightboxItem(store),
-    isLightBoxOpen: store.feed.get('isLightBoxOpen')
+    isLightBoxOpen: isLightBoxOpen(store),
   };
 };
 
