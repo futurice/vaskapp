@@ -55,6 +55,11 @@ const Comment = ({ item }) => {
 };
 
 const CommentPost = ({ item }) => {
+
+  if (!item) {
+    return null;
+  }
+
   const ago = time.getTimeAgo(item.get('createdAt'));
   const profilePicture = item.getIn(['author', 'profilePicture']);
   const userName = item.getIn(['author', 'name']);

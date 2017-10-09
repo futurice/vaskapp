@@ -18,8 +18,12 @@ const IOS = Platform.OS === 'ios';
 
 const CommentPost = props => {
   const { item, openUserPhotos } = props;
-  const ago = time.getTimeAgo(item.get('createdAt'));
 
+  if (!item) {
+    return null;
+  }
+
+  const ago = time.getTimeAgo(item.get('createdAt'));
   const isItemImage = item.get('type') === 'IMAGE';
 
   return (
