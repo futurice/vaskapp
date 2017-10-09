@@ -17,7 +17,7 @@ export const fetchAppContent = () => dispatch =>
     dispatch(fetchActionTypes()),
     dispatch(getUser()),
     dispatch(fetchFeed()),
-    dispatch(fetchEvents()),
+    // dispatch(fetchEvents()),
     dispatch(fetchTeams()),
   ])
   .then(() => dispatch({ type: APP_CONTENT_LOADED }));
