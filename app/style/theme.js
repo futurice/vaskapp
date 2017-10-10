@@ -37,13 +37,15 @@ const theme = {
   red:            '#FF5240',
   grey1:          '#eeeeee',
   grey2:          '#aaaaaa',
-  grey3:          '#cccccc',
+  grey3:          '#ccc',
+  grey4:          '#93909b',
+
   yellow:         '#fff',
   yellowDark:     '#eddead',
   blue1:          '#7E878B',
   blue2:          '#210F00',
   darker:         '#210F00',
-  blue3:          '#888888',
+
   green1:         '#C3E5D9',
   green2:         '#004C41',
   purple:         '#ADB5DC',

@@ -35,8 +35,8 @@ class Navigation extends Component {
       <TabBarIOS
         tintColor={theme.blue2}
         barTintColor={theme.white}
-        unselectedTintColor={theme.blue3}
-        unselectedItemTintColor={theme.blue3}
+        unselectedTintColor={theme.grey3}
+        unselectedItemTintColor={theme.grey3}
         translucent={false}
       >
         <TabBarIOS.Item

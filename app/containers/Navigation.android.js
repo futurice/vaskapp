@@ -96,7 +96,7 @@ class AndroidTabNavigation extends Component {
           tabBarPosition={'bottom'}
           tabBarBackgroundColor={theme.white}
           tabBarActiveTextColor={theme.darker}
-          tabBarInactiveTextColor={theme.blue3}
+          tabBarInactiveTextColor={theme.grey4}
           locked={true}
           scrollWithoutAnimation={true}
           prerenderingSiblingsNumber={0}

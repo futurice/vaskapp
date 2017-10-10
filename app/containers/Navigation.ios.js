@@ -54,15 +54,15 @@ class Navigation extends Component {
         initialPage={initialTab}
         tabBarPosition={'bottom'}
         tabBarBackgroundColor={theme.white}
-        tabBarActiveTextColor={theme.secondary}
-        tabBarInactiveTextColor={theme.blue3}
+        tabBarActiveTextColor={theme.primary}
+        tabBarInactiveTextColor={theme.grey4}
         locked={true}
         scrollWithoutAnimation={true}
         prerenderingSiblingsNumber={0}
         renderTabBar={() => <IconTabBar />}
       >
         <FeedView navigator={navigator} tabLabel={{ title: 'Vasking', icon:'fiber-smart-record' }} />
-        <EventMapView navigator={navigator} tabLabel={{ title: 'Geo', icon:'public' }} />
+        <EventMapView navigator={navigator} tabLabel={{ title: 'Geo', icon: 'public' }} />
         <ProfileView navigator={navigator} tabLabel={{ title: 'Me', icon:'face' }} />
       </ScrollableTabs>
     )
