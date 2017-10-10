@@ -4,7 +4,6 @@ import { getCityId } from '../concepts/city';
 import { getFeedSortType } from '../concepts/sortType';
 import { getAllPostsInStore } from '../reducers/feed';
 import { SET_COMMENTS as _SET_COMMENTS } from '../concepts/comments';
-import { CITY_CATEGORIES, TAMPERE } from '../constants/Cities';
 
 const SET_FEED = 'SET_FEED';
 const APPEND_FEED = 'APPEND_FEED';
@@ -33,7 +32,7 @@ const fetchFeed = () => (dispatch, getState) => {
   const sort = getFeedSortType(getState());
 
   dispatch({ type: GET_FEED_REQUEST });
-  return api.fetchModels('feed', { sort, ...CITY_CATEGORIES[TAMPERE], radius: 1000 })
+  return api.fetchModels('feed', { sort })
   .then(items => {
     dispatch({
       type: SET_FEED,
