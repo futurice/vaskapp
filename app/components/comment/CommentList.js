@@ -64,6 +64,7 @@ const CommentPost = ({ item }) => {
   const profilePicture = item.getIn(['author', 'profilePicture']);
   const userName = item.getIn(['author', 'name']);
   const isImage = item.get('type') === 'IMAGE';
+  const hasText = !!item.get('text')
 
 
   return (
@@ -79,13 +80,13 @@ const CommentPost = ({ item }) => {
           </View>
 
           <View style={styles.commentTextContent}>
-            {isImage
-              ?
-              <View style={{ marginTop: -5 }}>
+            {isImage &&
+              <View style={{ marginTop: -5, marginBottom: hasText ? 15 : 0, }}>
                 <Text style={styles.commentAuthor}>{item.get('userName')}</Text>
                 <Image style={{ width: 120, height: 120 }} source={{ uri: item.get('url') }} />
               </View>
-              :
+            }
+            {hasText &&
               <Text style={styles.commentText}>
                 <Text style={styles.commentAuthor}>{userName} </Text>{item.get('text')}
               </Text>
