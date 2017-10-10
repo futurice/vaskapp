@@ -30,6 +30,12 @@ const {
   GET_USER_FAILURE
 } = createRequestActionTypes('GET_USER');
 
+const {
+  POST_PROFILE_PICTURE_REQUEST,
+  POST_PROFILE_PICTURE_SUCCESS,
+  POST_PROFILE_PICTURE_FAILURE
+} = createRequestActionTypes('POST_PROFILE_PICTURE');
+
 const OPEN_REGISTRATION_VIEW = 'OPEN_REGISTRATION_VIEW';
 const CLOSE_REGISTRATION_VIEW = 'CLOSE_REGISTRATION_VIEW';
 const UPDATE_NAME = 'UPDATE_NAME';
@@ -97,11 +103,11 @@ const reset = () => {
 };
 
 const generateName = () => {
-  return (dispatch, getStore) => {
-    const currentTeamId = getStore().registration.get('selectedTeam');
+  return (dispatch, getState) => {
+    const currentTeamId = getState().registration.get('selectedTeam');
 
     if (currentTeamId) {
-      const teams = getStore().team.get('teams').toJS();
+      const teams = getState().team.get('teams').toJS();
       const selectedTeam = _.find(teams, ['id', currentTeamId]);
       if (selectedTeam) {
         dispatch({ type: UPDATE_NAME, payload: namegen.generateName(selectedTeam.name) });
@@ -125,6 +131,28 @@ const getUser = () => {
 };
 
 
+const postProfilePicture = imageData => {
+  return (dispatch, getState) => {
+    dispatch({ type: POST_PROFILE_PICTURE_REQUEST });
+    const uuid = DeviceInfo.getUniqueID();
+
+    // These are being sent just because API is WIP
+    const name = getState().registration.get('name');
+    const team = getState().registration.get('selectedTeam');
+
+    return api.putUser({ uuid, name, team, imageData })
+      .then(response => {
+        Promise.resolve(dispatch(getUser()))
+        .then(() => {
+          dispatch({ type: POST_PROFILE_PICTURE_SUCCESS });
+        });
+      })
+      .catch(error => dispatch({ type: POST_PROFILE_PICTURE_FAILURE, error: error }));
+  };
+}
+
+
+
 
 export {
   CREATE_USER_REQUEST,
@@ -141,6 +169,9 @@ export {
   SELECT_TEAM,
   RESET,
   DISMISS_INTRODUCTION,
+  POST_PROFILE_PICTURE_REQUEST,
+  POST_PROFILE_PICTURE_SUCCESS,
+  POST_PROFILE_PICTURE_FAILURE,
   putUser,
   openRegistrationView,
   closeRegistrationView,
@@ -151,5 +182,6 @@ export {
   getUser,
   selectTeam,
   reset,
-  dismissIntroduction
+  dismissIntroduction,
+  postProfilePicture,
 };

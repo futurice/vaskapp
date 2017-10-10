@@ -24,10 +24,14 @@ import Text from '../common/MyText';
 import theme from '../../style/theme';
 import { fetchLinks } from '../../actions/profile';
 import { getCurrentCityName } from '../../concepts/city';
-import { openRegistrationView } from '../../actions/registration';
+import { openRegistrationView, postProfilePicture } from '../../actions/registration';
 import { getUserName, getUserInfo } from '../../reducers/registration';
 import { logoutUser } from '../../concepts/auth';
 import feedback from '../../services/feedback';
+
+import permissions from '../../services/android-permissions';
+import ImagePickerManager from 'react-native-image-picker';
+import ImageCaptureOptions from '../../constants/ImageCaptureOptions';
 
 const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
@@ -233,6 +237,29 @@ class Profile extends Component {
   }
 
   @autobind
+  chooseImage() {
+    if (IOS) {
+      this.openImagePicker();
+    } else {
+      permissions.requestCameraPermission(() => {
+        setTimeout(() => {
+          this.openImagePicker();
+        });
+      });
+    }
+  }
+
+  @autobind
+  openImagePicker() {
+    ImagePickerManager.showImagePicker(ImageCaptureOptions, (response) => {
+      if (!response.didCancel && !response.error) {
+        const image = 'data:image/jpeg;base64,' + response.data;
+        this.props.postProfilePicture(image);
+      }
+    });
+  }
+
+  @autobind
   onLinkPress(url, text, openInWebview) {
     if (!url) {
       return;
@@ -362,12 +389,14 @@ class Profile extends Component {
           </View>
 
           {/*<View style={styles.profilePicBgLayer} /> */}
-          <View style={styles.listItemHeroIcon}>
-            {avatar ?
-              <Image style={styles.profilePic} source={{ uri: avatar }} /> :
-              <Icon style={[styles.listItemIcon, styles.listItemIcon__hero]} name={item.icon} />
-            }
-          </View>
+          <TouchableOpacity onPress={this.chooseImage}>
+            <View style={styles.listItemHeroIcon}>
+              {avatar ?
+                <Image style={styles.profilePic} source={{ uri: avatar }} /> :
+                <Icon style={[styles.listItemIcon, styles.listItemIcon__hero]} name={item.icon} />
+              }
+            </View>
+          </TouchableOpacity>
           <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
             {
               item.title ?
@@ -453,8 +482,6 @@ class Profile extends Component {
   }
 }
 
-const mapDispatchToProps = { fetchLinks, openRegistrationView, logoutUser };
-
 const select = store => ({
   teams: store.team.get('teams'),
 
@@ -467,5 +494,7 @@ const select = store => ({
   terms: store.profile.get('terms'),
   cityName: getCurrentCityName(store),
 });
+
+const mapDispatchToProps = { fetchLinks, openRegistrationView, logoutUser, postProfilePicture };
 
 export default connect(select, mapDispatchToProps)(Profile);
