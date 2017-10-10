@@ -26,6 +26,12 @@ import time from '../utils/time';
 import { TAMPERE, CITY_CATEGORIES, CITY_MAX_DISTANCE } from '../constants/Cities';
 import StorageKeys from '../constants/StorageKeys';
 
+// # Constants
+// radius how far from center (office) data should be fetched
+const CITY_RADIUS = 20 * 1000; // meters
+const CITY_POST_LIMIT = 5;
+
+// # Action types
 const SET_POSTS = 'SET_POSTS';
 const APPEND_POSTS = 'APPEND_POSTS';
 const {
@@ -175,12 +181,16 @@ const fetchPostsForCity = () => (dispatch, getState) => {
   if (!selectedCity || !selectedCity.has('location')) {
     return false;
   }
-  const cityLocation = selectedCity.get('location').toJS();
 
-  const sort = SortTypes.SORT_NEW;
+  const cityLocation = selectedCity.get('location').toJS(); // center for geo-querying posts
+  const sort = SortTypes.SORT_NEW; // sort choronologically
+  const since = moment().subtract(1, 'week').toISOString(); // week ago
+
+  const cityFeedParams = { sort, ...cityLocation, radius: CITY_RADIUS, limit: CITY_POST_LIMIT, since  }
+
   dispatch({ type: GET_POSTS_REQUEST });
 
-  return api.fetchModels('feed', { sort, ...cityLocation, radius: 20000 })
+  return api.fetchModels('feed', cityFeedParams)
   .then(items => {
     dispatch({
       type: SET_POSTS,
