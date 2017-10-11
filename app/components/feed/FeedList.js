@@ -222,8 +222,6 @@ class FeedList extends Component {
   openImagePicker(openLibrary) {
     const imagePickFunctionality = openLibrary ? 'launchImageLibrary' : 'launchCamera';
 
-    console.log('open', imagePickFunctionality);
-
     ImagePickerManager[imagePickFunctionality](ImageCaptureOptions, (response) => {
       if (!response.didCancel && !response.error) {
         const data = 'data:image/jpeg;base64,' + response.data;
@@ -321,7 +319,6 @@ class FeedList extends Component {
                 userTeam={this.props.userTeam}
                 removeFeedItem={this.props.removeFeedItem}
                 voteFeedItem={this.props.voteFeedItem}
-                isRegistrationInfoValid={this.props.isRegistrationInfoValid}
                 openRegistrationView={this.props.openRegistrationView}
                 openUserPhotos={this.openUserPhotos}
                 openComments={this.props.openComments}
