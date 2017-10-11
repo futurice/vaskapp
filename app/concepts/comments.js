@@ -6,7 +6,8 @@ import moment from 'moment';
 import api from '../services/api';
 import { createRequestActionTypes } from '../actions';;
 import { getAllPostsInStore } from '../reducers/feed';
-import { getAllMapPostsInStore } from '../concepts/map';
+import { getAllMapPostsInStore } from './map';
+import { getUserImages } from './user';
 import ActionTypes from '../constants/ActionTypes';
 
 // # Selectors
@@ -22,15 +23,14 @@ export const getCommentsCount = createSelector(
 );
 
 export const getCommentItem = createSelector(
-  getCommentItemId, getAllPostsInStore, getAllMapPostsInStore,
-  (id, posts, mapPosts) => {
+  getCommentItemId, getAllPostsInStore, getAllMapPostsInStore, getUserImages,
+  (id, feedPosts, mapPosts, userPosts) => {
 
     if (isNil(id)) {
       return Map();
     }
-
-    return posts.find((item) => item.get('id') === id) ||
-      mapPosts.find((item) => item.get('id') === id);
+    const allPosts =  feedPosts.concat(mapPosts, userPosts);
+    return allPosts.find((item) => item.get('id') === id);
   }
 );
 

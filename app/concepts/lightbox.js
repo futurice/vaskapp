@@ -5,6 +5,7 @@ import { isNil } from 'lodash';
 
 import { getAllPostsInStore } from '../reducers/feed';
 import { getAllMapPostsInStore } from './map';
+import { getUserImages } from './user';
 
 
 // # Action types
@@ -17,14 +18,14 @@ export const isLightBoxOpen = state => state.lightbox.get('isLightBoxOpen', fals
 export const getLightBoxItemId = state => state.lightbox.get('lightBoxItemId', null);
 
 export const getLightboxItem = createSelector(
-  getLightBoxItemId, getAllPostsInStore, getAllMapPostsInStore,
-  (id, posts, mapPosts) => {
+  getLightBoxItemId, getAllPostsInStore, getAllMapPostsInStore, getUserImages,
+  (id, feedPosts, mapPosts, userPosts) => {
 
     if (isNil(id)) {
       return Map();
     }
-
-    return posts.find((item) => item.get('id') === id) || mapPosts.find((item) => item.get('id') === id);
+    const allPosts =  feedPosts.concat(mapPosts, userPosts);
+    return allPosts.find((item) => item.get('id') === id);
   }
 );
 

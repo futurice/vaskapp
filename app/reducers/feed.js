@@ -1,6 +1,5 @@
 'use strict';
 import Immutable from 'immutable';
-import { createSelector } from 'reselect';
 import { isNil } from 'lodash';
 
 import {
@@ -15,17 +14,11 @@ import {
   VOTE_FEED_ITEM_REQUEST,
   SET_COMMENTS
 } from '../actions/feed';
-import { getUserImages } from '../concepts/user';
-import { getEventImages } from './event';
 import LoadingStates from '../constants/LoadingStates';
 
 // # Selectors
 export const getFeed = state => state.feed.get('list') || Immutable.List([]);
-
-export const getAllPostsInStore = createSelector(
-  getFeed, getUserImages, getEventImages,
-  (feedList, userImages, eventImages) => feedList.concat(userImages, eventImages)
-);
+export const getAllPostsInStore = getFeed;
 
 
 // # Reducer
