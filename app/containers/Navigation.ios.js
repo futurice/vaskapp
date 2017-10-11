@@ -54,7 +54,7 @@ class Navigation extends Component {
         initialPage={initialTab}
         tabBarPosition={'bottom'}
         tabBarBackgroundColor={theme.white}
-        tabBarActiveTextColor={theme.primary}
+        tabBarActiveTextColor={theme.secondary}
         tabBarInactiveTextColor={theme.grey4}
         locked={true}
         scrollWithoutAnimation={true}
