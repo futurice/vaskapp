@@ -14,7 +14,7 @@ import {
   Platform
 } from 'react-native';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { noop, get } from 'lodash';
 import { ImagePickerManager } from 'NativeModules';
 import autobind from 'autobind-decorator';
 
@@ -208,11 +208,12 @@ class FeedList extends Component {
   }
 
   @autobind
-  openUserPhotos(user) {
+  openUserPhotos(user, avatar) {
     if (user.id) {
       this.props.navigator.push({
         component: UserView,
         name: `${user.name}`,
+        avatar,
         user
       });
     }
