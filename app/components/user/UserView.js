@@ -1,12 +1,13 @@
 import { createStructuredSelector } from 'reselect';
 import React, { Component } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity,
-  TouchableHighlight, Image, Platform, Text } from 'react-native';
+  TouchableHighlight, Image, Platform } from 'react-native';
 import { connect } from 'react-redux';
 
 import {
   getUserImages,
   getUserPicture,
+  getUserProfile,
   getUserTeam,
   getTimeSinceLastPost,
   getTotalSimas,
@@ -14,15 +15,22 @@ import {
   fetchUserImages,
   isLoadingUserImages,
 } from '../../concepts/user';
-import { getUserName, getUserInfo, getUserId } from '../../reducers/registration';
-import { openLightBox } from '../../actions/feed';
+
+import { removeFeedItem, voteFeedItem,} from '../../actions/feed';
+import { openRegistrationView } from '../../actions/registration';
+import { getUserName, getUserId } from '../../reducers/registration';
+
+import { openLightBox } from '../../concepts/lightbox';
+import { openComments } from '../../concepts/comments';
 
 import ParallaxView from 'react-native-parallax-view';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import ImageGrid from './ImageGrid';
 import theme from '../../style/theme';
 import Header from '../common/Header';
 import Loader from '../common/Loader';
+import Text from '../common/MyText';
 
 const headerImage = require('../../../assets/patterns/sea.png');
 
@@ -46,95 +54,85 @@ class UserView extends Component {
   render() {
 
     const { images, isLoading, totalVotes, totalSimas, timeSinceLastPost,
-      userTeam, userName, userInfo, navigator, profilePicture } = this.props;
-    let { user } = this.props.route;
+      profile, userTeam, userName, userInfo, navigator, profilePicture } = this.props;
+    let { user, avatar } = this.props.route;
 
     // Show Current user if not user selected
     if (!user) {
       user = { name: userName }
     }
 
+    const userPhoto = profilePicture || avatar;
     const imagesCount = images.size;
 
     return (
       <View style={{ flex: 1 }}>
-      <ParallaxView
-        backgroundSource={profilePicture ? { uri: profilePicture } : headerImage}
-        windowHeight={headerHeight}
-        style={{ backgroundColor:theme.white }}
-        scrollableViewStyle={{ shadowColor: theme.transparent }}
-        header={(
-          <View style={styles.header}>
-            {!isIOS &&
-            <View style={styles.backLink}>
-              <TouchableHighlight onPress={() => navigator.pop()} style={styles.backLinkText} underlayColor={'rgba(255, 255, 255, .1)'}>
-                <Icon name="arrow-back" size={28} style={styles.backLinkIcon}  />
-              </TouchableHighlight>
-            </View>
-            }
-          {/*
-            <View style={styles.avatar}>
-              {profilePicture
-                ? <Image style={styles.avatarImage} source={{ uri: profilePicture }} />
-                : <Icon style={styles.avatarText} name="person-outline" />
+        <ParallaxView
+          backgroundSource={userPhoto ? { uri: userPhoto } : headerImage}
+          windowHeight={headerHeight * 0.75}
+          style={{ backgroundColor:theme.white }}
+          scrollableViewStyle={{ shadowColor: theme.transparent }}
+          header={(
+            <View>
+              {!isIOS &&
+              <View style={styles.backLink}>
+                <TouchableHighlight onPress={() => navigator.pop()} style={styles.backLinkText} underlayColor={'rgba(255, 255, 255, .1)'}>
+                  <Icon name="arrow-back" size={28} style={styles.backLinkIcon}  />
+                </TouchableHighlight>
+              </View>
               }
             </View>
-          */}
+          )}
+        >
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <View style={styles.profileInfo}>
+                <Text style={styles.headerTitle}>
+                  {user.name || profile.get('name')}
+                </Text>
+                <Text style={styles.headerSubTitle}>
+                  {userTeam || user.team}
+                </Text>
 
-            <View style={styles.profileInfo}>
-              <Text style={styles.headerTitle}>
-                {user.name}
-              </Text>
-              <Text style={styles.headerSubTitle}>
-                {userTeam || user.team}
-              </Text>
 
-              <Text style={styles.profileInfoText}>
-                {userInfo}
-              </Text>
+                {!!profile.get('info')
+                ?
+                <Text style={styles.profileInfoText}>
+                  “{profile.get('info')}”
+                </Text>
+                :
+                <Text style={[styles.profileInfoText, { opacity: 0.5 }]}>
+                  No info
+                </Text>
+                }
 
-              <View style={styles.headerKpis}>
-                <View style={styles.headerKpi}>
-                  <Text style={styles.headerKpiValue}>{!isLoading ? imagesCount : '-'}</Text>
-                  <Text style={styles.headerKpiTitle}>photos</Text>
+                {/*
+                <View style={styles.headerKpis}>
+                  <View style={styles.headerKpi}>
+                    <Text style={styles.headerKpiValue}>{!isLoading ? imagesCount : '-'}</Text>
+                    <Text style={styles.headerKpiTitle}>photos</Text>
+                  </View>
+                  <View style={styles.headerKpi}>
+                    <Text style={styles.headerKpiValue}>{!isLoading ? timeSinceLastPost : '-'}</Text>
+                    <Text style={styles.headerKpiTitle}>days since last photo</Text>
+                  </View>
                 </View>
-                <View style={styles.headerKpi}>
-                  <Text style={styles.headerKpiValue}>{!isLoading ? timeSinceLastPost : '-'}</Text>
-                  <Text style={styles.headerKpiTitle}>days since last photo</Text>
-                </View>
+              */}
+
               </View>
-
             </View>
-          </View>
-        )}
-      >
 
-      <View style={styles.container}>
-        {isLoading && <View style={styles.loader}><Loader size="large" /></View>}
-        {images.size > 0 &&
-          <View style={styles.imageContainer}>
-            {images.map(image =>
-              <View key={image.get('id')}>
-                <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => this.props.openLightBox(image.get('id'))}
-                >
-                  <Image
-                    key={image.get('id')}
-                    style={{height: width / 3 - 5, width: width / 3 - 5, margin: 2, backgroundColor: theme.stable}}
-                    source={{uri: image.get('url')}}/>
-                </TouchableOpacity>
-              </View>
-            )}
+            <ImageGrid
+              isLoading={isLoading}
+              images={images}
+              openRegistrationView={this.props.openRegistrationView}
+              openComments={this.props.openComments}
+              openLightBox={this.props.openLightBox}
+              removeFeedItem={this.props.removeFeedItem}
+              voteFeedItem={this.props.voteFeedItem}
+            />
           </View>
-        }
-        {!isLoading && !images.size &&
-          <View style={styles.imageTitleWrap}>
-            <Text style={styles.imageTitle}>No photos</Text>
-          </View>
-        }
-      </View>
-      </ParallaxView>
+        </ParallaxView>
       </View>
     );
   }
@@ -151,10 +149,10 @@ const styles = StyleSheet.create({
   header: {
     flex:1,
     elevation: 3,
-    paddingTop: 30,
-    minHeight: headerHeight,
-    alignItems: 'center',
-    justifyContent: 'flex-end'
+    paddingTop: 0,
+    // minHeight: headerHeight,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start'
   },
   backLink: {
     position: 'absolute',
@@ -175,11 +173,11 @@ const styles = StyleSheet.create({
   },
   profileInfo: {
     backgroundColor: 'rgba(255, 255, 255, .6)',
-    padding: 12,
+    padding: 25,
     alignItems: 'flex-start',
   },
   headerTitle:{
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: 'normal',
     textAlign: 'center',
     color: theme.primary,
@@ -188,15 +186,18 @@ const styles = StyleSheet.create({
     backgroundColor: theme.transparent,
   },
   headerSubTitle: {
-    fontSize: 12,
-    marginBottom: 20,
+    fontSize: 14,
     fontWeight: 'normal',
+    marginBottom: 30,
     textAlign: 'center',
-    color: 'rgba(0,0,0,.5)',
+    // color: 'rgba(0,0,0,.5)',
+    color: theme.primary,
   },
   profileInfoText: {
     color: theme.primary,
-    fontSize: 12,
+    fontSize: 14,
+    lineHeight: 20,
+    opacity: 0.7,
   },
   avatar: {
     marginBottom: 0,
@@ -220,14 +221,15 @@ const styles = StyleSheet.create({
   },
   headerKpis: {
     alignItems: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginTop: 20,
   },
   headerKpi: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'flex-start',
     marginBottom: 0,
-    marginTop: 10,
+    marginTop: 0,
   },
   headerKpiTitle: {
     color: theme.primary,
@@ -243,46 +245,27 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     backgroundColor: theme.transparent
   },
-  loader: {
-    marginTop: 50
-  },
-  imageContainer:{
-    margin: 1,
-    marginTop: 2,
-    marginBottom: 30,
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingBottom: 50,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start'
-  },
-  imageTitle: {
-    textAlign: 'center',
-    color: theme.grey,
-    margin: 20,
-    marginTop: 40,
-    fontSize: 15,
-    fontWeight: '600'
-  },
-  imageTitleWrap: {
-    flex: 1,
-    marginTop: 0
-  },
 });
 
 
-const mapDispatchToProps = { openLightBox, fetchUserImages };
+const mapDispatchToProps = {
+  fetchUserImages,
+  openRegistrationView,
+  openComments,
+  openLightBox,
+  removeFeedItem,
+  voteFeedItem,
+};
 
 const mapStateToProps = createStructuredSelector({
   images: getUserImages,
+  profile: getUserProfile,
   profilePicture: getUserPicture,
   isLoading: isLoadingUserImages,
   totalSimas: getTotalSimas,
   totalVotes: getTotalVotesForUser,
   userId: getUserId,
   userName: getUserName,
-  userInfo: getUserInfo,
   userTeam: getUserTeam,
   timeSinceLastPost: getTimeSinceLastPost,
 });
