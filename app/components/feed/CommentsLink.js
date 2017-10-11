@@ -27,7 +27,7 @@ class CommentsLinks extends Component {
               {hasComments ? commentCount : ''}
             </Text>
           }
-          <Text style={[styles.commentText, !compact && styles.commentTextRight]}>
+          <Text style={[styles.commentText, styles.commentIconWrap, !compact && styles.commentTextRight]}>
             <Icon
               style={[styles.commentIcon, hasComments ? styles.activeCommentIcon : {}]}
               name={'md-chatbubbles'}
@@ -57,11 +57,14 @@ const styles = StyleSheet.create({
   commentTextRight: {
     marginLeft: 7,
   },
+  commentIconWrap: {
+    top: 1,
+  },
   compactText: {
     marginRight: 3
   },
   commentIcon: {
-    fontSize: 20,
+    fontSize: 19,
   },
   activeCommentIcon: {
     color: theme.secondaryLight,
