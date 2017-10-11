@@ -6,6 +6,7 @@ import moment from 'moment';
 import api from '../services/api';
 import {createRequestActionTypes} from '../actions';
 import { VOTE_FEED_ITEM_REQUEST } from '../actions/feed';
+import { SET_COMMENTS } from './comments';
 
 // # Selectors
 export const getUserProfile = state => state.user.get('profile', Map());
@@ -98,6 +99,18 @@ export default function city(state = initialState, action) {
       }
     }
 
+    case SET_COMMENTS: {
+      const list = state.getIn(['profile', 'images'], List());
+      const itemIndex = list.findIndex((item) => item.get('id') === action.payload.postId);
+
+      if (itemIndex < 0) {
+        console.log('Tried to update comment count for user image posts, but it was not found from state:', itemIndex);
+        return state;
+      } else {
+        console.log('updating comment count for user image posts', itemIndex);
+        return state.setIn(['profile', 'images', itemIndex, 'commentCount'], action.payload.comments.length || 0);
+      }
+    }
 
     default: {
       return state;
