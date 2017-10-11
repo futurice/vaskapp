@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { isFunction } from 'lodash';
 import {
   Dimensions,
   Image,
@@ -83,8 +84,14 @@ const styles = StyleSheet.create({
 });
 
 const FeedItemHeader = ({ ago, author, avatar, myTeam, onHeaderPress }) => {
+
+  let headerProps = {};
+  if (onHeaderPress && isFunction(onHeaderPress)) {
+    headerProps = { onPress: () => onHeaderPress(author, avatar) }
+  }
+
   return (
-    <TouchableOpacity activeOpacity={IOS ? 0.7 : 1} style={styles.feedItemListItemInfo} onPress={() => onHeaderPress(author)}>
+    <TouchableOpacity activeOpacity={IOS ? 0.7 : 1} style={styles.feedItemListItemInfo} {...headerProps}>
       <View style={styles.itemAuthorAvatar}>
         {avatar
           ? <Image style={styles.profilePic} source={{ uri: avatar }} />
