@@ -4,7 +4,5 @@
 
 module.exports = {
   API_TOKEN: '',
-  HOCKEYAPP_ID: '',
-  HOCKEYAPP_ID_ANDROID: '',
   API_URL: ''
 };
