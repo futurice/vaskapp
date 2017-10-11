@@ -10,4 +10,4 @@
 #endif
 #endif
 
-#define A0CurrentLockVersion @"1.29.1"
+#define A0CurrentLockVersion @"1.29.2"
