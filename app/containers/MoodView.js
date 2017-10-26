@@ -2,96 +2,85 @@
 
 import React, { Component } from 'react';
 import {
+  Animated,
   View,
   Text,
   StyleSheet,
-  TouchableHighlight,
+  TouchableOpacity,
   Platform,
   Dimensions,
   ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
-
-import {
-  getOwnMoodData,
-  getTeamMoodData,
-  getCityMoodData,
-  getLimitLineData,
-  getCurrentTeamName,
-  getKpiValues,
-  isMoodLoading,
-  fetchMoodData
-} from '../concepts/mood';
-
 import Notification from '../components/common/Notification';
-// import MoodChart from '../components/mood/MoodChart';
-// import MoodKpis from '../components/mood/MoodKpis';
 import Fab from '../components/common/Fab';
+import AnimateMe from '../components/AnimateMe';
 import theme from '../style/theme';
 import autobind from 'autobind-decorator';
-import { openRegistrationView } from '../actions/registration';
+import { openRegistrationView } from '../concepts/registration';
 import { getCurrentCityName } from '../concepts/city';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
 
+
+const moodIcons = [
+  "sentiment-very-dissatisfied",
+  "sentiment-dissatisfied",
+  "sentiment-neutral",
+  "sentiment-satisfied",
+  "sentiment-very-satisfied",
+]
+
+const moodEmojis = ["😭","🙁","😑","😋","😍"]
+
 class MoodView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      emojiAnimations: moodEmojis.map(() => new Animated.Value(0)),
       selectedMood: null
     };
 
   }
-  componentDidMount() {
-    this.props.fetchMoodData()
-  }
 
-  @autobind
-  navigateToMoodSlider() {
-    /*
-    if (!this.props.isRegistrationInfoValid) {
-      this.props.openRegistrationView();
-    } else {
-      this.props.navigator.push({
-        showName: true,
-        component: MoodSlider,
-        name: 'Whappu Vibe today',
-        hideNavButton: true
-      });
-    }
-    */
-  }
 
   render() {
     const { cityMoodData, ownMoodData, teamMoodData, limitLineData, moodKpiValues,
       isNotificationVisible, notificationText, cityName, teamName, isLoading } = this.props;
 
-    const moodIcons = [
-      "sentiment-very-dissatisfied",
-      "sentiment-dissatisfied",
-      "sentiment-neutral",
-      "sentiment-satisfied",
-      "sentiment-very-satisfied",
-    ]
+
+    // this.state.emojiAnimations.forEach(() => )
 
     return (
       <View style={styles.container} >
 
-        {/* <ActivityIndicator style={styles.loader} animating={isLoading} size={'large'} color={theme.accentLight} /> */}
-
         <View style={{ flex: 1, justifyContent: 'space-around', paddingHorizontal: 30, alignItems: 'center', flexDirection: 'row', width, }}>
-          <View style={{ height: 2, flex: 1, left: 50, right: 50, position: 'absolute', backgroundColor: theme.grey3 }} />
-          {moodIcons.map((icon, index) =>
-            <TouchableHighlight key={icon} activeOpacity={1} onPress={() => this.setState({ selectedMood: index })}>
-              <Icon
+          <View style={{ height: 3, flex: 1, left: 50, right: 50, position: 'absolute', backgroundColor: '#FFD336' }} />
+          {moodEmojis.map((icon, index) =>
+            <TouchableOpacity key={icon} activeOpacity={1} onPress={() => this.setState({ selectedMood: index })}>
+              {this.state.selectedMood !== index &&
+                <Text style={{ fontSize: 30, paddingHorizontal: 0, backgroundColor: '#FFF' }}>
+                 {icon}
+                </Text>
+              }
+
+              {this.state.selectedMood === index &&
+                <AnimateMe animationType="scale-small-in" duration={200}>
+                  <Text style={{ fontSize: 60, paddingHorizontal: 0, backgroundColor: 'transparent' }}>
+                   {icon}
+                  </Text>
+                </AnimateMe>
+              }
+
+             {/*<Icon
                 name={icon}
                 style={{ color: this.state.selectedMood === index ? theme.secondary : theme.grey3, fontSize: 44, padding: 0, backgroundColor: '#FFF' }} />
-            </TouchableHighlight>
+              */}
+            </TouchableOpacity>
           )}
         </View>
-        {/*<MoodChart cityData={cityMoodData} ownData={ownMoodData} teamData={teamMoodData} limitLineData={limitLineData} />*/}
       {/*
         <Fab
           onPress={this.navigateToMoodSlider}
@@ -103,20 +92,7 @@ class MoodView extends Component {
             ADD VIBE
           </Text>
         </Fab>
-
-        <Fab
-          onPress={this.props.fetchMoodData}
-          styles={styles.buttonSmall}
-          disabled={false}
-          underlayColor={theme.white}
-        >
-          <Text style={styles.smallButtonText}>
-            <Icon name={IOS ? 'ios-refresh' : 'md-refresh'} size={IOS ? 24 : 22} />
-          </Text>
-        </Fab>
       */}
-
-        {/*<MoodKpis kpiValues={moodKpiValues} cityName={cityName} teamName={teamName} />*/}
 
         <Notification visible={isNotificationVisible} topOffset={IOS ? 20 : 0}>
           {notificationText}
@@ -198,20 +174,12 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapDispatchToProps = { fetchMoodData, openRegistrationView };
+const mapDispatchToProps = { openRegistrationView };
 
 const mapStateToProps = state => {
   const isRegistrationInfoValid = state.registration.get('name') !== '' &&
     state.registration.get('selectedTeam') > 0;
   return {
-    cityMoodData: getCityMoodData(state),
-    ownMoodData: getOwnMoodData(state),
-    teamMoodData: getTeamMoodData(state),
-    limitLineData: getLimitLineData(state),
-    moodKpiValues: getKpiValues(state),
-    cityName: getCurrentCityName(state),
-    teamName: getCurrentTeamName(state),
-    isLoading: isMoodLoading(state),
     isNotificationVisible: state.competition.get('isNotificationVisible'),
     notificationText: state.competition.get('notificationText'),
     isRegistrationInfoValid

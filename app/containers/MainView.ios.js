@@ -15,7 +15,6 @@ import ProfileEditor from '../components/registration/ProfileEditor';
 import CheckInActionView from '../components/actions/CheckInActionView';
 import TextActionView from '../components/actions/TextActionView';
 import LightBox from '../components/lightbox/Lightbox';
-import CommentsView from '../components/comment/CommentsView';
 
 const theme = require('../style/theme');
 
@@ -52,12 +51,11 @@ class MainView extends Component {
           configureScene={() => sceneConfig}
         />
 
-
+        { /* Modals */}
         <AppIntroView />
         <LightBox />
         <ProfileEditor />
         <TextActionView />
-        <CommentsView />
       </View>
     );
   }
@@ -69,16 +67,16 @@ const styles = StyleSheet.create({
     paddingBottom:0,
   },
   navbar: {
-    backgroundColor: theme.yellow,
+    backgroundColor: theme.white,
     height: 62,
     paddingBottom: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    // shadowColor: theme.dark,
-    // shadowOpacity: 0.05,
-    // shadowRadius: 1,
+    // shadowColor: theme.secondaryDark,
+    // shadowOpacity: 0.09,
+    // shadowRadius: 7,
     // shadowOffset: {
-    //   height: 1,
+    //   height: 5,
     //   width: 0
     // },
   }

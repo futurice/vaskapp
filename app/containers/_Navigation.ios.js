@@ -14,7 +14,7 @@ import SettingsView from './ProfileView';
 import MoodView from './MoodView';
 import HoursView from './HoursView';
 import Tabs from '../constants/Tabs';
-import { isUserLoggedIn } from '../reducers/registration';
+import { isUserLoggedIn } from '../concepts/registration';
 import { changeTab } from '../actions/navigation';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 
