@@ -14,17 +14,19 @@ import theme from '../../../style/theme';
 
 const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
-  calloutImage: {
-    width: 120,
-    height: height / 4,
-    backgroundColor: theme.white,
-  },
   calloutContent: {
     flex: 1,
     padding: 15,
     paddingBottom: 10,
     alignItems: 'flex-start',
     flexDirection: 'row',
+    elevation: 3,
+    overflow: 'visible',
+  },
+  calloutImage: {
+    width: 120,
+    height: height / 4,
+    backgroundColor: theme.white,
   },
   calloutTitleWrap: {
     flexDirection:'row',

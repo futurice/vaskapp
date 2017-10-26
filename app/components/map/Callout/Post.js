@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Dimensions,
   StyleSheet,
+  ScrollView,
   View,
 } from 'react-native';
 
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: theme.primary,
     fontSize: 14,
-    paddingBottom: 8
+    paddingBottom: 3,
   },
   postTextMessage: {
     marginTop: 10,
@@ -44,8 +45,11 @@ const styles = StyleSheet.create({
   },
 });
 
+const MAX_TEXT_LENGTH = 101; // *Tweet*
 
 const CalloutPost = ({ item, openComments, onImagePress }) => {
+
+    const text = item.get('text');
     return (
       <Callout
         onImagePress={onImagePress}
@@ -61,9 +65,12 @@ const CalloutPost = ({ item, openComments, onImagePress }) => {
               compact
             />
           </CalloutButton>
-          <Text style={styles.postAuthorName}>{item.getIn(['author','name'])}</Text>
-          <Text style={styles.postTextMessage}>{item.get('text')}</Text>
-          <Text style={styles.postDate}>{time.getTimeAgo(item.getIn(['createdAt']))} ago</Text>
+
+          <Text style={styles.postAuthorName}>{item.getIn(['author','name'])}!</Text>
+          <Text style={styles.postTextMessage}>
+            {text && text.length > MAX_TEXT_LENGTH ? `${text.slice(0, MAX_TEXT_LENGTH)}...` : text}
+          </Text>
+          <Text style={styles.postDate}>{time.getTimeAgo(item.getIn(['createdAt']))}</Text>
 
         </View>
       </Callout>

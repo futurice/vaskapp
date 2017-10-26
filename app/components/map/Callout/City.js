@@ -3,6 +3,7 @@ import {
   Dimensions,
   StyleSheet,
   View,
+  Linking,
 } from 'react-native';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 
@@ -10,6 +11,7 @@ import Text from '../../common/MyText';
 import Button from '../../common/Button';
 import Callout from '.';
 import theme from '../../../style/theme';
+import locationService from '../../../services/location';
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -19,7 +21,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   postInfo: {
-    flex: 1,
+    flexGrow: 1,
     marginLeft: 20,
     maxWidth: width - 130 - 0,
   },
@@ -27,21 +29,26 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: theme.primary,
     fontSize: 14,
-    paddingBottom: 8
+    paddingBottom: 3,
   },
   postTextMessage: {
     marginTop: 10,
+    marginBottom: 15,
     fontSize: 12,
     color: theme.dark,
     backgroundColor: theme.transparent
   },
-  postDate: {
-    marginTop: 10,
-    fontSize: 12,
-    color: '#888',
-    backgroundColor: theme.transparent
-  },
+  calloutButton: {
+    maxHeight: 36,
+  }
 });
+
+const onDirectionsPress = model => {
+  const location = model && model.toJS ? model.toJS() : model;
+  const geoUrl = locationService.getGeoUrl(location);
+
+  Linking.openURL(geoUrl);
+}
 
 const CalloutPost = ({ item }) => {
     return (
@@ -52,7 +59,9 @@ const CalloutPost = ({ item }) => {
         <View style={styles.postInfo}>
           <Text style={styles.postAuthorName}>{item.get('title')}</Text>
           <Text style={styles.postTextMessage}>{item.get('subtitle')}</Text>
-          <Button style={styles.calloutButton}><MDIcon name="directions" /> Directions</Button>
+          <Button style={styles.calloutButton} onPress={() => onDirectionsPress(item)}>
+            <MDIcon name="directions" /> Directions
+          </Button>
         </View>
       </Callout>
   );

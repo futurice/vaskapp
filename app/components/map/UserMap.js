@@ -20,14 +20,17 @@ import { connect } from 'react-redux';
 import autobind from 'autobind-decorator';
 import { fromJS } from 'immutable';
 
+
 import Text from '../common/MyText';
 import { get, random} from 'lodash';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 import analytics from '../../services/analytics';
+
 import EventDetail from '../calendar/EventDetailView';
 import Loader from '../common/Loader';
 import Button from '../common/Button';
+import CommentsView from '../comment/CommentsView';
 import PlatformTouchable from '../common/PlatformTouchable';
 import time from '../../utils/time';
 import theme from '../../style/theme';
@@ -65,6 +68,12 @@ class UserMap extends Component {
     super(props);
 
     this.state = { calloutAnimation: new Animated.Value(0) };
+  }
+
+  @autobind
+  openPostComments(postId) {
+    this.props.openComments(postId);
+    this.props.navigator.push({ component: CommentsView, name: 'Comments', showName: true });
   }
 
   componentDidMount() {
@@ -169,7 +178,7 @@ class UserMap extends Component {
                 ? <CityCallout item={location} />
                 : <PostCallout
                     onImagePress={this.props.openLightBox}
-                    openComments={this.props.openComments}
+                    openComments={this.openPostComments}
                     item={location}
                   />
             }
@@ -376,6 +385,7 @@ class UserMap extends Component {
           {this.renderLocateMe()}
           {this.renderCustomCallout(selectedMarker)}
 
+
           {/*this.renderCheckIn() */}
           {/*this.renderCloseLayer(selectedMarker)*/}
         </View>
@@ -413,7 +423,6 @@ const styles = StyleSheet.create({
   avatarMarker: {
     width: 30,
     height: 30,
-    elevation: 3,
     borderRadius: 15,
     flex: 1,
     justifyContent: 'center',
@@ -588,7 +597,8 @@ const styles = StyleSheet.create({
   markerFilterButtonText: {
     paddingTop: 2,
     fontSize: 13,
-    fontWeight: 'bold',
+    fontWeight: IOS ? 'bold' : 'normal',
+    fontFamily: IOS ? 'Futurice' : 'Futurice_bold',
     color: theme.midgrey,
   },
   markerFilterIcon: {
