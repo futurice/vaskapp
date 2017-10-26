@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import {
   StyleSheet,
   View,
-  ListView,
   ScrollView,
   TouchableOpacity,
   Linking,
@@ -19,19 +18,30 @@ import _ from 'lodash';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import WebViewer from '../webview/WebViewer';
-import PlatformTouchable from '../common/PlatformTouchable';
 import Text from '../common/MyText';
 import theme from '../../style/theme';
-import { fetchLinks } from '../../actions/profile';
+import { getProfileLinks } from '../../concepts/settings';
+import { getApps } from '../../concepts/apps';
 import { getCurrentCityName } from '../../concepts/city';
-import { openRegistrationView, postProfilePicture } from '../../actions/registration';
-import { getUserName, getUserInfo } from '../../reducers/registration';
-import { logoutUser } from '../../concepts/auth';
+import {
+  openRegistrationView,
+  postProfilePicture,
+  getUserName,
+  getUserInfo,
+  getUserImage,
+  getUserTeam,
+} from '../../concepts/registration';
 import feedback from '../../services/feedback';
 
 import permissions from '../../services/android-permissions';
 import ImagePickerManager from 'react-native-image-picker';
 import ImageCaptureOptions from '../../constants/ImageCaptureOptions';
+import ProfileLink from './ProfileLink';
+import AppList from './AppList';
+import ImageSection from './ImageSection';
+import { links } from '../../constants/Links';
+import { getNameInitials } from '../../utils/name-format';
+
 
 const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
@@ -45,37 +55,43 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listItem: {
-    flex:1,
+    flex: 1,
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: IOS ? theme.white : theme.transparent,
   },
   listItem__hero:{
+    flexGrow: 1,
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: IOS ? 20 : 0,
-    paddingBottom: 25,
-    backgroundColor: theme.yellow,
-    elevation: 3,
-    overflow: 'hidden'
+
+    paddingTop: 0,
+    paddingBottom: 0,
+    backgroundColor: theme.white,
+    flex: 1,
   },
   heroItem: {
-    height: IOS ? 180 : 190,
-    marginBottom: 0,
+    height: 250,
+    marginBottom: 20,
     flex: 0,
   },
+  heroInfoContent: {
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
   listItemSeparator: {
-    marginBottom: 15,
-    elevation: 1,
+    marginBottom: 20,
+    elevation: 0,
     borderBottomWidth: 0,
     backgroundColor: theme.white,
     borderBottomColor: '#eee',
-    shadowColor: '#000000',
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
+    shadowColor: theme.secondaryDark,
+    shadowOpacity: 0.06,
+    shadowRadius: 7,
     shadowOffset: {
-      height: 1,
+      height: 5,
       width: 0
     },
   },
@@ -93,51 +109,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 50,
   },
-  listItemSubtitle: {
-    color: theme.subtlegrey,
-    top: 1,
-    fontSize: 13,
-  },
-  editProfileButton: {
-    zIndex: 10,
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    width: 50,
-    height: 50,
-  },
-  avatarColumn: {
-    width: 50,
-  },
-  avatar: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    left: -8,
-    top: -1,
-    width: 40,
-    height: 40,
-    backgroundColor: theme.stable,
-    borderRadius: 20,
-  },
-  avatarInitialLetter: {
-    backgroundColor: theme.blue2
-  },
-  avatarText: {
-    color: theme.accentLight,
-    fontSize: 18,
-  },
-  listItemIconRight:{
-    position: 'absolute',
-    right: 0,
-    color: '#aaa',
-    top: 45,
-  },
+
   listItemText:{
     color: '#000',
     fontSize: 16,
+    marginTop: IOS ? 5 : 0,
   },
   listItemText__highlight: {
-    color: theme.blue2,
+    color: theme.primary,
     fontWeight: 'normal',
     backgroundColor: theme.transparent,
     padding: 0,
@@ -145,97 +124,49 @@ const styles = StyleSheet.create({
     top: 0,
     fontSize: 16,
   },
-  listItemText__downgrade: {
-    color: 'rgba(0,0,0,.8)',
-    fontWeight: 'bold'
-  },
   listItemText__small: {
     fontSize: 13,
     color: theme.grey
   },
-  listItemTitles: {
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  listItemBottomLine:{
-    position:'absolute',
-    right:0,
-    left:70,
-    bottom:0,
-    height:1,
-    backgroundColor:'#f4f4f4'
-  },
-  listItemHeroIcon:{
-    backgroundColor: theme.transparent,
-    borderRadius: 0,
+  profilePicWrap:{
+    backgroundColor: theme.stable,
+    borderRadius: 50,
     width: 100,
-    top: 0,
-    height: 80,
+    height: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: IOS ? 15 : 0,
-    overflow:'visible'
-  },
-  profilePicBgLayer:{
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    opacity: 1,
-    bottom: 0,
-    top: 0,
-    backgroundColor: theme.yellow,
-  },
-  profilePicBg: {
-    backgroundColor: theme.primary,
-    position: 'absolute',
-    opacity: 0.3,
-    width: width,
-    height: width,
-    left: 0,
-    top: 0,
-    bottom: 0,
-    right: 0,
+    overflow: 'hidden',
   },
   profilePic: {
     width: 100,
     height: 100,
-    borderRadius: 50
+    borderRadius: 50,
   },
-  listItemIcon__hero:{
-    top: 0,
-    width:60,
-    fontSize: 60,
-    color: theme.blue2,
-    left: 5,
-    alignSelf: 'stretch',
-    backgroundColor: 'transparent',
+  profileInitials: {
+    fontSize: 34,
+    top: IOS ? 7 : 0,
+    color: theme.dark,
+  },
+  profileEditBadge: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 20,
+    backgroundColor: IOS ? theme.secondaryLayer : 'rgba(255,255,255,.5)',
+  },
+  profileEditText: {
+    fontSize: 11,
+    fontWeight: IOS ? 'bold' : 'normal',
+    backgroundColor: theme.transparent,
+    textAlign: 'center',
+    color: IOS ? theme.white : theme.dark,
   },
 });
 
 class Profile extends Component {
-  propTypes: {
-    dispatch: PropTypes.func.isRequired,
-    name: PropTypes.string.isRequired,
-    links: PropTypes.object.isRequired
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
-    };
-  }
-
-
-  componentDidMount() {
-    this.props.fetchLinks();
-  }
-
-  @autobind
-  openRegistration() {
-    this.props.openRegistrationView();
-  }
-
   @autobind
   chooseImage() {
     if (IOS) {
@@ -251,7 +182,17 @@ class Profile extends Component {
 
   @autobind
   openImagePicker() {
-    ImagePickerManager.showImagePicker(ImageCaptureOptions, (response) => {
+    // Create selfie image capture options
+    const selfieCaptureOptions = Object.assign(
+      _.cloneDeep(ImageCaptureOptions),
+      {
+        title: 'Change Avatar',
+        cameraType: 'front',
+        takePhotoButtonTitle: 'Take a selfie',
+      },
+    );
+
+    ImagePickerManager.showImagePicker(selfieCaptureOptions, (response) => {
       if (!response.didCancel && !response.error) {
         const image = 'data:image/jpeg;base64,' + response.data;
         this.props.postProfilePicture(image);
@@ -273,142 +214,66 @@ class Profile extends Component {
         name: text,
         url: url
       });
-
     }
   }
 
-  renderCustomItem(item, index) {
-    const linkItemStyles = [styles.listItemButton];
-
-    if (item.separatorAfter || item.last) {
-      linkItemStyles.push(styles.listItemSeparator)
-    }
-
-    if (item.last) {
-      linkItemStyles.push(styles.listItemLast)
-    }
-
+  renderAppList(item, index) {
     return (
-      <PlatformTouchable
+      <AppList
+        navigator={this.props.navigator}
+        apps={item.apps}
+        title={item.title}
         key={index}
-        underlayColor={'#eee'}
-        activeOpacity={0.6}
-        delayPressIn={0}
-        style={styles.listItemButton}
-        onPress={item.onPress}>
-        <View style={linkItemStyles}>
-          <View style={styles.listItem}>
-            <Icon style={styles.listItemIcon} name={item.icon} />
-            <View style={styles.listItemTitles}>
-              <Text style={styles.listItemText}>{item.title}</Text>
-              {item.subtitle && <Text style={styles.listItemSubtitle}>{item.subtitle}</Text>}
-            </View>
-            {!item.separatorAfter && !item.last && <View style={styles.listItemBottomLine} />}
-          </View>
-        </View>
-      </PlatformTouchable>
+      />
     );
   }
 
   renderLinkItem(item, index) {
-    const linkItemStyles = [styles.listItemButton];
-
-    if (item.separatorAfter || item.last) {
-      linkItemStyles.push(styles.listItemSeparator)
+    const onPress = () => {
+      return item.mailto
+        ? feedback.sendEmail(item.mailto)
+        : this.onLinkPress(item.link, item.title, item.showInWebview)
     }
 
-    if (item.last) {
-      linkItemStyles.push(styles.listItemLast)
-    }
-
-    return (
-      <PlatformTouchable
-        key={index}
-        underlayColor={'#eee'}
-        activeOpacity={0.6}
-        delayPressIn={0}
-        style={styles.listItemButton}
-        onPress={() => item.mailto ? feedback.sendEmail(item.mailto) : this.onLinkPress(item.link, item.title, item.showInWebview)}>
-        <View style={linkItemStyles}>
-          <View style={styles.listItem}>
-            <Icon style={styles.listItemIcon} name={item.icon} />
-            <View style={styles.listItemTitles}>
-              <Text style={styles.listItemText}>{item.title}</Text>
-              {item.subtitle && <Text style={styles.listItemSubtitle}>{item.subtitle}</Text>}
-            </View>
-            {!item.separatorAfter && !item.last && <View style={styles.listItemBottomLine} />}
-          </View>
-        </View>
-      </PlatformTouchable>
-    );
+    return <ProfileLink item={item} index={index} onPress={onPress} />;
   }
 
   renderComponentItem(item, index) {
-    const linkItemStyles = [styles.listItemButton];
     const { navigator } = this.props;
     const { component, title } = item;
 
-    if (item.separatorAfter || item.last) {
-      linkItemStyles.push(styles.listItemSeparator)
-    }
+    const onPress = () => navigator.push({ name: title, component, showName: true });
 
-    return (
-      <PlatformTouchable
-        key={index}
-        underlayColor={'#eee'}
-        activeOpacity={0.6}
-        delayPressIn={0}
-        style={styles.listItemButton}
-        onPress={() => navigator.push({ name: title, component, showName: true })}>
-        <View style={linkItemStyles}>
-          <View style={styles.listItem}>
-            <Icon style={styles.listItemIcon} name={item.icon} />
-            <View style={styles.listItemTitles}>
-              <Text style={styles.listItemText}>{item.title}</Text>
-              {item.subtitle && <Text style={styles.listItemSubtitle}>{item.subtitle}</Text>}
-            </View>
-            {!item.separatorAfter && !item.last && <View style={styles.listItemBottomLine} />}
-          </View>
-        </View>
-      </PlatformTouchable>
-    );
+    return <ProfileLink item={item} index={index} onPress={onPress} />;
   }
 
-  renderModalItem(item) {
-    const currentTeam = _.find(this.props.teams.toJS(), ['id', this.props.selectedTeam]) || { name: '' };
+  renderModalItem(item, index) {
+    const currentTeam = this.props.selectedTeam;
     const avatar = item.picture;
 
     return (
-      <View style={[styles.listItemButton, styles.listItemSeparator, styles.heroItem]}>
+      <View key={index} style={[styles.listItemButton, styles.listItemSeparator, styles.heroItem]}>
         <View style={[styles.listItem, styles.listItem__hero]}>
 
-          <View style={styles.editProfileButton}>
-            <TouchableOpacity onPress={this.openRegistration}>
-              <Icon name="edit" size={25} />
+          <View>
+            <TouchableOpacity onPress={this.props.openRegistrationView}>
+              <View style={styles.profilePicWrap}>
+                {avatar
+                  ? <Image style={styles.profilePic} source={{ uri: avatar }} />
+                  : <Text style={styles.profileInitials}>{getNameInitials(item.title)}</Text>
+                }
+                <View style={styles.profileEditBadge}>
+                  <Text style={styles.profileEditText} bold>EDIT</Text>
+                </View>
+              </View>
             </TouchableOpacity>
           </View>
-
-          {/*<View style={styles.profilePicBgLayer} /> */}
-          <TouchableOpacity onPress={this.chooseImage}>
-            <View style={styles.listItemHeroIcon}>
-              {avatar ?
-                <Image style={styles.profilePic} source={{ uri: avatar }} /> :
-                <Icon style={[styles.listItemIcon, styles.listItemIcon__hero]} name={item.icon} />
-              }
-            </View>
-          </TouchableOpacity>
-          <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
-            {
-              item.title ?
-              <Text style={[styles.listItemText, styles.listItemText__highlight]}>
-                {item.title}
-              </Text> :
-              <Text style={[styles.listItemText, styles.listItemText__downgrade]}>
-                Anonymous User
-              </Text>
-            }
+          <View style={styles.heroInfoContent}>
+            <Text style={[styles.listItemText, styles.listItemText__highlight]}>
+              {item.title || 'Anonymous User'}
+            </Text>
             <Text style={[styles.listItemText, styles.listItemText__small]}>
-              {currentTeam.name}
+              {!!currentTeam && currentTeam.get('name')}
             </Text>
           </View>
         </View>
@@ -418,83 +283,75 @@ class Profile extends Component {
 
   @autobind
   renderItem(item) {
-    if (item.hidden) {
-      return null;
-    }
-
     const key = item.id || item.title;
+
     if (item.component) {
       return this.renderComponentItem(item, key);
     } else if (item.link || item.mailto) {
       return this.renderLinkItem(item, key);
+    } else if (item.id === 'profile') {
+      return this.renderModalItem(item, key);
+    } else if (item.id === 'apps') {
+      return this.renderAppList(item, key);
+    } else if (item.id === 'images') {
+      return <ImageSection title={item.title} key={key}/>
     }
 
     return null;
-    // this.renderModalItem(item, key);
   }
 
   render() {
-    const { name, picture, links, terms, cityName, logoutUser } = this.props;
+    const { name, picture, cityName, apps } = this.props;
 
-    const linksForCity = links.toJS().map(link => {
-      const showCity = link.showCity;
-      if (showCity && (cityName || '').toLowerCase() !== showCity) {
-        link.hidden = true;
-      }
-      return link;
-    });
-
-
-    const userItem = {
+    const sections = [
+    {
       title: name,
       icon: 'face',
-      rightIcon: 'create',
-      id: 'user-edit',
+      id: 'profile',
       picture
-    };
-    const listData = [userItem].concat(linksForCity, terms.toJS());
-
-    const logoutItem = {
-      title: 'Logout from App',
-      onPress: () => logoutUser(),
-      icon: 'exit-to-app',
-      separatorAfter: true,
+    },
+    {
+      title: 'My Apps',
+      id: 'apps',
+      apps,
+    },
+    {
+      title: 'My Images',
+      id: 'images',
+    },
+    {
+      link: 'https://futurice.github.io/vaskapp-web/apps/Initiative/',
+      title: 'Initiate',
+      subtitle: 'Do you have an idea? Or maybe too complex 3x2 decision? Let us know!',
+      id: 'feedback',
+      icon: 'lightbulb-outline',
+      showInWebview: true,
     }
+    ]
+
+    const listData = sections; //.concat(links);
 
     return (
       <View style={styles.container}>
-
-        {this.renderModalItem(userItem, 'user-1')}
         <ScrollView style={styles.scrollView}>
           {listData.map(this.renderItem)}
-          {this.renderCustomItem(logoutItem, 'logout')}
         </ScrollView>
-
-      {/*
-         <ListView style={[styles.scrollView]}
-          dataSource={this.state.dataSource.cloneWithRows(listData)}
-          renderRow={this.renderItem}
-        />
-      */}
       </View>
       );
 
   }
 }
 
-const select = store => ({
-  teams: store.team.get('teams'),
+const select = state => ({
+  name: getUserName(state),
+  info: getUserInfo(state),
+  selectedTeam: getUserTeam(state),
+  picture: getUserImage(state),
 
-  name: getUserName(store),
-  info: getUserInfo(store),
-  selectedTeam: store.registration.get('selectedTeam'),
-  picture: store.registration.get('profilePicture'),
-
-  links: store.profile.get('links'),
-  terms: store.profile.get('terms'),
-  cityName: getCurrentCityName(store),
+  apps: getApps(state),
+  cityName: getCurrentCityName(state),
 });
 
-const mapDispatchToProps = { fetchLinks, openRegistrationView, logoutUser, postProfilePicture };
+const mapDispatchToProps = { openRegistrationView, postProfilePicture };
 
 export default connect(select, mapDispatchToProps)(Profile);
