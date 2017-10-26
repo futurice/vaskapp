@@ -4,11 +4,11 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.airbnb.android.react.maps.MapsPackage;
+import com.auth0.react.A0Auth0Package;
 import com.heanoria.library.reactnative.locationenabler.RNAndroidLocationEnablerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import cl.json.RNSharePackage;
 import com.reactnative.photoview.PhotoViewPackage;
-import com.auth0.lock.react.LockReactPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.image.zoom.ReactImageZoom;
 import com.imagepicker.ImagePickerPackage;
@@ -35,11 +35,11 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new MapsPackage(),
+            new A0Auth0Package(),
             new RNAndroidLocationEnablerPackage(),
             new VectorIconsPackage(),
             new RNSharePackage(),
             new PhotoViewPackage(),
-            new LockReactPackage(),
             new LinearGradientPackage(),
             new ReactImageZoom(),
             new ImagePickerPackage(),

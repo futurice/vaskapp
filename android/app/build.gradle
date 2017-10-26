@@ -131,12 +131,11 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-maps')
+    compile project(':react-native-auth0')
     compile project(':react-native-android-location-enabler')
     compile project(':react-native-vector-icons')
     compile project(':react-native-share')
     compile project(':react-native-photo-view')
-    compile project(':react-native-lock')
     compile project(':react-native-linear-gradient')
     compile project(':react-native-image-zoom')
     compile project(':react-native-image-picker')
@@ -146,8 +145,11 @@ dependencies {
       exclude group: 'com.google.android.gms', module: 'play-services-base'
       exclude group: 'com.google.android.gms', module: 'play-services-maps'
     }
-    compile 'com.google.android.gms:play-services-base:10.2.1'
-    compile 'com.google.android.gms:play-services-maps:10.2.1'
+    compile "com.google.android.gms:play-services-base:+"
+    compile 'com.google.android.gms:play-services-location:+'
+    compile 'com.google.android.gms:play-services-maps:+'
+    // compile 'com.google.android.gms:play-services-base:10.2.1'
+    // compile 'com.google.android.gms:play-services-maps:10.2.1'
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules

@@ -24,7 +24,7 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>None</string>
 			<key>CFBundleURLName</key>
 			<string>auth0</string>
 			<key>CFBundleURLSchemes</key>
@@ -70,6 +70,7 @@
 		<string>Futurice-Regular.ttf</string>
 		<string>FuturiceMonospace.ttf</string>
 		<string>Feather.ttf</string>
+		<string>Futurice-Regular.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

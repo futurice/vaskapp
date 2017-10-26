@@ -11,10 +11,4 @@
         <!-- text -->
         <item name="android:textColor">#46289A</item>
     </style>
-
-    <style name="MyLock.Theme" parent="Lock.Theme" >
-       <item name="Auth0.Background">#FFFFFF</item>
-       <item name="Auth0.Separator.Color">#FFFFFF</item>
-   </style>
-
 </resources>

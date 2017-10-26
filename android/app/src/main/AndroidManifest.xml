@@ -20,18 +20,32 @@
       android:theme="@style/AppTheme">
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDfaSYEDhhkWNsIq1S7ofxLRPfw2yuQPcE" />
+        android:value="@string/gmaps_api_key" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTask">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data
+                android:host="@string/auth0_domain"
+                android:pathPrefix="/android/${applicationId}/callback"
+                android:scheme="${applicationId}" />
+        </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+
+    <!--
       <activity
         android:name="com.auth0.lock.LockActivity"
         android:theme="@style/MyLock.Theme"
@@ -42,14 +56,11 @@
           <category android:name="android.intent.category.DEFAULT"/>
           <category android:name="android.intent.category.BROWSABLE"/>
           <data
-            android:scheme="a0wjivk_ggpbtq_pcgnepxh9rxolwie_b3"
+            android:scheme="a6ixvbuvgaxw7jim3E0pu6vt6066gdiu"
             android:host="@string/auth0_domain"
           />
         </intent-filter>
-            <!-- android:pathPrefix="/android/com.futubohemia/callback" -->
       </activity>
-      <!--Auth0 Lock End-->
-      <!--Auth0 Lock Passwordless-->
       <activity
           android:name="com.auth0.lock.passwordless.LockPasswordlessActivity"
           android:theme="@style/Lock.Theme"
@@ -60,6 +71,7 @@
           android:name="com.auth0.lock.passwordless.CountryCodeActivity"
           android:theme="@style/Lock.Theme">
       </activity>
+    -->
 
     </application>
 
