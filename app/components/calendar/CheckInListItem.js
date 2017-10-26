@@ -7,11 +7,11 @@ import {
   PropTypes,
   StyleSheet,
   Dimensions,
-  Text,
   TouchableHighlight,
   View
 } from 'react-native';
 
+import Text from '../common/MyText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import time from '../../utils/time';
 import theme from '../../style/theme';

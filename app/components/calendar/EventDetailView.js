@@ -3,7 +3,6 @@
 import React, { PropTypes } from 'react';
 import {
   StyleSheet,
-  Text,
   Dimensions,
   View,
   Platform,
@@ -16,6 +15,7 @@ import {
   Image,
 } from 'react-native';
 
+import Text from '../common/MyText';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -27,13 +27,13 @@ import Notification from '../common/Notification';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import analytics from '../../services/analytics';
-import { checkIn } from '../../actions/competition';
+import { checkIn } from '../../concepts/competition';
 import time from '../../utils/time';
 import locationService from '../../services/location';
 import Button from '../common/Button';
 
 import { openLightBox } from '../../actions/feed';
-import { openRegistrationView } from '../../actions/registration';
+import { openRegistrationView } from '../../concepts/registration';
 
 import {
   INACTIVE,

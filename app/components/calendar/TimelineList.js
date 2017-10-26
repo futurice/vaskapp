@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   ListView,
-  Text,
   Platform,
   PropTypes,
   ActivityIndicator,
@@ -17,6 +16,7 @@ import autobind from 'autobind-decorator';
 import _ from 'lodash';
 import moment from 'moment';
 
+import Text from '../common/MyText';
 import analytics from '../../services/analytics';
 import location from '../../services/location';
 import theme from '../../style/theme';
@@ -58,14 +58,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   sectionHeader: {
-    backgroundColor: IOS ? 'rgba(255,255,255,.88)' : 'transparent',
+    backgroundColor: IOS ? 'rgba(255,255,255,1)' : 'transparent',
     opacity: IOS ? 1 : 1,
     padding: IOS ? 15 : 35,
     paddingLeft:15,
     flexGrow: 1,
   },
   sectionHeaderAnnouncement: {
-    backgroundColor: IOS ? 'rgba(255,255,255,.88)' : 'transparent',
+    backgroundColor: IOS ? 'rgba(255,255,255,1)' : 'transparent',
     marginTop: 0,
     padding: IOS ? 20 : 15,
     flexGrow: 1,
@@ -76,8 +76,10 @@ const styles = StyleSheet.create({
   },
   sectionHeaderText: {
     textAlign: 'left',
-    fontWeight: 'bold',
-    fontSize: IOS ? 18 : 16,
+    fontWeight: 'normal',
+    fontSize: IOS ? 14 : 16,
+    top: IOS ? 3 : 0,
+    letterSpacing: 1,
     color: theme.primary
   }
 });

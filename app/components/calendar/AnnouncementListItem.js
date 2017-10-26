@@ -6,11 +6,11 @@ import {
   Image,
   StyleSheet,
   PropTypes,
-  Text,
   View,
   Linking
 } from 'react-native';
 import Loader from '../common/Loader';
+import Text from '../common/MyText';
 import ParsedText from 'react-native-parsed-text';
 import theme from '../../style/theme';
 import time from '../../utils/time';
