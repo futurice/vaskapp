@@ -83,10 +83,15 @@ export const refreshPostComments = (postId) => (dispatch) => {
 }
 
 
-export const postComment = (text) => (dispatch, getState) => {
+export const postComment = ({ text, imageData }) => (dispatch, getState) => {
   const state = getState();
   const feedItemId = getCommentItemId(state);
   const payload = { text, feedItemId, type: ActionTypes.COMMENT };
+
+  // Add image
+  if (imageData) {
+    payload.imageData = imageData;
+  }
 
   dispatch({ type: POST_COMMENT_REQUEST });
   return api.postAction(payload)
@@ -102,10 +107,11 @@ export const postComment = (text) => (dispatch, getState) => {
     .catch(error => dispatch({ type: POST_COMMENT_FAILURE, error: true, payload: error }));
 }
 
-export const openComments = (id) => (dispatch) => {
-  dispatch(fetchPostComments(id));
-  return dispatch({ type: OPEN_COMMENTS, payload: id })
+export const openComments = (postId) => (dispatch) => {
+  dispatch(fetchPostComments(postId));
+  return dispatch({ type: OPEN_COMMENTS, payload: postId })
 }
+
 export const closeComments = () => ({ type: CLOSE_COMMENTS });
 
 // # Reducer

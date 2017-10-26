@@ -39,14 +39,14 @@ export const getTimeSinceLastPost = createSelector(
 );
 
 
-
 // # Action creators
 const {
   GET_USER_PROFILE_REQUEST,
   GET_USER_PROFILE_SUCCESS,
   GET_USER_PROFILE_FAILURE
 } = createRequestActionTypes('GET_USER_PROFILE');
-const SET_USER_PROFILE = 'SET_USER_PROFILE';
+const SET_USER_PROFILE = 'user/SET_USER_PROFILE';
+const CLOSE_USER_VIEW = 'user/CLOSE_USER_VIEW';
 
 export const fetchUserImages = (userId) => (dispatch) => {
   dispatch({ type: GET_USER_PROFILE_REQUEST });
@@ -61,6 +61,17 @@ export const fetchUserImages = (userId) => (dispatch) => {
     .catch(error => dispatch({ type: GET_USER_PROFILE_FAILURE, error: true, payload: error }));
 }
 
+// # Open user view
+// Params
+// user: javascript object
+// avatar: string (url)
+export const openUserView = (user, avatar) => dispatch => {
+  dispatch(fetchUserImages(user.id));
+  return dispatch({ type: SET_USER_PROFILE, payload: Object.assign(user, { profilePicture: avatar }) });
+}
+
+export const closeUserView = () => ({ type: CLOSE_USER_VIEW });
+
 // # Reducer
 const initialState = fromJS({
   profile: {},
@@ -72,6 +83,10 @@ export default function city(state = initialState, action) {
   switch (action.type) {
     case SET_USER_PROFILE: {
       return state.set('profile', fromJS(action.payload));
+    }
+
+    case CLOSE_USER_VIEW: {
+      return state.set('profile', Map())
     }
 
     case GET_USER_PROFILE_REQUEST: {

@@ -1,6 +1,6 @@
 import api from '../services/api';
 import {createRequestActionTypes} from '.';
-import staticMarkers from '../data/user-markers';
+// import staticMarkers from '../data/user-markers';
 
 const SET_MARKER_LIST = 'SET_MARKER_LIST';
 const {

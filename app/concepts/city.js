@@ -7,9 +7,8 @@ import {createRequestActionTypes} from '../actions';
 import { fetchFeed } from '../actions/feed';
 import { fetchTeams } from '../actions/team';
 import { fetchEvents } from '../actions/event';
-import { fetchMoodData } from './mood';
 import { getTeams } from '../reducers/team';
-import { getUserTeamId } from '../reducers/registration';
+import { getUserTeamId } from '../concepts/registration';
 
 import StorageKeys from '../constants/StorageKeys';
 
@@ -117,7 +116,6 @@ export const fetchCitySpecificContent = () => dispatch =>
     dispatch(fetchFeed()),
     dispatch(fetchEvents()),
     dispatch(fetchTeams()),
-    dispatch(fetchMoodData()),
   ])
   .then(() => dispatch({ type: FETCH_CITY_CONTENT_SUCCESS }))
 

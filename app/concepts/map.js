@@ -46,7 +46,7 @@ const getSelectedCategory = state => state.usermap.get('selectedCategory');
 const getSelectedMarkerId = state => state.usermap.get('selectedMarkerId');
 const getSelectedMarkerType = state => state.usermap.get('selectedMarkerType');
 const getMapPostsState = state => state.usermap.get('loadingPosts');
-export const getAllMapPostsInStore = state => state.usermap.get('posts') || List([]);
+export const getAllMapPostsInStore = state => state.usermap.get('posts') || List();
 
 const isMapLoading = createSelector(
   m.getMarkerListState, getEventListState, getMapPostsState, (a, b, c) =>

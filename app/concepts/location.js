@@ -76,6 +76,8 @@ export const initLocationWatcher = () => (dispatch) => {
 }
 
 export const stopLocationWatcher = () => (dispatch) => {
-	navigator.geolocation.clearWatch(watchID);
+  if (watchID) {
+    navigator.geolocation.clearWatch(watchID);
+  }
 }
 

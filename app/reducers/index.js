@@ -1,15 +1,12 @@
+import apps from '../concepts/apps';
 import navigation from './navigation';
 import event from './event';
 import feed from './feed';
-import registration from './registration';
 import team from './team';
-import competition from './competition';
 import announcement from './announcement';
-import profile from './profile';
 import marker from './marker';
 import errors from './errors';
 import city from '../concepts/city';
-import mood from '../concepts/mood';
 import sortType from '../concepts/sortType';
 import user from '../concepts/user';
 import comments from '../concepts/comments';
@@ -17,25 +14,28 @@ import usermap from '../concepts/map';
 import auth from '../concepts/auth';
 import location from '../concepts/location';
 import lightbox from '../concepts/lightbox';
+import settings from '../concepts/settings';
+import competition from '../concepts/competition';
+import registration from '../concepts/registration';
 
 export {
+  announcement,
+  apps,
+  auth,
+  city,
+  comments,
+  competition,
   errors,
-  marker,
-  navigation,
   event,
   feed,
-  registration,
-  team,
   location,
   lightbox,
-  competition,
-  announcement,
-  profile,
-  city,
-  mood,
+  marker,
+  navigation,
+  registration,
+  settings,
   sortType,
+  team,
   user,
-  comments,
   usermap,
-  auth,
 };

@@ -1,9 +1,9 @@
 import { AsyncStorage } from 'react-native';
-import Auth0Lock from 'react-native-lock';
+import Auth0 from 'react-native-auth0';
 import { fromJS } from 'immutable';
 
 import api from '../services/api';
-import { updateProfile, putUser } from '../actions/registration';
+import { updateProfile, putUser } from '../concepts/registration';
 import { fetchAppContent } from './app';
 import { getTeams } from '../reducers/team';
 import { createRequestActionTypes } from '../actions';
@@ -19,7 +19,7 @@ export const {
   REFRESH_TOKEN_FAILURE
 } = createRequestActionTypes('REFRESH_TOKEN');
 
-const lock = new Auth0Lock({ clientId: AUTH0_CLIENTID, domain: AUTH0_DOMAIN, useBrowser: true });
+const auth0 = new Auth0({ domain: AUTH0_DOMAIN, clientId: AUTH0_CLIENTID });
 
 // # Selectors
 export const isRefreshingToken = state => state.auth.get('isRefreshingToken', false);
@@ -33,7 +33,43 @@ const setTokenToStore = payload => ({ type: SET_TOKEN, payload });
 export const openLoginView = () => (dispatch, getState) => {
   const state = getState();
   const teams = getTeams(state);
+  let tokens;
 
+  auth0
+  .webAuth
+  .authorize({ scope: 'openid profile email'/*, audience: `https://${AUTH0_DOMAIN}/userinfo` */})
+  .then((credentials) => {
+    tokens = credentials;
+    const { accessToken } = credentials;
+
+    return auth0
+      .auth
+      .userInfo({ token: accessToken})
+  })
+  .then(profile => {
+    const userFields = {
+      profilePicture: profile.picture,
+      name: profile.name,
+      selectedTeam: teams.getIn([0, 'id'], 1)
+    };
+
+    // Save profile to state
+    // (we don't have user id yet, because user is not created)
+    Promise.resolve(dispatch(updateProfile(userFields)))
+    .then(() => {
+      // Save profile to Storage
+      AsyncStorage.setItem(STORAGE_KEYS.token, JSON.stringify(tokens), () => {
+        // Set storage info to state
+        dispatch(setTokenToStore(tokens));
+
+        // Send profile info to server
+        // and then get created user
+        Promise.resolve(dispatch(putUser()))
+        .then(() => dispatch(fetchAppContent()));
+      });
+    })
+  });
+  /*
   lock.show({
     connections: ['google-oauth2'],
     scope: 'openid profile email',
@@ -63,6 +99,7 @@ export const openLoginView = () => (dispatch, getState) => {
       });
     });
   });
+  */
 }
 
 const updateAuthToken = (idToken) => dispatch => {

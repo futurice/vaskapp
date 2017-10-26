@@ -31,7 +31,7 @@ export default function team(state = initialState, action) {
       return state.merge({
         isLoading: false,
         isError: false,
-        teams: action.payload,
+        teams: fromJS(action.payload),
         isRefreshing: false
       });
     case GET_TEAMS_FAILURE:

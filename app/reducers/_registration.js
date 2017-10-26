@@ -121,9 +121,22 @@ export default function registration(state = initialState, action) {
 export const getUserId = state => state.registration.get('userId');
 export const getUserName = state => state.registration.get('name');
 export const getUserInfo = state => state.registration.get('info');
+export const getUserImage = state => state.registration.get('profilePicture');
 export const getUserTeamId = state => state.registration.get('selectedTeam', 0);
 export const getToken = state => state.registration.get('userToken', fromJS({})) || fromJS({});
 export const getUserTeam = createSelector(getUserTeamId, getTeams,
-  (teamId, teams) => teams.find(item => item.get('id') === teamId))
+  (teamId, teams) => teams.find(item => item.get('id') === teamId));
+
+export const getUser = createSelector(
+  getUserId, getUserName, getUserInfo, getUserTeamId, getUserTeam, getUserImage,
+  (id, name, info, teamId, teamName, image) => fromJS({
+    id,
+    name,
+    info,
+    teamId,
+    teamName,
+    image
+  })
+);
 
 export const isUserLoggedIn = createSelector(getToken, token => !!token && !token.isEmpty())
