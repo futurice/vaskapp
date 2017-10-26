@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Dimensions,
   StyleSheet,
+  Platform,
   View,
 } from 'react-native';
 import { isNil } from 'lodash';
@@ -9,6 +10,8 @@ import { isNil } from 'lodash';
 import theme from '../../../style/theme';
 
 const { width } = Dimensions.get('window');
+const IOS = Platform.OS === 'ios';
+
 const styles = StyleSheet.create({
 // # Skeleton styles
   skeletonWrap: {
@@ -25,7 +28,7 @@ const styles = StyleSheet.create({
     overflow: 'visible',
     borderWidth: 0,
     // // # Drop shadows
-    elevation: 5,
+    elevation: 2,
     shadowColor: theme.secondaryDark,
     shadowOpacity: 0.09,
     shadowRadius: 7,
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
 
 const FeedItemSkeleton = ({ opacity }) => {
   return (
-    <View style={[styles.skeletonWrap, { opacity: isNil(opacity) ? 1 : opacity }]}>
+    <View style={[styles.skeletonWrap, { opacity: !IOS || isNil(opacity) ? 1 : opacity }]}>
       <View style={styles.itemContent}>
         <View style={styles.skeletonHeader}>
           <View style={styles.skeletonAvatar} />

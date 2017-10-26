@@ -12,17 +12,21 @@ import theme from '../../../style/theme';
 
 const IOS = Platform.OS === 'ios';
 
+const borderWidth = IOS ? 0 : 0;
 const styles = StyleSheet.create({
   itemTextWrapper: {
     paddingLeft: 30,
     paddingRight: 30,
     paddingTop: 10,
     paddingBottom: 5,
+    borderLeftWidth: borderWidth,
+    borderRightWidth: borderWidth,
+    borderColor: '#eee',
   },
   feedItemListText: {
     textAlign: 'center',
     fontSize: 17,
-    lineHeight: 25,
+    lineHeight: IOS ? 25 : 30,
     color: theme.dark,
     fontFamily: IOS ? 'Futurice' : 'Futurice-Regular',
   },
@@ -39,7 +43,7 @@ const styles = StyleSheet.create({
   imageItemText: {
     textAlign: 'left',
     fontSize: 13,
-    lineHeight: 17,
+    lineHeight: IOS ? 17 : 22,
   },
   url: {
     color: theme.secondary,

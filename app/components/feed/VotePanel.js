@@ -1,15 +1,40 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableHighlight, Image, Platform } from 'react-native';
+import { Animated, Easing, View, StyleSheet, TouchableOpacity, Image, Platform } from 'react-native';
+import { get } from 'lodash';
 import autobind from 'autobind-decorator';
 
-import Text from '../common/MyText';
+import VoteNumber from './VoteNumber';
+import PlatformTouchable from '../common/PlatformTouchable';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../../style/theme';
+import Text from '../common/MyText';
 
 const IOS = Platform.OS === 'ios';
 const heartIcon = require('../../../assets/icons/love.png');
 
 class VotePanel extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { animation: new Animated.Value(1) }
+  }
+
+  componentWillReceiveProps({ item }) {
+    const { userVote } = item || {};
+    if (get(this.props, 'item.userVote') !== userVote && userVote) {
+      this.animateIcon();
+    }
+  }
+
+  animateIcon() {
+    const duration = 50;
+    const { animation } = this.state;
+
+    Animated.sequence([
+      Animated.timing(animation, { toValue: 0, duration }),
+      Animated.timing(animation, { toValue: 1, easing: Easing.elastic(2), duration: duration * 6 })
+    ]).start();
+  }
+
   @autobind
   getVotes() {
     const { votes } = this.props.item;
@@ -29,36 +54,29 @@ class VotePanel extends Component {
     }
   }
 
-  renderVoteButton(positive) {
+  renderVoteButton() {
     const { userVote } = this.props.item;
-
-    // const value = positive ? 1 : -1;
-    // const iconName = positive ? 'keyboard-arrow-up' : 'keyboard-arrow-down';
-    // const alreadyVotedThis = userVote === value;
-
+    const { animation } = this.state;
     const value = userVote && userVote > 0 ? 0 : 1;
     const alreadyVotedThis = userVote > 0;
 
     return (
       <View style={styles.itemVoteButtonWrap}>
-        <TouchableHighlight
-          // disabled={alreadyVotedThis}
-          activeOpacity={1}
+        <TouchableOpacity
           style={styles.itemVoteButton}
-          underlayColor={'rgba(0,0,0,.05)'}
+          activeOpacity={0.8}
           onPress={() => this.voteThisItem(value)}>
             <View style={styles.itemVoteButton}>
-              <Image
+              <Animated.Image
                 source={heartIcon}
-                style={[styles.voteImage, {tintColor: alreadyVotedThis ? theme.secondaryLight : theme.grey} ]}
+                style={[
+                  styles.voteImage,
+                  { tintColor: alreadyVotedThis ? theme.secondaryLight : theme.grey },
+                  { transform: [{ scale: animation }] }
+                ]}
               />
-              {/*
-              <Text style={{color: alreadyVotedThis ? theme.primary : theme.grey}}>
-                <Icon name={iconName} size={25}/>
-              </Text>
-              */}
             </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -67,11 +85,10 @@ class VotePanel extends Component {
 
     return (
       <View style={styles.itemVoteWrapper}>
-        {this.renderVoteButton(true)}
+        {this.renderVoteButton()}
         <View>
-          <Text style={styles.itemVoteValue}>{this.getVotes()}</Text>
+          <VoteNumber style={styles.itemVoteValue} value={this.getVotes()} />
         </View>
-        {/* this.renderVoteButton() */}
       </View>
     );
   }
@@ -82,9 +99,9 @@ const styles = StyleSheet.create({
   itemVoteWrapper: {
     flexDirection: 'row',
     paddingVertical: 5,
-    paddingLeft: 0,
-    marginLeft: 8,
-    minWidth: 45,
+    paddingLeft: 8,
+    marginLeft: 0,
+    minWidth: 50,
     minHeight: 42,
     justifyContent: 'center',
     alignItems: 'center',
@@ -112,9 +129,9 @@ const styles = StyleSheet.create({
   },
   itemVoteValue: {
     minWidth: 15,
-    textAlign: 'left',
+    textAlign: 'center',
     fontSize: 15,
-    top: IOS ? 3 : 0,
+    top: IOS ? 1 : 0,
     paddingVertical: 3,
     color: theme.grey
   },

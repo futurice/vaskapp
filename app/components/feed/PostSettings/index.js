@@ -26,15 +26,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 20,
     marginBottom: 0,
-
-    // elevation: 5,
-    // shadowColor: theme.secondaryDark,
-    // shadowOpacity: 0.1,
-    // shadowRadius: 5,
-    // shadowOffset: {
-    //   height: 6,
-    //   width: 0
-    // },
   },
   settingsRow: {
     minHeight: 50,

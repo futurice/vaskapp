@@ -21,6 +21,7 @@ import autobind from 'autobind-decorator';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../../style/theme';
+import Fab from '../common/Fab';
 import Toolbar from '../common/Toolbar';
 import PostSettings from './PostSettings';
 import * as features from '../../constants/Features';
@@ -274,14 +275,16 @@ class ImageEditor extends Component {
   @autobind
   renderSubmitButtonForAndroid() {
     return (
-      <View style={styles.buttonWrap}>
-        <TouchableHighlight underlayColor={theme.secondaryDark} onPress={this.sendImage} style={styles.button}>
-          <Text style={styles.buttonText}>
-            <Icon size={38} name="done" />
-          </Text>
-        </TouchableHighlight>
-      </View>
-    )
+      <Fab
+        onPress={this.sendImage}
+        styles={styles.button}
+        underlayColor={theme.secondaryDark}
+      >
+        <Text style={styles.buttonText}>
+          <Icon size={34} name="done" />
+        </Text>
+      </Fab>
+    );
   }
 
   @autobind

@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { isFunction } from 'lodash';
-import { View, StyleSheet, Text, TouchableHighlight } from 'react-native';
+import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 
+import Text from '../common/MyText';
 import PlatformTouchable from '../common/PlatformTouchable';
 import Icon from 'react-native-vector-icons/Ionicons';
 import theme from '../../style/theme';
+
+const IOS = Platform.OS === 'ios';
 
 class CommentsLinks extends Component {
   render() {
@@ -20,7 +23,7 @@ class CommentsLinks extends Component {
     }
 
     return (
-      <PlatformTouchable style={styles.commentLink} {...calloutProps}>
+      <TouchableOpacity activeOpacity={0.8} style={styles.commentLink} {...calloutProps}>
         <View style={styles.comment}>
           {(hasComments || !compact) &&
             <Text style={[styles.commentText, compact && styles.compactText]}>
@@ -34,7 +37,7 @@ class CommentsLinks extends Component {
             />
           </Text>
         </View>
-      </PlatformTouchable>
+      </TouchableOpacity>
     );
   }
 };
@@ -53,6 +56,7 @@ const styles = StyleSheet.create({
   commentText: {
     color: theme.grey,
     fontSize: 15,
+    top: IOS ? 3 : 0,
   },
   commentTextRight: {
     marginLeft: 7,

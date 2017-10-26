@@ -16,18 +16,11 @@ const styles = StyleSheet.create({
     right: 0
   },
   labelText:{
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 17,
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'normal',
     color: theme.primary,
-  },
-  additionalLabelText:{
-    color: '#bbb',
-    marginLeft: 5,
-    fontWeight: 'bold',
-    fontSize: 11,
-    flex: 1
   }
 });
 
@@ -43,7 +36,6 @@ class ActionButtonLabel extends Component {
     return (
       <Animated.View style={combinedStyle}>
         <Text style={styles.labelText}>{children}</Text>
-        {/* <Text style={styles.additionalLabelText}>{additionalLabel}p</Text>*/}
       </Animated.View>
 
     );

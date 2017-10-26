@@ -10,12 +10,12 @@ import Text from '../common/MyText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ActionButton from './ActionButton';
 import ActionButtonLabel from './ActionButtonLabel';
-import { openRegistrationView } from '../../actions/registration';
+import { openRegistrationView } from '../../concepts/registration';
 import theme from '../../style/theme';
 import reactMixin from 'react-mixin';
 import TimerMixin from 'react-timer-mixin';
-import { updateCooldowns } from '../../actions/competition';
-import { getActionTypesForFeed } from '../../reducers/competition';
+import { updateCooldowns, getActionTypesForFeed } from '../../concepts/competition';
+import AnimateMe from '../AnimateMe'
 
 const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     // right: 20,
     overflow: 'visible',
     width: 100,
-    height: 100,
+    height: 120,
     borderRadius: 0
   },
   actionButton: {
@@ -125,7 +125,8 @@ const styles = StyleSheet.create({
     right: 43,
     bottom:IOS ? 60 : 43,
     position:'absolute',
-    backgroundColor: theme.transparent,
+    backgroundColor: theme.white,
+    opacity: 0.8,
     // backgroundColor:theme.light,
     // opacity:0.9,
     width:10,
@@ -133,14 +134,17 @@ const styles = StyleSheet.create({
     borderRadius:5
   },
   overlay_fixed: {
-    position: 'absolute',
-    zIndex: 2,
     width,
     height,
+    flex: 1,
+    flexGrow: 1,
+    position: 'absolute',
+    zIndex: 99,
+    left: 0,
+    top: 0,
     right: 0,
-    bottom:IOS ? 0 : 43,
-    backgroundColor: theme.transparent,
-
+    bottom: IOS ? 0 : 43,
+    backgroundColor: IOS ? theme.white : 'rgba(255, 255, 255, .8)',
   }
 });
 
@@ -173,35 +177,35 @@ class ActionButtons extends Component {
   animateButtonsToState(nextState) {
     const { actionTypes } = this.props;
     const { buttons, labels } = this.state;
+    const isOpening = nextState === OPEN;
 
-    // state is manipulated here directly on purpose, so the animations works smoothly
-    /*eslint-disable */
-    // this.state.actionButtonsOpen = nextState === OPEN;
-    /*eslint-enable */
-    this.setState({ actionButtonsOpen: nextState === OPEN })
+    // change state directly if OPENING
+    if (isOpening) {
+      this.setState({ actionButtonsOpen: isOpening });
+    }
+
+    Animated.spring(this.state.plusButton, { toValue: isOpening ? 1 : 0 }).start();
 
     actionTypes.forEach((pos, i) => {
-      // Animate action buttons, iOS handles delay better
-      if (IOS) {
-        Animated.sequence([
-          Animated.delay(nextState === OPEN ? ((i+1) * BUTTON_DELAY) : 0),
-          Animated.spring(buttons[i], { toValue: nextState === OPEN ? 1 : 0 })
-        ]).start();
-      } else {
-        Animated.spring(buttons[i], { toValue: nextState === OPEN ? 1 : 0 }).start();
-      }
+
+      Animated.sequence([
+        Animated.delay(isOpening ? ((i+1) * BUTTON_DELAY) : 0),
+        Animated.spring(buttons[i], { toValue: isOpening ? 1 : 0 })
+      ]).start();
 
       // Animate action button labels, 200ms later than buttons
       Animated.sequence([
-        Animated.delay(nextState === OPEN ? 200 + ((i+1) * BUTTON_DELAY) : 0),
-        Animated.spring(labels[i], { duration:200, toValue: nextState === OPEN ? 1 : 0 })
-      ]).start();
+        Animated.delay(isOpening ? 200 + ((i + 1) * BUTTON_DELAY) : 0),
+        Animated.spring(labels[i], { duration:200, toValue: isOpening ? 1 : 0 })
+      ]).start(() => {
+
+        // Change actual state after animations when CLOSING
+        if (i >= actionTypes.size - 1 && !isOpening) {
+          this.setState({ actionButtonsOpen: isOpening });
+        }
+      });
     });
 
-    Animated.spring(this.state.plusButton, { toValue: nextState === OPEN ? 1 : 0 }).start();
-
-    // buttonset width
-    Animated.timing(this.state.actionButtonsWidth, { duration:0, toValue: nextState === OPEN ? 56 : 56 }).start();
 
 
   }
@@ -225,7 +229,7 @@ class ActionButtons extends Component {
 
       Animated.timing(this.state.overlayOpacity, {
         duration: actionButtonsOpen ? 40 : 120,
-        easing: Easing.linear,
+        easing: Easing.ease,
         toValue: this.state.actionButtonsOpen ? 0 : 1
       }).start();
       this.animateButtonsToState(actionButtonsOpen ? CLOSED : OPEN);
@@ -300,9 +304,9 @@ class ActionButtons extends Component {
       const labelName = actionType.get('name').split(' ')[0];
       const isCoolingDown = disabledActionTypes.find(dat => dat === actionTypeCode);
 
-      const iconOrCooldownTime = isCoolingDown ?
-        <Text style={[styles.actionButtonContent, styles.cooldown]}>{this.getCooldownTime(actionTypeCode)}</Text> :
-        <Icon name={iconName} size={22} style={styles.actionButtonContent}></Icon>;
+      const iconOrCooldownTime = isCoolingDown
+        ? <Text style={[styles.actionButtonContent, styles.cooldown]}>{this.getCooldownTime(actionTypeCode)}</Text>
+        : <Icon name={iconName} size={22} style={styles.actionButtonContent}></Icon>;
 
       const actionButtonStyles = [
         styles.buttonEnclosure,
@@ -314,7 +318,18 @@ class ActionButtons extends Component {
 
       return (
         <Animated.View key={`button-${i}`} style={actionButtonStyles}>
-          <ActionButtonLabel additionalLabel={actionTypeValue} extraStyle={{ opacity:this.state.labels[i] }}>
+          <ActionButtonLabel
+            additionalLabel={actionTypeValue}
+            extraStyle={{
+              opacity: this.state.labels[i],
+              transform: [{
+                translateY: this.state.labels[i].interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-10, 0]
+                })
+              }]
+            }}
+          >
             {labelName}
           </ActionButtonLabel>
           <ActionButton
@@ -334,9 +349,11 @@ class ActionButtons extends Component {
     // Show scroll top button instead of add button when scrolled down
     if (this.props.showScrollTopButton) {
       return (
-      <ActionButton onPress={this.props.onScrollTop}
+      <ActionButton
+        onPress={this.props.onScrollTop}
         underLayColor={theme.lightgrey}
-        extraStyle={styles.scrollTopButton}>
+        extraStyle={styles.scrollTopButton}
+      >
         <View >
           <Icon name={'keyboard-arrow-up'} size={26} style={[styles.actionButtonContent, styles.scrollTopButtonContent]}></Icon>
         </View>
@@ -359,7 +376,7 @@ class ActionButtons extends Component {
 
   render() {
     const { isLoading, actionTypes, style, visibilityAnimation } = this.props;
-    const { overlayOpacity, actionButtonsOpen } = this.state;
+    const { overlayOpacity, plusButton, actionButtonsOpen } = this.state;
 
     if (isLoading || !actionTypes || actionTypes.size === 0) {
       return null;
@@ -367,7 +384,7 @@ class ActionButtons extends Component {
 
     const actionButtonsTranslate = visibilityAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: [-100, (IOS ? 0 : 0)]
+      outputRange: [-100, 0]
     });
 
     const actionButtonsWrapVisibility = {
@@ -376,7 +393,6 @@ class ActionButtons extends Component {
 
     return (
       <Animated.View style={[style, { bottom: actionButtonsTranslate }]}>
-      {/*
         <Animated.View style={[styles.overlay, {
           transform:[{scale: overlayOpacity.interpolate({
             inputRange: [0, 1],
@@ -384,17 +400,18 @@ class ActionButtons extends Component {
           })}]
         }]} >
         </Animated.View>
-      */}
 
-        {actionButtonsOpen &&
-          <Animated.View style={[styles.overlay_fixed, { opacity: overlayOpacity }]}>
+        {/*
+          <Animated.View style={[styles.overlay_fixed, { opacity: plusButton }]}>
             <ModalBackgroundView blurType='light' style={{ flex: 1 }} />
           </Animated.View>
-        }
+        */}
 
-        <Animated.View style={[styles.actionButtonsWrap, actionButtonsWrapVisibility]}>
-          {this.renderActionButtons()}
-        </Animated.View>
+        {actionButtonsOpen &&
+          <View style={styles.actionButtonsWrap}>
+            {this.renderActionButtons()}
+          </View>
+        }
 
         {this.renderMenuButton()}
 

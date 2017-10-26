@@ -6,18 +6,18 @@ import {
   Image,
   Platform,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 
 import theme from '../../../style/theme';
+import Text from '../../common/MyText';
 
 const { width } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
 
+const borderWidth = IOS ? 0 : 1;
 const styles = StyleSheet.create({
-
   feedItemListItemInfo: {
     flex: 1,
     flexDirection: 'row',
@@ -86,12 +86,17 @@ const styles = StyleSheet.create({
 const FeedItemHeader = ({ ago, author, avatar, myTeam, onHeaderPress }) => {
 
   let headerProps = {};
-  if (onHeaderPress && isFunction(onHeaderPress)) {
+  const hasHeaderPressFunction = onHeaderPress && isFunction(onHeaderPress);
+  if (hasHeaderPressFunction) {
     headerProps = { onPress: () => onHeaderPress(author, avatar) }
   }
 
   return (
-    <TouchableOpacity activeOpacity={IOS ? 0.7 : 1} style={styles.feedItemListItemInfo} {...headerProps}>
+    <TouchableOpacity
+      activeOpacity={IOS && hasHeaderPressFunction ? 0.7 : 1}
+      style={styles.feedItemListItemInfo}
+      {...headerProps}
+    >
       <View style={styles.itemAuthorAvatar}>
         {avatar
           ? <Image style={styles.profilePic} source={{ uri: avatar }} />

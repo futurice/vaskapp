@@ -16,6 +16,7 @@ import {
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ParsedText from 'react-native-parsed-text';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { isEmpty, get } from 'lodash';
 import abuse from '../../services/abuse';
@@ -31,9 +32,7 @@ import FeedItemSkeleton from './FeedItemSkeleton';
 import CommentsLink from './CommentsLink';
 
 const { width } = Dimensions.get('window');
-const FEED_ITEM_MARGIN_DISTANCE = 10;
-const FEED_ITEM_MARGIN_DEFAULT = 10;
-const FEED_ADMIN_ITEM_MARGIN_DEFAULT = 15;
+const FEED_ITEM_MARGIN = 10;
 const IOS = Platform.OS === 'ios';
 
 const styles = StyleSheet.create({
@@ -41,7 +40,7 @@ const styles = StyleSheet.create({
     width,
     flex: 1,
     backgroundColor: theme.white,
-    paddingBottom: 15,
+    paddingBottom: IOS ? 15 : 12,
     paddingTop: 8,
   },
   itemTouchable: {
@@ -50,12 +49,14 @@ const styles = StyleSheet.create({
   },
   itemContent: {
     flexGrow: 1,
-    marginLeft: FEED_ITEM_MARGIN_DEFAULT,
-    marginRight: FEED_ITEM_MARGIN_DISTANCE,
+    marginLeft: FEED_ITEM_MARGIN,
+    marginRight: FEED_ITEM_MARGIN,
     overflow: 'visible',
-    borderWidth: 0,
+    zIndex: 10,
+    // borderWidth: IOS ? 0 : 1,
+    // borderColor: '#eee,
     // // # Drop shadows
-    elevation: 5,
+    elevation: 2,
     shadowColor: theme.secondaryDark,
     shadowOpacity: 0.09,
     shadowRadius: 7,
@@ -66,19 +67,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderBottomLeftRadius: 3,
     borderBottomRightRadius: 3,
-    borderTopRightRadius: 3,
     borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
   },
+
   itemContent_selected: {
     backgroundColor: theme.stable
   },
   itemContent_byMyTeam: {
-    marginRight: FEED_ITEM_MARGIN_DEFAULT,
-    marginLeft: FEED_ITEM_MARGIN_DISTANCE,
+    marginRight: FEED_ITEM_MARGIN,
+    marginLeft: FEED_ITEM_MARGIN,
   },
   itemContent_image: {
-    marginLeft: FEED_ITEM_MARGIN_DEFAULT,
-    marginRight: FEED_ITEM_MARGIN_DEFAULT,
+    marginLeft: FEED_ITEM_MARGIN,
+    marginRight: FEED_ITEM_MARGIN,
     borderRadius: 0,
   },
   feedItemListItemAuthorIcon:{
@@ -215,7 +217,6 @@ class FeedListItem extends Component {
     return (
       <View style={styles.itemWrapper}>
         <View style={[styles.itemContent, styles.itemContent__admin]}>
-
           <View style={[styles.feedItemListItemInfo, styles.feedItemListItemInfo__admin]}>
             <View style={[styles.feedItemListItemAuthor, styles.feedItemListItemAuthor__admin]}>
               <Text style={styles.itemAuthorName}>Vaskbot</Text>
@@ -241,7 +242,7 @@ class FeedListItem extends Component {
   }
 
   render() {
-    const { item, openUserPhotos, openComments, opacity } = this.props;
+    const { item, openUserView, openComments, opacity } = this.props;
 
     if (item.type === 'SKELETON') {
       return <FeedItemSkeleton opacity={opacity} />;
@@ -261,6 +262,8 @@ class FeedListItem extends Component {
 
     return (
       <View style={styles.itemWrapper}>
+
+
         <View
           style={[styles.itemContent,
             itemByMyTeam ? styles.itemContent_byMyTeam : {},
@@ -278,7 +281,7 @@ class FeedListItem extends Component {
               avatar={avatar}
               author={item.author}
               myTeam={itemByMyTeam}
-              onHeaderPress={openUserPhotos} />
+              onHeaderPress={openUserView} />
             {hasItemText && isItemImage &&
               <FeedItemText
                 text={item.text}

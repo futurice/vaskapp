@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import { noop, get } from 'lodash';
 import { ImagePickerManager } from 'NativeModules';
 import autobind from 'autobind-decorator';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../../style/theme';
 import { fetchFeed,
@@ -28,19 +29,19 @@ import { fetchFeed,
 
 import { openLightBox } from '../../concepts/lightbox';
 import { openComments } from '../../concepts/comments';
+import { openUserView } from '../../concepts/user';
 
-import { openRegistrationView } from '../../actions/registration';
-import { getUserTeam } from '../../reducers/registration';
+import { openRegistrationView, getUserTeam } from '../../concepts/registration';
 import permissions from '../../services/android-permissions';
 
 import ImageEditor from './ImageEditor';
 import FeedListItem from './FeedListItem';
 import Notification from '../common/Notification';
-import UserView from '../user/UserView';
 import Loading from './Loading';
 import ActionButtons from './ActionButtons';
 import LoadingStates from '../../constants/LoadingStates';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import UserView from '../user/UserView';
+import CommentsView from '../comment/CommentsView';
 
 import ImageCaptureOptions from '../../constants/ImageCaptureOptions';
 import {
@@ -51,7 +52,9 @@ import {
   openCheckInView,
   setEditableImage,
   clearEditableImage,
-} from '../../actions/competition';
+} from '../../concepts/competition';
+
+
 import reactMixin from 'react-mixin';
 import TimerMixin from 'react-timer-mixin';
 
@@ -61,7 +64,7 @@ const IOS = Platform.OS === 'ios';
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: theme.white
+    backgroundColor: theme.white,
   },
   feedContainer: {
     flexDirection: 'column',
@@ -70,12 +73,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   listView: {
-    flex: 1
+    flex: 1,
   },
   actionButtons: {
     position: 'absolute',
     bottom: 0,
-    right: 0
+    right: 0,
   },
   problemWrap: {
     flex: 1,
@@ -195,6 +198,19 @@ class FeedList extends Component {
   }
 
   @autobind
+  openUserView(user, avatar) {
+    this.props.openUserView(user, avatar);
+    this.props.navigator.push({ component: UserView, name: `${user.name}`, showName: true });
+  }
+
+  @autobind
+  openPostComments(postId) {
+    this.props.openComments(postId);
+    this.props.navigator.push({ component: CommentsView, name: 'Comment', showName: true });
+  }
+
+
+  @autobind
   chooseImage(openLibrary) {
     if (IOS) {
       this.openImagePicker(openLibrary);
@@ -203,18 +219,6 @@ class FeedList extends Component {
         setTimeout(() => {
           this.openImagePicker(openLibrary);
         });
-      });
-    }
-  }
-
-  @autobind
-  openUserPhotos(user, avatar) {
-    if (user.id) {
-      this.props.navigator.push({
-        component: UserView,
-        name: `${user.name}`,
-        avatar,
-        user
       });
     }
   }
@@ -321,15 +325,14 @@ class FeedList extends Component {
                 removeFeedItem={this.props.removeFeedItem}
                 voteFeedItem={this.props.voteFeedItem}
                 openRegistrationView={this.props.openRegistrationView}
-                openUserPhotos={this.openUserPhotos}
-                openComments={this.props.openComments}
+                openUserView={this.openUserView}
+                openComments={this.openPostComments}
                 openLightBox={this.props.openLightBox} />
               }
               style={[styles.listView]}
               onScroll={this._onScroll}
               onEndReached={this.onLoadMoreItems}
               refreshControl={refreshControl} />
-
             <ActionButtons
               visibilityAnimation={this.state.actionButtonsAnimation}
               isRegistrationInfoValid={this.props.isRegistrationInfoValid}
@@ -389,6 +392,7 @@ const mapDispatchToProps = {
   clearEditableImage,
   openComments,
   openRegistrationView,
+  openUserView,
 };
 
 const select = store => {

@@ -9,12 +9,11 @@ import Text from '../common/MyText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ActionButton from './ActionButton';
 import ActionButtonLabel from './ActionButtonLabel';
-import { openRegistrationView } from '../../actions/registration';
+import { openRegistrationView } from '../../concepts/registration';
 import theme from '../../style/theme';
 import reactMixin from 'react-mixin';
 import TimerMixin from 'react-timer-mixin';
-import { updateCooldowns } from '../../actions/competition';
-import { getActionTypesForFeed } from '../../reducers/competition';
+import { updateCooldowns, getActionTypesForFeed } from '../../concepts/competition';
 
 const IOS = Platform.OS === 'ios';
 

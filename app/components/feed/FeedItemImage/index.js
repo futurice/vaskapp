@@ -5,12 +5,14 @@ import {
   TouchableOpacity,
   View,
   Image,
+  Platform,
   Dimensions,
 } from 'react-native';
 import ParsedText from 'react-native-parsed-text';
 
 import theme from '../../../style/theme';
 
+const IOS = Platform.OS === 'ios';
 const { width } = Dimensions.get('window');
 const FEED_ITEM_MARGIN_DEFAULT = 10;
 
