@@ -25,7 +25,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {
   postText,
   closeTextActionView
-} from '../../actions/competition';
+} from '../../concepts/competition';
 
 const IOS = Platform.OS === 'ios';
 

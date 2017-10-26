@@ -6,8 +6,8 @@ async function requestLocationPermission(cb) {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        'title': 'Futubohemia Location Permission',
-        'message': 'Futubohemia needs access to location ' +
+        'title': 'Vask Location Permission',
+        'message': 'Vask needs access to location ' +
                    'to serve best possible experience.'
       }
     )
@@ -28,8 +28,8 @@ async function requestCameraPermission(cb) {
     const grantCamera = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.CAMERA,
       {
-        'title': 'Futubohemia Camera Permission',
-        'message': 'Futubohemia needs access to camera ' +
+        'title': 'Vask Camera Permission',
+        'message': 'Vask needs access to camera ' +
                    'to post images to feed.'
       }
     );
@@ -37,8 +37,8 @@ async function requestCameraPermission(cb) {
     const grantWrite = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       {
-        'title': 'Futubohemia Storage Permission',
-        'message': 'Futubohemia needs access to storage ' +
+        'title': 'Vask Storage Permission',
+        'message': 'Vask needs access to storage ' +
         'to post images to feed.'
       }
     );
@@ -48,8 +48,8 @@ async function requestCameraPermission(cb) {
       PermissionsAndroid.PERMISSIONS.CAMERA,
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
     ], {
-      'title': 'Futubohemia Camera Permission',
-      'message': 'Futubohemia needs access to camera and storage to post images to feed.'
+      'title': 'Vask Camera Permission',
+      'message': 'Vask needs access to camera and storage to post images to feed.'
     })/*.then((response) => {
       console.log('PERMISSIONS: ', response);
     });*/

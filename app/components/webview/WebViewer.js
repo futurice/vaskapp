@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import theme from '../../style/theme';
 import Toolbar from '../calendar/EventDetailToolbar';
+import ScrollHeader from '../common/ScrollHeader';
 const IOS = Platform.OS === 'ios';
 
 
@@ -17,7 +18,7 @@ class WebViewer extends Component {
 
   render() {
 
-    const { hideHeader } = this.props;
+    const { hideHeader, navigator } = this.props;
     let { url, name } = this.props.route;
 
     if (IOS && url.indexOf('https') < 0) {
@@ -25,16 +26,24 @@ class WebViewer extends Component {
     }
 
     const showHeader = !hideHeader && !IOS;
+    const topPadding = IOS ? 20 : 0;
 
     return (
-      <View style={[styles.container, { paddingTop: showHeader ? 52 : 0 }]}>
-        {showHeader && <Toolbar title={name} color={theme.blue2} backgroundColor={theme.secondary} navigator={this.props.navigator} /> }
+      <View style={[styles.container, { paddingTop: showHeader ? 0 : topPadding }]}>
+        {showHeader &&
+          <ScrollHeader title={name} color={theme.primary} onIconClick={() => navigator.pop()} /> }
 
         {url &&
           <WebView
             source={{uri: url}}
             scalesPageToFit={false}
-            style={{flex: 1}}
+            style={{ flex: 1 }}
+
+            allowsInlineMediaPlayback={true}
+            domStorageEnabled={true}
+            thirdPartyCookiesEnabled={true}
+            mixedContentMode={'always'}
+            javaScriptEnabled={true}
           />
         }
       </View>
@@ -49,7 +58,7 @@ WebViewer.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    flex:1
+    flex: 1
   }
 });
 

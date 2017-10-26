@@ -54,12 +54,37 @@ class InstructionView extends Component {
     return (
        <View style={containerStyles}>
 
-          <View style={styles.topArea}>
+          <View style={styles.topArea} level={20}>
             <View style={styles.iconWrap}>
+
               <Image
-                style={styles.subImage}
+                style={{ left: 20, top: -15,  width: 60, height: 60, position: 'absolute' }}
+                resizeMode="contain"
+                source={require('../../../assets/chilicorn.png')} />
+
+              <Image
+                style={{ right: 5, top: -5, width: 180, height: 180, position: 'absolute' }}
+                resizeMode="contain"
+                source={require('../../../assets/illustrations/planet.png')} />
+
+              <Image
+                style={{ right: 30, bottom: 55, overflow: 'visible', width: 40, height: 40, position: 'absolute',}}
                 resizeMode="contain"
                 source={require('../../../assets/illustrations/chat-dark.png')} />
+
+              <View style={{ right: 20,  top: 5,  backgroundColor: theme.primary, justifyContent: 'center', alignItems: 'center', width: 36, height: 36, borderRadius: 21, position: 'absolute', transform: [{ rotate: '-5deg' }] }}>
+                <MdIcon
+                  style={{ fontSize: 20, color: theme.white, backgroundColor: 'transparent' }}
+                  name="hot-tub" />
+              </View>
+
+
+              <View style={{ bottom: 60, left: 25, backgroundColor: theme.primary, justifyContent: 'center', alignItems: 'center', width: 36, height: 36, borderRadius: 21, position: 'absolute', transform: [{ rotate: '5deg' }] }}>
+                <Icon
+                  style={{ fontSize: 20, top: 2, color: theme.white, backgroundColor: 'transparent' }}
+                  name="md-trophy"  />
+              </View>
+
             </View>
           </View>
 
@@ -69,12 +94,14 @@ class InstructionView extends Component {
 
                   <View style={styles.content}>
                     <View style={styles.textContainer}>
+
                       <Image
-                        style={{ width: 100, height: 30, tintColor: theme.primary }}
-                        source={require('../../../assets/logo/new.png')}
+                        resizeMode="contain"
+                        style={{ width: 120, height: 70, tintColor: theme.primary }}
+                        source={require('../../../assets/logo/vask.png')}
                       />
-                      <Text style={styles.subTitle}>Welcome My Friend!</Text>
-                      {/*<Text style={styles.text}>It's time for Fututrip again!</Text>*/}
+                      <Text style={styles.subTitle}>Praise the Culture</Text>
+                      {/*<Text style={styles.text}>of your team</Text>*/}
                     </View>
                   </View>
                 </View>
@@ -106,14 +133,12 @@ const styles = StyleSheet.create({
   },
   iconWrap: {
     position: 'absolute',
-    width: IOS ? 180 : 200,
-    height: IOS ? 180 : 200,
-    borderRadius: IOS ? 95 : 105,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(0,0,0,0.05)',
     left: width / 2 - 90,
     top: IOS ? width / 6 : width / 8,
-    alignItems: 'center',
-    justifyContent: 'center',
     overflow: 'visible'
   },
   icon: {
@@ -177,16 +202,17 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   subTitle: {
-    color: theme.midgrey,
-    fontSize: 16,
+    color: theme.primary,
+    fontSize: 20,
     margin: 15,
     marginTop: 35,
-    fontFamily: IOS ? 'Futurice' : 'Futurice_bold'
+    marginBottom: 10,
+    // fontFamily: IOS ? 'Futurice' : 'Futurice_bold',
   },
   text: {
-    fontSize: 16,
-    lineHeight: 18,
-    marginTop: 40,
+    fontSize: 20,
+    lineHeight: 22,
+    marginTop: 0  ,
     color: theme.blue1,
     textAlign: 'center',
   },

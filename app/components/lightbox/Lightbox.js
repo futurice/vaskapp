@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import theme from '../../style/theme';
 // import ModalBox from 'react-native-modalbox';
 
-import { openRegistrationView } from '../../actions/registration';
+import { openRegistrationView } from '../../concepts/registration';
 import { voteFeedItem, removeFeedItem } from '../../actions/feed';
 import { getLightboxItem, closeLightBox, isLightBoxOpen } from '../../concepts/lightbox';
 import abuse from '../../services/abuse';
@@ -144,7 +144,7 @@ class LightBox extends Component {
         supportedOrientations={['portrait']}
         animationType={IOS ? 'none' : 'slide'}
       >
-        <ModalBackgroundView style={styles.container} blurType="dark" >
+        <ModalBackgroundView style={styles.container} blurType="light" >
           {IOS
           ?
           <View style={{ width, height }}>
@@ -174,7 +174,7 @@ class LightBox extends Component {
           <View style={styles.header}>
             <View style={styles.header__icon}>
               <PlatformTouchable delayPressIn={0} onPress={this.onClose}>
-                <View><Icon style={{ color: theme.white, fontSize: 26 }} name="close" /></View>
+                <View><Icon style={{ color: theme.primary, fontSize: 26 }} name="close" /></View>
               </PlatformTouchable>
 
               <View style={styles.headerTitle}>
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     justifyContent: 'center',
-    backgroundColor: IOS ? 'transparent' : theme.black,
+    backgroundColor: IOS ? 'transparent' : theme.white,
   },
   header: {
     height: 56,
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     top:0,
     right: 0,
     zIndex: 2,
-    backgroundColor: IOS ? 'transparent' : 'rgba(0,0,0,.3)',
+    backgroundColor: IOS ? 'transparent' : 'rgba(255,255,255,.3)',
   },
   header__icon: {
     position: 'absolute',
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   headerTitleText: {
-    color: theme.white,
+    color: theme.primary,
     fontWeight: 'bold',
     fontSize: 14
   },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     paddingTop: IOS ? 2 : 0
   },
   dateText: {
-    color: theme.stable,
+    color: theme.primary,
     opacity: 0.9,
     fontSize: 12
   },
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     right: 0,
     height: 58,
     zIndex: 3,
-    backgroundColor: IOS ? 'transparent' : 'rgba(0,0,0,.3)',
+    backgroundColor: IOS ? 'transparent' : 'rgba(255,255,255,.3)',
   },
   toolbar__buttons: {
     justifyContent:'flex-end',
@@ -302,14 +302,14 @@ const styles = StyleSheet.create({
   toolbar__icon: {
     backgroundColor: 'transparent',
     fontSize: 24,
-    color: theme.white,
+    color: theme.secondaryLight,
   },
   toolbar__button__text: {
     textAlign: 'center',
     backgroundColor: 'transparent',
     fontSize: 10,
     marginTop: 2,
-    color: theme.stable
+    color: theme.midgrey
   }
 });
 

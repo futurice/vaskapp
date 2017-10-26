@@ -1,5 +1,5 @@
 import Immutable from 'immutable';
-import { UPDATE_COOLDOWNS } from '../actions/competition';
+import { UPDATE_COOLDOWNS } from '../concepts/competition';
 
 export default {
   collapsed: true,

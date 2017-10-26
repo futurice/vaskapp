@@ -19,6 +19,7 @@ import autobind from 'autobind-decorator';
 import Text from '../../common/MyText';
 import Button from '../../common/Button';
 import theme from '../../../style/theme';
+import typography from '../../../style/typography';
 
 import Team from '../Team';
 import Toolbar from '../RegistrationToolbar';
@@ -29,11 +30,14 @@ import {
   selectTeam,
   reset,
   closeRegistrationView,
-} from '../../../actions/registration';
-import { isUserLoggedIn, getUserName, getUserInfo } from '../../../reducers/registration';
+  isUserLoggedIn,
+  getUser,
+  getUserName,
+} from '../../../concepts/registration';
 import { setCity, getCityIdByTeam, getCityId } from '../../../concepts/city';
-import { openLoginView } from '../../../concepts/auth';
 import { showChooseTeam } from '../../../actions/team';
+import { getTeams } from '../../../reducers/team';
+
 import * as keyboard from '../../../utils/keyboard';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -70,11 +74,6 @@ class ProfileEditorView extends Component {
   }
 
   @autobind
-  onGenerateName() {
-    this.props.generateName();
-  }
-
-  @autobind
   onShowChooseTeam() {
     this.props.showChooseTeam();
   }
@@ -92,15 +91,39 @@ class ProfileEditorView extends Component {
     this.props.closeRegistrationView();
   }
 
+  @autobind
+  scrollToNameSelection() {
+    const regScroll = this.containerScrollViewRef;
+    if (regScroll) {
+      regScroll.scrollToEnd({ animated: true });
+    }
+  }
+
+
   teamIsValid() {
-    const { selectedTeam, teams } = this.props
+    const { userData, teams } = this.props
     const { selectedCity } = this.state;
-    const team = teams.find(t => t.get('id') === selectedTeam);
+    const team = teams.find(t => t.get('id') === userData.get('teamId'));
 
     if (team) {
       return team.get('city') === selectedCity;
     }
     return false;
+  }
+
+  renderAvatar(item, index) {
+    const avatar = this.props.userData.get('image');
+
+    return (
+      <View style={styles.avatarInput}>
+        <View style={styles.profilePicWrap}>
+          {avatar ?
+            <Image style={styles.profilePic} source={{ uri: avatar }} /> :
+            <Icon style={[styles.avatarFallback]} name="camera-alt" />
+          }
+        </View>
+      </View>
+    );
   }
 
   renderProfileEditor() {
@@ -116,29 +139,10 @@ class ProfileEditorView extends Component {
           style={{ flex:1 }}
         >
           <View style={[styles.innerContainer]}>
-            {/* this.renderCitySelect() */}
-            <View style={styles.inputGroup}>
-              <View style={styles.inputLabel}>
-                <Text style={styles.inputLabelText}>Tribe</Text>
-              </View>
 
-              <View style={[styles.inputFieldWrap, { paddingBottom: 0 }]}>
-                <ScrollView style={{flex:1, height: IOS ? 210 : null}}>
-                  {this.props.teams.map(team => {
-                    if (team.get('city') === this.state.selectedCity) {
-                      return <Team
-                        key={team.get('id')}
-                        name={team.get('name')}
-                        teamid={team.get('id')}
-                        logo={team.get('imagePath')}
-                        selected={this.props.selectedTeam}
-                        onPress={this.onSelectTeam.bind(this, team.get('id'))}/>;
-                    }}
-                  )}
-                </ScrollView>
-              </View>
-            </View>
+            {this.renderAvatar()}
             {this.renderNameSelect()}
+            {this.renderTeamSelect()}
           </View>
         </ScrollView>
 
@@ -154,44 +158,39 @@ class ProfileEditorView extends Component {
     );
   }
 
-  @autobind
-  renderCitySelect() {
-    const { selectedCity } = this.state;
+  renderTeamSelect() {
     return (
       <View style={styles.inputGroup}>
         <View style={styles.inputLabel}>
-          <Text style={styles.inputLabelText}>Your City</Text>
-        </View>
-        <View style={{flexDirection: 'row', padding: 10, paddingTop: 5 }}>
-          {this.props.cities.map((city, i) => {
-            const isCitySelected = selectedCity === city.get('id');
-            return (
-              <View key={i} style={styles.item}>
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: isCitySelected ? theme.secondary : theme.white}]}
-                  onPress={() => this.onSelectCity(city.get('id'))}>
-                  <Text style={[styles.text, {color: isCitySelected ? 'white' : theme.midgrey }]}>
-                    {city.get('name')}
-                  </Text>
-                </TouchableOpacity>
-              </View>);
-            }
-
-          )}
-        </View>
-      </View>
-    );
-  }
-
-
-  renderNameSelect() {
-    return (
-      <View style={[styles.inputGroup, { marginBottom:4 }]}>
-        <View style={styles.inputLabel}>
-          <Text style={styles.inputLabelText}>Information</Text>
+          <Text style={styles.inputLabelText}>Tribe</Text>
         </View>
         <View style={styles.inputFieldWrap}>
-          <TextInput
+
+          <ScrollView style={{flex:1, height: IOS ? 210 : null}}>
+            {this.props.teams.map(team => <Team
+              key={team.get('id')}
+              name={team.get('name')}
+              teamid={team.get('id')}
+              logo={team.get('imagePath')}
+              selected={this.props.userData.get('teamId')}
+              onPress={this.onSelectTeam.bind(this, team.get('id'))}/>
+            )}
+          </ScrollView>
+        </View>
+      </View>
+    )
+  }
+
+  renderNameSelect() {
+    const { userData } = this.props;
+    return (
+      <View style={styles.inputGroup}>
+        <View style={styles.inputLabel}>
+          <Text style={styles.inputLabelText}>Name</Text>
+        </View>
+        <View style={styles.inputFieldWrap}>
+          <Text style={styles.staticText}>{userData.get('name')}</Text>
+          {/*<TextInput
             ref={view => this.nameTextInputRef = view}
             autoCorrect={false}
             autoCapitalize={'words'}
@@ -205,10 +204,13 @@ class ProfileEditorView extends Component {
               keyboard.onInputBlur(this.containerScrollViewRef)
             }}
             onChangeText={this.props.updateName}
-            value={this.props.userName}
-          />
+            value={userData.get('name')}
+          />*/}
         </View>
 
+        <View style={styles.inputLabel}>
+          <Text style={styles.inputLabelText}>Your Introduction</Text>
+        </View>
         <View style={styles.inputFieldWrap}>
           <TextInput
             multiline={true}
@@ -218,7 +220,7 @@ class ProfileEditorView extends Component {
             returnKeyType={'done'}
             style={[styles.inputField, styles.textarea, styles['inputField_' + Platform.OS]]}
             onChangeText={this.props.updateUserInfo}
-            value={this.props.userInfo}
+            value={userData.get('info')}
           />
         </View>
       </View>
@@ -230,7 +232,7 @@ class ProfileEditorView extends Component {
     return (
       <Modal
         visible={isUserLogged && isRegistrationViewOpen}
-        animationType={'slide'}
+        animationType={IOS ? 'fade' : 'slide'}
         onRequestClose={this.onCloseProfileEditor}
       >
         {this.renderProfileEditor()}
@@ -244,11 +246,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 50,
-    backgroundColor: '#f2f2f2'
+    backgroundColor: theme.stable,
   },
   innerContainer: {
     flex:1,
-    paddingTop:15,
+    paddingTop: 0,
     paddingBottom: 50,
     margin: 0,
     borderRadius: 5
@@ -274,13 +276,12 @@ const styles = StyleSheet.create({
     backgroundColor: theme.black,
   },
   inputGroup:{
-    padding: 0,
-    backgroundColor:theme.light,
-    marginHorizontal:15,
-    marginBottom:15,
+    padding: 20,
+    backgroundColor: theme.white,
+    marginBottom: 15,
     elevation:1,
     flex:1,
-    borderRadius:5,
+    borderRadius: 0,
     overflow:'hidden'
   },
   item: {
@@ -294,33 +295,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+
   inputLabel:{
-    padding: 15,
-    paddingTop: 13,
-    paddingBottom: 10,
-    borderBottomWidth: 0,
-    borderColor: '#ddd'
+    paddingBottom: 0,
   },
-  inputLabelText:{
-    fontSize: 15,
-    color: theme.secondary,
-    fontWeight: 'normal',
-    textAlign: IOS ? 'center' : 'left',
-  },
+  inputLabelText: Object.assign({}, typography.h2, { marginBottom: 0 }),
   inputFieldWrap:{
-    paddingTop: 5,
-    padding:15,
+    paddingTop: 4,
+    marginBottom: 25,
+  },
+  staticText: {
+    fontSize: 16,
   },
   inputField: {
     height: 40,
     fontSize:16,
   },
   inputField_android: {
-
+    fontFamily: 'Futurice_regular',
   },
   inputField_ios: {
-    padding:5,
-    backgroundColor: 'rgba(20,20,20,0.05)',
+    fontFamily: 'Futurice',
+    padding: 5,
+    backgroundColor: 'rgba(20,20,20,0.04)',
   },
   textarea: {
     height: 100,
@@ -329,6 +326,30 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+
+  avatarInput: {
+    backgroundColor: theme.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 15,
+    paddingTop: 50,
+  },
+  profilePicWrap:{
+    backgroundColor: theme.stable,
+    borderRadius: 50,
+    top: 0,
+    width: 100,
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 0,
+    marginTop: 0,
+  },
+  profilePic: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
 });
 
@@ -340,19 +361,17 @@ const mapDispatchToProps = {
   reset,
   setCity,
   selectTeam,
-  openLoginView,
   closeRegistrationView,
   showChooseTeam
 };
 
 const select = store => ({
   isRegistrationViewOpen: store.registration.get('isRegistrationViewOpen'),
-  userName: getUserName(store),
-  userInfo: getUserInfo(store),
-  selectedTeam: store.registration.get('selectedTeam'),
+  userData: getUser(store),
+
   selectedCityId: getCityIdByTeam(store),
   viewCityId: getCityId(store),
-  teams: store.team.get('teams'),
+  teams: getTeams(store),
   cities: store.city.get('list'),
   isRegistrationInfoValid: !!getUserName(store),
   isUserLogged: isUserLoggedIn(store)

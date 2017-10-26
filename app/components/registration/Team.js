@@ -10,6 +10,8 @@ import {
 import PlatformTouchable from '../common/PlatformTouchable';
 
 import theme from '../../style/theme';
+import typography from '../../style/typography';
+import { getNameInitials } from '../../utils/name-format';
 
 class Team extends Component {
   propTypes: {
@@ -21,7 +23,8 @@ class Team extends Component {
   }
 
   render() {
-    const selected = this.props.teamid === this.props.selected;
+    const { logo, name, onPress, teamid, selected } = this.props;
+    const isSelected = teamid === selected;
     return (
       <View style={styles.item}>
         <PlatformTouchable
@@ -29,11 +32,17 @@ class Team extends Component {
           style={{}}
           onPress={this.props.onPress}>
           <View style={styles.button}>
+
+          {/*
           <Image
             source={this.props.logo === null ? null : { uri: this.props.logo }}
-            style={[styles.teamLogo, {borderColor: selected ? theme.primary : '#f2f2f2'}]} />
-          <Text style={[styles.text, {color: selected ? theme.primary : '#666'}]}>
-            {this.props.name}
+            style={[styles.teamLogo, {borderColor: isSelected ? theme.primary : '#f2f2f2'}]} />
+          */}
+          <View style={[styles.teamLogo, { borderColor: isSelected ? theme.primary : '#f2f2f2' }]}>
+            <Text style={styles.teamInitials}>{getNameInitials(name)}</Text>
+          </View>
+          <Text style={[styles.text, {color: isSelected ? theme.primary : '#666'}]}>
+            {name}
           </Text>
           </View>
         </PlatformTouchable>
@@ -54,11 +63,16 @@ const styles = StyleSheet.create({
     height:40,
     marginRight:15,
     borderWidth:3,
+    backgroundColor: theme.white,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  text: {
-    fontWeight: 'bold',
-    fontSize: 15
+  teamInitials: {
+    fontSize: 18,
+    backgroundColor: 'transparent',
+    color: theme.dark,
   },
+  text: Object.assign({}, typography.h2, { marginBottom: 0 }),
   button: {
     padding:15,
     paddingTop:10,

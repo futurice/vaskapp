@@ -29,11 +29,10 @@ import {
   reset,
   dismissIntroduction,
   closeRegistrationView,
-} from '../../actions/registration';
-import { isUserLoggedIn } from '../../reducers/registration';
+  isUserLoggedIn,
+} from '../../concepts/registration';
 import { getCityIdByTeam, getCityId } from '../../concepts/city';
 import { openLoginView } from '../../concepts/auth';
-import * as keyboard from '../../utils/keyboard';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const IOS = Platform.OS === 'ios';
@@ -124,33 +123,11 @@ class AppIntroView extends Component {
           {/* Slide 1 */}
           <IntroView style={styles.slide} selectedCity={this.state.selectedCity} onSelect={this.onSelectCity} cities={this.props.cities} />
 
-          {/* Slide 2
-          <View style={[styles.slide, styles.slideIntro]} >
-            <View style={styles.topArea} level={10} >
-              <View style={styles.iconWrap}>
-                <Image style={styles.bgImage} source={require('../../../assets/patterns/sea.png')} />
-                <Icon style={styles.icon} name={'face'} />
-                <Icon style={styles.subIcon} name={'chat-bubble-outline'} />
-                <Icon style={[styles.subIcon, { top: IOS ? -20 : 0, left: IOS ? 65 : 70, fontSize: IOS ? 50 : 35 }]} name={'event'} />
-                <Icon style={[styles.subIcon, { top: 20, left: IOS ? -15 : 0, fontSize: 50 }]} name={'photo-camera'} />
-              </View>
-            </View>
-            <View level={-10} >
-              <InstructionView simplified={true} closeRegistrationView={this.onClose} />
-            </View>
-          </View>
-          */}
-
-          {/* Slide 3 */}
+          {/* Slide 2 */}
           <View style={[styles.slide, styles.slideIntro]} >
             <View style={styles.topArea} level={10} >
               <View style={styles.iconWrap}>
                 <Image style={styles.subImage} source={require('../../../assets/chilicorn.png')} />
-                {/*
-                <Image style={styles.bgImage} source={require('../../../assets/patterns/sea.png')} />
-                <Icon style={styles.icon} name={'people-outline'} />
-                <Icon style={[styles.subIcon, { left: 115, top: IOS ? -15 : 0, }]} name={'wb-sunny'} />
-                */}
               </View>
             </View>
             <View level={-10} >

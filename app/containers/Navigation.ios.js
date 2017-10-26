@@ -1,6 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import autobind from 'autobind-decorator';
 
@@ -12,8 +13,10 @@ import FeedView from './FeedView';
 import ProfileView from './ProfileView';
 import MoodView from './MoodView';
 
+
 import Tabs from '../constants/Tabs';
-import { isUserLoggedIn } from '../reducers/registration';
+import { isUserLoggedIn } from '../concepts/registration';
+import { getEvents } from '../reducers/event';
 import { changeTab } from '../actions/navigation';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 
@@ -23,35 +26,29 @@ import IconTabBar from '../components/common/MdIconTabBar';
 
 const theme = require('../style/theme');
 
-const IOS_TAB_ORDER = [
-  Tabs.FEED,
-  Tabs.CALENDAR,
-  Tabs.MAP,
-  Tabs.SETTINGS
-];
-const initialTab = 0;
+
+const initialTabIndex = 0;
+const initialTab = Tabs.FEED;
 
 // # Tab navigation
 class Navigation extends Component {
 
   componentDidMount() {
     const { changeTab } = this.props;
-
-    changeTab(IOS_TAB_ORDER[initialTab])
+    changeTab(initialTab)
   }
 
-
   @autobind
-  onChangeTab({ i }) {
-    this.props.changeTab(IOS_TAB_ORDER[i]);
+  onChangeTab({ ref }) {
+    this.props.changeTab(ref.props.id);
   }
 
   render() {
-    const { navigator, currentTab } = this.props;
+    const { navigator, currentTab, events } = this.props;
     return (
       <ScrollableTabs
         onChangeTab={this.onChangeTab}
-        initialPage={initialTab}
+        initialPage={initialTabIndex}
         tabBarPosition={'bottom'}
         tabBarBackgroundColor={theme.white}
         tabBarActiveTextColor={theme.secondary}
@@ -61,9 +58,10 @@ class Navigation extends Component {
         prerenderingSiblingsNumber={0}
         renderTabBar={() => <IconTabBar />}
       >
-        <FeedView navigator={navigator} tabLabel={{ title: 'Vasking', icon:'fiber-smart-record' }} />
-        <EventMapView navigator={navigator} tabLabel={{ title: 'Geo', icon: 'public' }} />
-        <ProfileView navigator={navigator} tabLabel={{ title: 'Me', icon:'face' }} />
+        <FeedView navigator={navigator} id={Tabs.FEED} tabLabel={{ title: 'Buzz', icon:'bubble-chart' }} />
+        {false && !!events.size && <CalendarView id={Tabs.CALENDAR} navigator={navigator} tabLabel={{ title: 'Event', icon: 'event' }} />}
+        <EventMapView navigator={navigator} id={Tabs.MAP} tabLabel={{ title: 'Geo', icon: 'public' }} />
+        <ProfileView navigator={navigator} id={Tabs.SETTINGS} tabLabel={{ title: 'Personal', icon:'account-circle' }} />
       </ScrollableTabs>
     )
   }
@@ -71,10 +69,9 @@ class Navigation extends Component {
 
 const mapDispatchToProps = { changeTab };
 
-const select = state => {
-  return {
-    currentTab: state.navigation.get('currentTab')
-  }
-};
+const select = state => ({
+  events: getEvents(state),
+  currentTab: state.navigation.get('currentTab')
+})
 
 export default connect(select, mapDispatchToProps)(Navigation);

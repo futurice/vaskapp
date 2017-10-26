@@ -30,7 +30,9 @@ const styles = StyleSheet.create({
   },
   title:{
     paddingRight:15,
+    fontSize: 17,
     lineHeight: 25,
+    top: 5,
     color: theme.primary,
     fontWeight: 'normal'
   },

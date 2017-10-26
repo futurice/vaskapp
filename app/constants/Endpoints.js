@@ -3,6 +3,7 @@ import * as ENV from '../../env';
 const ROOT_URL = ENV.API_URL;
 
 const EndpointUrls = {
+  apps: `${ROOT_URL}/apps`,
   markers: `${ROOT_URL}/markers`,
   events: `${ROOT_URL}/events`,
   event: (eventId) => `${ROOT_URL}/events/${eventId}`,

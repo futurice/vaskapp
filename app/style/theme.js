@@ -1,5 +1,5 @@
 /*
-*	Theme colors for Futurice App
+* Theme colors for Vask App
 */
 
 const theme = {
@@ -11,7 +11,7 @@ const theme = {
   secondary:      '#664cb5',
   secondaryLight: '#ad9ddb',
   secondaryDark:  '#281956',
-  secondaryLayer: 'rgba(253, 240, 196, .5)',
+  secondaryLayer: 'rgba(102, 76, 181, .3)',
 
   accent:         '#FFFB38',
   accentLight:    '#FEFF77',
@@ -19,9 +19,9 @@ const theme = {
   stable:         '#f6f6f6',
 
   light:          '#fff',
-  dark:           '#414e51',
+  dark:           '#474d4f',
   darkgrey:       '#474747',
-  midgrey:        '#777',
+  midgrey:        '#7e878b',
   subtlegrey:     '#999',
   lightgrey:      '#f2f2f2',
   grey:           '#aaa',
@@ -29,7 +29,7 @@ const theme = {
   black:          '#222',
   white:          '#fff',
 
-  lightgreen:     '#EEF3F5',
+  lightgreen:     '#CDECE4',
   green:          '#329E41',
 
   transparent:    'transparent',

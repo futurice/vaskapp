@@ -57,16 +57,16 @@ const postAction = (params, location, queryParams) => {
   return _post(Endpoints.urls.action, payload, queryParams);
 };
 
-const postComment = (parentId, params, location, queryParams) => {
-  let payload = Object.assign({}, params, { user: DeviceInfo.getUniqueID() });
+// const postComment = (parentId, params, location, queryParams) => {
+//   let payload = Object.assign({}, params, { user: DeviceInfo.getUniqueID() });
 
-  // Add location to payload, if it exists
-  if (location) {
-    payload.location = location;
-  }
+//   // Add location to payload, if it exists
+//   if (location) {
+//     payload.location = location;
+//   }
 
-  return _post(Endpoints.urls.feedItem(parentId), payload, queryParams);
-};
+//   return _post(Endpoints.urls.feedItem(parentId), payload, queryParams);
+// };
 
 const putMood = (params) => {
   let payload = Object.assign({}, params, { user: DeviceInfo.getUniqueID() });
@@ -155,7 +155,7 @@ const wapuFetch = (url, opts) => {
     // Auth0 token contains:
     // accessToken, idToken and refreshToken
     const tokenObj = token ? JSON.parse(token) : {};
-    const { idToken } = tokenObj;
+    const { idToken, accessToken } = tokenObj;
 
     if (!idToken) {
       return Promise.resolve();
@@ -254,7 +254,7 @@ export default {
   getUser,
   getUserProfile,
   postAction,
-  postComment,
+  // postComment,
   putMood,
   putUser,
   refreshAuthToken,

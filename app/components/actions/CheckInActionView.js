@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EventListItem from '../calendar/CheckInListItem';
-import { checkIn, closeCheckInView } from '../../actions/competition';
+import { checkIn, closeCheckInView } from '../../concepts/competition';
 import { getCurrentCityName } from '../../concepts/city';
 
 import CheckInButton from './CheckInButton';

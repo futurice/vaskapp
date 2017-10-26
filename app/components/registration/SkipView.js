@@ -28,12 +28,12 @@ class SkipView extends Component {
               <View style={styles.content}>
                 <View style={styles.textContainer}>
                   <Image
-                    style={{ width: 100, height: 30, tintColor: theme.primary }}
-                    source={require('../../../assets/logo/new.png')}
+                    resizeMode="contain"
+                    style={{ width: 120, height: 70, tintColor: theme.primary }}
+                    source={require('../../../assets/logo/vask.png')}
                   />
-                  {/*<Text style={styles.subTitle}>IT'S FUN O'CLOCK!</Text>*/}
                   <Text style={styles.text}>Login with your
-                    <Text style={{fontWeight: 'normal', fontFamily: IOS ? 'Futurice' : 'Futurice_bold' }}> @futurice </Text>email address.
+                    <Text style={{fontWeight: 'normal' }}> @futurice </Text>email address.
                   </Text>
                 </View>
                 <PlatformTouchable onPress={this.props.onPressProfileLink}>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 16,
     lineHeight: 20,
-    color: theme.midgrey,
+    color: theme.primary,
     textAlign: 'center',
   },
   loginButton: {

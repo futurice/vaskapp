@@ -21,14 +21,13 @@ import ScrollableTabs  from 'react-native-scrollable-tab-view';
 import Tabs from '../constants/Tabs';
 import IconTabBar from '../components/common/MdIconTabBar';
 
+const HEADER_HIDDEN_ON_TABS = [Tabs.MAP];
+
 const theme = require('../style/theme');
 
-const ANDROID_TAB_ORDER = [
-  Tabs.FEED,
-  Tabs.MAP,
-  Tabs.SETTINGS
-];
-const initialTab = 0;
+const initialTabIndex = 0;
+const initialTab = Tabs.FEED;
+
 
 class AndroidTabNavigation extends Component {
   constructor(props) {
@@ -40,8 +39,7 @@ class AndroidTabNavigation extends Component {
 
   componentDidMount() {
     const { changeTab } = this.props;
-
-    changeTab(ANDROID_TAB_ORDER[initialTab])
+    changeTab(initialTab)
   }
 
   @autobind
@@ -50,8 +48,8 @@ class AndroidTabNavigation extends Component {
   }
 
   @autobind
-  onChangeTab({ i }) {
-    this.props.changeTab(ANDROID_TAB_ORDER[i]);
+  onChangeTab({ ref }) {
+    this.props.changeTab(ref.props.id);
   }
 
   render() {
@@ -76,10 +74,12 @@ class AndroidTabNavigation extends Component {
       transform: [{ translateY: headerTranslateY }]
     };
 
+    const showHeader = HEADER_HIDDEN_ON_TABS.indexOf(currentTab) < 0;
     const isFeedView = currentTab === Tabs.FEED;
 
     return (
       <View style={{ flexGrow: 1, flex: 1 }}>
+      {showHeader &&
         <Animated.View style={isFeedView ? feedHeaderStyles : {}}>
           <Header
             title={null}
@@ -90,9 +90,10 @@ class AndroidTabNavigation extends Component {
             navigator={navigator}
           />
         </Animated.View>
+      }
         <ScrollableTabs
           onChangeTab={this.onChangeTab}
-          initialPage={initialTab}
+          initialPage={initialTabIndex}
           tabBarPosition={'bottom'}
           tabBarBackgroundColor={theme.white}
           tabBarActiveTextColor={theme.darker}
@@ -106,10 +107,12 @@ class AndroidTabNavigation extends Component {
             onScrollUp={() => this.toggleHeader(true)}
             onScrollDown={() => this.toggleHeader(false)}
             navigator={navigator}
-            tabLabel={{ title: 'Feed', icon:'fiber-smart-record' }}
+            tabLabel={{ title: 'Feed', icon: 'bubble-chart' }}
+            id={Tabs.FEED}
           />
-          <EventMapView navigator={navigator} tabLabel={{ title: 'Locate', icon:'public' }} />
-          <ProfileView navigator={navigator} tabLabel={{ title: 'Futuricean', icon:'Face' }} />
+          {false && <CalendarView id={Tabs.CALENDAR} navigator={navigator} tabLabel={{ title: 'Event', icon: 'event' }} />}
+          <EventMapView navigator={navigator} id={Tabs.MAP} tabLabel={{ title: 'Geo', icon: 'public' }} />
+          <ProfileView navigator={navigator} id={Tabs.SETTINGS} tabLabel={{ title: 'You', icon: 'account-circle' }} />
         </ScrollableTabs>
       </View>
     )
