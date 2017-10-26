@@ -1,7 +1,7 @@
-import { createStructuredSelector } from 'reselect';
 import React, { Component } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity,
   TouchableHighlight, Image, Platform } from 'react-native';
+import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
 import {
@@ -9,60 +9,42 @@ import {
   getUserPicture,
   getUserProfile,
   getUserTeam,
-  getTimeSinceLastPost,
-  getTotalSimas,
   getTotalVotesForUser,
-  fetchUserImages,
   isLoadingUserImages,
 } from '../../concepts/user';
 
 import { removeFeedItem, voteFeedItem,} from '../../actions/feed';
-import { openRegistrationView } from '../../actions/registration';
-import { getUserName, getUserId } from '../../reducers/registration';
+import { openRegistrationView, getUserName, getUserId } from '../../concepts/registration';
 
 import { openLightBox } from '../../concepts/lightbox';
-import { openComments } from '../../concepts/comments';
 
 import ParallaxView from 'react-native-parallax-view';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { openComments } from '../../concepts/comments';
 
 import ImageGrid from './ImageGrid';
 import theme from '../../style/theme';
+import typography from '../../style/typography';
 import Header from '../common/Header';
+import BackLink from '../common/BackLink';
+import AnimateMe from '../AnimateMe';
 import Loader from '../common/Loader';
 import Text from '../common/MyText';
 
 const headerImage = require('../../../assets/patterns/sea.png');
 
 const { height, width } = Dimensions.get('window');
-const isIOS = Platform.OS === 'ios';
+const IOS = Platform.OS === 'ios';
 const headerHeight = width;
 
 
 class UserView extends Component {
-  componentDidMount() {
-    const { user } = this.props.route;
-    const { userId } = this.props;
-
-    if (user && user.id) {
-      this.props.fetchUserImages(user.id);
-    } else {
-      this.props.fetchUserImages(userId);
-    }
-  }
-
   render() {
 
-    const { images, isLoading, totalVotes, totalSimas, timeSinceLastPost,
+    const { images, isLoading, totalVotes, totalSimas,
       profile, userTeam, userName, userInfo, navigator, profilePicture } = this.props;
-    let { user, avatar } = this.props.route;
 
-    // Show Current user if not user selected
-    if (!user) {
-      user = { name: userName }
-    }
-
-    const userPhoto = profilePicture || avatar;
+    const userPhoto = profilePicture;
     const imagesCount = images.size;
 
     return (
@@ -74,36 +56,32 @@ class UserView extends Component {
           scrollableViewStyle={{ shadowColor: theme.transparent }}
           header={(
             <View>
-              {!isIOS &&
-              <View style={styles.backLink}>
-                <TouchableHighlight onPress={() => navigator.pop()} style={styles.backLinkText} underlayColor={'rgba(255, 255, 255, .1)'}>
-                  <Icon name="arrow-back" size={28} style={styles.backLinkIcon}  />
-                </TouchableHighlight>
-              </View>
-              }
+            {!IOS && <BackLink onPress={() => navigator.pop()} /> }
             </View>
           )}
         >
           <View style={styles.container}>
             <View style={styles.header}>
               <View style={styles.profileInfo}>
-                <Text style={styles.headerTitle}>
-                  {user.name || profile.get('name')}
-                </Text>
-                <Text style={styles.headerSubTitle}>
-                  {userTeam || user.team}
-                </Text>
 
+                <AnimateMe delay={300} animationType="fade-from-bottom">
+                  <Text style={styles.headerTitle}>
+                    {profile.get('name')}
+                  </Text>
+                </AnimateMe>
 
-                {!!profile.get('info')
-                ?
-                <Text style={styles.profileInfoText}>
-                  “{profile.get('info')}”
-                </Text>
-                :
-                <Text style={[styles.profileInfoText, { opacity: 0.5 }]}>
-                  No info
-                </Text>
+                <AnimateMe delay={400} animationType="fade-from-bottom">
+                  <Text style={styles.headerSubTitle}>
+                    {userTeam}
+                  </Text>
+                </AnimateMe>
+
+                {!!profile.get('info') &&
+                  <AnimateMe delay={900} animationType="fade-in">
+                    <Text style={styles.profileInfoText}>
+                      “{profile.get('info')}”
+                    </Text>
+                  </AnimateMe>
                 }
 
                 {/*
@@ -122,15 +100,18 @@ class UserView extends Component {
               </View>
             </View>
 
-            <ImageGrid
-              isLoading={isLoading}
-              images={images}
-              openRegistrationView={this.props.openRegistrationView}
-              openComments={this.props.openComments}
-              openLightBox={this.props.openLightBox}
-              removeFeedItem={this.props.removeFeedItem}
-              voteFeedItem={this.props.voteFeedItem}
-            />
+            <AnimateMe delay={1500} animationType="fade-in">
+              <ImageGrid
+                navigator={navigator}
+                isLoading={isLoading}
+                images={images}
+                openRegistrationView={this.props.openRegistrationView}
+                openComments={this.props.openComments}
+                openLightBox={this.props.openLightBox}
+                removeFeedItem={this.props.removeFeedItem}
+                voteFeedItem={this.props.voteFeedItem}
+              />
+            </AnimateMe>
           </View>
         </ParallaxView>
       </View>
@@ -156,8 +137,8 @@ const styles = StyleSheet.create({
   },
   backLink: {
     position: 'absolute',
-    left: 7,
-    top: 7,
+    left: 23,
+    top: IOS ? 33 : 23,
     zIndex: 2,
   },
   backLinkText: {
@@ -166,39 +147,19 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: theme.white
+    backgroundColor: 'rgba(255, 255, 255, .5)'
   },
   backLinkIcon: {
-    color: theme.blue2
+    color: theme.primary
   },
   profileInfo: {
     backgroundColor: 'rgba(255, 255, 255, .6)',
     padding: 25,
     alignItems: 'flex-start',
   },
-  headerTitle:{
-    fontSize: 24,
-    fontWeight: 'normal',
-    textAlign: 'center',
-    color: theme.primary,
-    marginBottom: 2,
-    paddingHorizontal: 0,
-    backgroundColor: theme.transparent,
-  },
-  headerSubTitle: {
-    fontSize: 14,
-    fontWeight: 'normal',
-    marginBottom: 30,
-    textAlign: 'center',
-    // color: 'rgba(0,0,0,.5)',
-    color: theme.primary,
-  },
-  profileInfoText: {
-    color: theme.primary,
-    fontSize: 14,
-    lineHeight: 20,
-    opacity: 0.7,
-  },
+  headerTitle: typography.h1,
+  headerSubTitle: typography.h2,
+  profileInfoText: typography.paragraph,
   avatar: {
     marginBottom: 0,
     justifyContent: 'center',
@@ -249,7 +210,6 @@ const styles = StyleSheet.create({
 
 
 const mapDispatchToProps = {
-  fetchUserImages,
   openRegistrationView,
   openComments,
   openLightBox,
@@ -262,12 +222,10 @@ const mapStateToProps = createStructuredSelector({
   profile: getUserProfile,
   profilePicture: getUserPicture,
   isLoading: isLoadingUserImages,
-  totalSimas: getTotalSimas,
   totalVotes: getTotalVotesForUser,
   userId: getUserId,
   userName: getUserName,
   userTeam: getUserTeam,
-  timeSinceLastPost: getTimeSinceLastPost,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserView);

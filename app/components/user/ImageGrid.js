@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import autobind from 'autobind-decorator';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Loader from '../common/Loader';
 import Text from '../common/MyText';
 import theme from '../../style/theme';
 import FeedListItem from '../feed/FeedListItem';
+import CommentsView from '../comment/CommentsView';
 
 const { width } = Dimensions.get('window');
 
@@ -90,6 +92,18 @@ class ImageGrid extends Component {
     this.state = { selectedTab: 0 }
   }
 
+  @autobind
+  openPostComments(postId) {
+    this.props.openComments(postId);
+
+    this.props.navigator.push({
+      component: CommentsView,
+      showName: true,
+      name: 'Comment',
+    });
+  }
+
+
   render() {
     const {
       images,
@@ -156,7 +170,7 @@ class ImageGrid extends Component {
           removeFeedItem={removeFeedItem}
           voteFeedItem={voteFeedItem}
           openRegistrationView={openRegistrationView}
-          openComments={openComments}
+          openComments={this.openPostComments}
           openLightBox={openLightBox}
         />
       )}
