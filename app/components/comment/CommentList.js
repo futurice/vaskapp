@@ -9,99 +9,73 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  Dimensions
+  Dimensions,
+  Linking,
 } from 'react-native';
 import { fromJS } from 'immutable';
 import moment from 'moment';
 import autobind from 'autobind-decorator';
 
+import ParsedText from 'react-native-parsed-text';
 import Text from '../common/MyText';
 import theme from '../../style/theme';
 import time from '../../utils/time';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import ICONS from '../../constants/Icons';
+import { Comment, CommentPost } from './CommentPost';
 import CommentForm from './CommentForm';
+import SimpleEmojiPicker from './SimpleEmojiPicker';
 
 const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
 
-const Comment = ({ item }) => {
-  const ago = time.getTimeAgo(item.get('createdAt'));
-  const profilePicture = item.get('profilePicture');
-
-  return (
-    <View style={styles.comment}>
-        <View style={styles.commentContent}>
-          <View style={styles.commentAvatarCol}>
-            <View style={styles.commentAvatar}>
-              {profilePicture
-                ? <Image source={{ uri: profilePicture }} style={styles.commentAvatarImage} />
-                : <Icon name="person" style={styles.commentAvatarIcon} />
-              }
-            </View>
-          </View>
-
-          <View style={styles.commentTextContent}>
-            <Text style={styles.commentText}>
-              <Text style={styles.commentAuthor}>{item.get('userName')} </Text>
-              {item.get('text')}
-            </Text>
-
-            <Text style={styles.itemTimestamp}>{ago}</Text>
-          </View>
-        </View>
-    </View>
-  );
-};
-
-const CommentPost = ({ item }) => {
-
-  if (!item) {
-    return null;
-  }
-
-  const ago = time.getTimeAgo(item.get('createdAt'));
-  const profilePicture = item.getIn(['author', 'profilePicture']);
-  const userName = item.getIn(['author', 'name']);
-  const isImage = item.get('type') === 'IMAGE';
-  const hasText = !!item.get('text')
-
-
-  return (
-    <View style={styles.comment}>
-        <View style={styles.commentContent}>
-          <View style={styles.commentAvatarCol}>
-            <View style={styles.commentAvatar}>
-              {profilePicture
-                ? <Image source={{ uri: profilePicture }} style={styles.commentAvatarImage} />
-                : <Icon name="person" style={styles.commentAvatarIcon} />
-              }
-            </View>
-          </View>
-
-          <View style={styles.commentTextContent}>
-            {isImage &&
-              <View style={{ marginTop: -5, marginBottom: hasText ? 15 : 0, }}>
-                <Text style={styles.commentAuthor}>{item.get('userName')}</Text>
-                <Image style={{ width: 120, height: 120 }} source={{ uri: item.get('url') }} />
-              </View>
-            }
-            {hasText &&
-              <Text style={styles.commentText}>
-                <Text style={styles.commentAuthor}>{userName} </Text>{item.get('text')}
-              </Text>
-            }
-
-            <Text style={styles.itemTimestamp}>{ago}</Text>
-          </View>
-        </View>
-    </View>
-  );
-};
-
+const insertText = (str, index, indexEnd, value) =>
+  str.substr(0, index) + value + str.substr(index + (indexEnd - index));
 
 
 class CommentList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showEmojiPicker: false,
+      cursorPositionStart: null,
+      cursorPositionEnd: null,
+    }
+  }
+
+
+  @autobind
+  onAddCustomText(customChar) {
+    const { editCommentText } = this.props;
+    const { cursorPositionStart, cursorPositionEnd } = this.state;
+
+    // if there is existing value from last edit, and user has not focused input
+    const start = editCommentText && cursorPositionStart > editCommentText.length
+      ? 0
+      : cursorPositionStart;
+
+    const newText = insertText(editCommentText || '', start, cursorPositionEnd, customChar);
+    this.props.editComment(newText);
+  }
+
+  @autobind
+  toggleEmojiPicker() {
+    this.setState({ showEmojiPicker: !this.state.showEmojiPicker })
+  }
+
+  @autobind
+  closeEmojiPicker() {
+    this.setState({ showEmojiPicker: false })
+  }
+
+  @autobind
+  setCursorPosition({ selection }) {
+    const { start, end } = selection;
+    this.setState({
+      cursorPositionStart: start,
+      cursorPositionEnd: end,
+    })
+  }
+
   @autobind
   scrollBottom(animated = false) {
     if (this.commentScrollView){
@@ -112,11 +86,13 @@ class CommentList extends Component {
   @autobind
   postComment(comment) {
     this.props.postComment(comment);
+
+    this.closeEmojiPicker();
     this.scrollBottom(true);
   }
 
   renderLoader() {
-    return <ActivityIndicator size="large" color={theme.blue1} />;
+    return <ActivityIndicator size="large" color={theme.primary} />;
   }
 
   render() {
@@ -127,7 +103,8 @@ class CommentList extends Component {
       editComment,
       editCommentText,
       loadingComments,
-      loadingCommentPost
+      loadingCommentPost,
+      openUserView,
     } = this.props;
 
     return (
@@ -144,17 +121,28 @@ class CommentList extends Component {
               <ScrollView
                 ref={ref => this.commentScrollView = ref}
                 onContentSizeChange={(contentWidth, contentHeight) => {
-                  this.commentScrollView.scrollToEnd({ animated: false });
+                  this.scrollBottom(false);
                 }}
+                keyboardShouldPersistTaps="always"
               >
-                <CommentPost item={postItem} />
-                {comments.map((comment, index) => <Comment key={index} item={comment} />)}
+                <CommentPost item={postItem} openUserView={openUserView} />
+                {comments.map((comment, index) => <Comment key={index} item={comment} openUserView={openUserView} />)}
               </ScrollView>
             }
           </View>
 
+
+          {this.state.showEmojiPicker &&
+            <View style={{ zIndex: 20, position: 'absolute', left: 0, bottom: 50, width: 50, flex: 1 }}>
+              <SimpleEmojiPicker onEmojiPress={this.onAddCustomText} />
+            </View>
+          }
+
           <View style={styles.commentForm}>
             <CommentForm
+              toggleEmojiPicker={this.toggleEmojiPicker}
+              setCursorPosition={this.setCursorPosition}
+
               postComment={this.postComment}
               editComment={editComment}
               text={editCommentText}
@@ -210,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     padding: IOS ? 25 : 20,
-    paddingBottom: 15,
+    paddingBottom: 10,
     paddingTop: 15,
   },
   commentContent: {
@@ -220,7 +208,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   commentAvatarCol: {
-    paddingRight: IOS ? 25 : 20,
+    paddingRight: 18,
   },
   commentAvatar: {
     width: 36,
@@ -251,7 +239,7 @@ const styles = StyleSheet.create({
   },
   commentText: {
     textAlign: 'left',
-    color: theme.dark
+    color: theme.primary
   },
   commentListItemImg: {
     width: width,
@@ -263,15 +251,24 @@ const styles = StyleSheet.create({
   commentTextContent:{
     flex: 1,
   },
+  authorField: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 7,
+  },
   commentAuthor: {
-    marginRight: 5,
-    color: theme.blue2,
+    color: theme.primary,
     fontWeight: 'bold',
   },
   itemTimestamp: {
-    marginTop: 7,
+    marginLeft: 10,
+    top: 2,
+    flex: 1,
     color: '#aaa',
     fontSize: 12,
+    fontWeight: 'normal'
   },
 });
 

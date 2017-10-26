@@ -23,6 +23,7 @@ import {
   postComment,
   closeComments
 } from '../../concepts/comments';
+import { openUserView } from '../../concepts/user';
 
 import Text from '../common/MyText';
 import theme from '../../style/theme';
@@ -30,6 +31,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CommentPost from './CommentPost';
 import CommentList from './CommentList';
 import Toolbar from '../common/Toolbar';
+import UserView from '../user/UserView';
 
 const IOS = Platform.OS === 'ios';
 
@@ -39,6 +41,12 @@ class CommentsView extends Component {
   @autobind
   onClose() {
     this.props.closeComments();
+  }
+
+  @autobind
+  openUserView(user, avatar) {
+    this.props.openUserView(user, avatar);
+    this.props.navigator.push({ component: UserView, name: `${user.name}` });
   }
 
   render() {
@@ -51,48 +59,62 @@ class CommentsView extends Component {
       editComment,
       editCommentText,
       loadingComments,
-      loadingCommentPost
+      loadingCommentPost,
     } = this.props;
 
     if (!isCommentsViewOpen) {
       return false;
     }
 
+
     return (
-      <Modal
-        onRequestClose={this.onClose}
-        visible={isCommentsViewOpen}
-        animationType={'slide'}
-      >
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={this.onClose} style={styles.closeLink}>
-              <Icon style={styles.closeLinkIcon} name="close" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Comment</Text>
-          </View>
-          <CommentList
-            postItem={commentItem}
-            comments={comments}
-            postComment={postComment}
-            editComment={editComment}
-            editCommentText={editCommentText}
-            loadingComments={loadingComments}
-            loadingCommentPost={loadingCommentPost}
-          />
+      <View style={styles.container}>
+        {/*
+        <View style={styles.header}>
+          <TouchableOpacity onPress={this.onClose} style={styles.closeLink}>
+            <Icon style={styles.closeLinkIcon} name="close" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Comment</Text>
         </View>
-      </Modal>
+        */}
+        <CommentList
+          openUserView={this.openUserView}
+          postItem={commentItem}
+          comments={comments}
+          postComment={postComment}
+          editComment={editComment}
+          editCommentText={editCommentText}
+          loadingComments={loadingComments}
+          loadingCommentPost={loadingCommentPost}
+        />
+      </View>
     );
   }
+}
+
+CommentsView.propTypes = {
+  isCommentsViewOpen: PropTypes.bool,
+  commentItem: PropTypes.object,
+  comments: PropTypes.object,
+  postComment: PropTypes.func,
+  editComment: PropTypes.func,
+  editCommentText: PropTypes.string,
+  loadingComments: PropTypes.bool,
+  loadingCommentPost: PropTypes.bool,
+  isModal: PropTypes.bool,
+};
+
+CommentsView.defaultProps = {
+  isCommentsViewOpen: false,
+  loadingComments: false,
+  loadingCommentPost: false,
+  isModal: false,
 }
 
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    // paddingTop: 0,
-    // paddingBottom: 0,
-    // justifyContent: 'flex-start',
   },
   header: {
     height: 56,
@@ -102,10 +124,20 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingTop: 28,
     zIndex: 2,
+
+    elevation: 10,
+    shadowColor: theme.secondaryDark,
+    shadowOpacity: 0.09,
+    shadowRadius: 7,
+    shadowOffset: {
+      height: 5,
+      width: 0
+    },
   },
   headerTitle: {
-    color: theme.blue2,
-    fontWeight: 'bold'
+    color: theme.primary,
+    fontWeight: 'normal',
+    top: IOS ? 3 : 0,
   },
   closeLink: {
     position: 'absolute',
@@ -124,7 +156,8 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = {
   editComment,
   postComment,
-  closeComments
+  closeComments,
+  openUserView,
 };
 
 const select = createStructuredSelector({

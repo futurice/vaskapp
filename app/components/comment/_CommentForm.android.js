@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   Image,
   TouchableOpacity,
+  Platform,
   Dimensions,
   TextInput,
   KeyboardAvoidingView,
@@ -14,11 +14,18 @@ import {
 import autobind from 'autobind-decorator';
 import { isEmpty } from 'lodash';
 import PlatformTouchable from '../common/PlatformTouchable';
+import AnimateMe from '../AnimateMe';
 
+import Text from '../common/MyText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../../style/theme';
 
-const { width, height } = Dimensions.get('window');;
+import permissions from '../../services/android-permissions';
+import ImagePickerManager from 'react-native-image-picker';
+import ImageCaptureOptions from '../../constants/ImageCaptureOptions';
+
+const { width, height } = Dimensions.get('window');
+const IOS = Platform.OS === 'ios';
 
 class CommentForm extends Component {
   constructor(props) {
@@ -46,32 +53,69 @@ class CommentForm extends Component {
       return;
     }
 
-    postComment(text);
+    postComment({ text });
   }
 
   renderPostLoader() {
-    return <ActivityIndicator style={styles.sendButton} size={'small'} color={theme.blue2} />;
+    return <ActivityIndicator style={styles.button} size={'small'} color={theme.blue2} />;
+  }
+
+  @autobind
+  chooseImage() {
+    if (IOS) {
+      this.openImagePicker();
+    } else {
+      permissions.requestCameraPermission(() => {
+        setTimeout(() => {
+          this.openImagePicker();
+        });
+      });
+    }
+  }
+
+  @autobind
+  openImagePicker() {
+    ImagePickerManager.showImagePicker(ImageCaptureOptions, (response) => {
+      if (!response.didCancel && !response.error) {
+        const imageData = 'data:image/jpeg;base64,' + response.data;
+        // text as '...'' because API does not yet approve comments without text
+        this.props.postComment({ imageData, text: '...' });
+      }
+    });
+  }
+
+
+  renderImageUpload() {
+    return (
+      <AnimateMe animationType="fade-in" duration={200}>
+        <View style={styles.button}>
+          <TouchableOpacity onPress={this.chooseImage} >
+            <Text>
+              <Icon name="photo-camera" style={[styles.buttonIcon, styles.imageButtonIcon]} />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </AnimateMe>
+    );
   }
 
   @autobind
   renderSubmit() {
-    const { loadingCommentPost } = this.props;
     return (
-      loadingCommentPost
-        ? this.renderPostLoader()
-        :
-        <View style={styles.sendButton}>
-          <TouchableOpacity onPress={this.onSendText} underlayColor={theme.white} style={{ width: 52, height: 52,  alignItems: 'center', justifyContent: 'center' }} >
+      <AnimateMe animationType="fade-from-right" duration={250}>
+        <View style={styles.button}>
+          <TouchableOpacity onPress={this.onSendText} >
             <Text>
-              <Icon name="send" style={styles.sendButtonIcon} />
+              <Icon name="send" style={styles.buttonIcon} />
             </Text>
           </TouchableOpacity>
         </View>
+      </AnimateMe>
     )
   }
 
   render() {
-    const { text, loadingCommentPost } = this.props;
+    const { text, loadingCommentPost, onInputFocus } = this.props;
 
     return (
       <View style={styles.itemWrapper}>
@@ -85,19 +129,24 @@ class CommentForm extends Component {
             autoCorrect={false}
             autoCapitalize={'sentences'}
             underlineColorAndroid={'transparent'}
-            clearButtonMode={'while-editing'}
             returnKeyType={'send'}
             style={styles.inputField}
+            numberOfLines={1}
             blurOnSubmit={false}
-            maxLength={131}
+            maxLength={151}
             placeholderTextColor={'rgba(0,0,0, 0.4)'}
-            placeholder="Add comment..."
+            placeholder="Add comment...."
             onSubmitEditing={this.onSendText}
             onChangeText={this.onChangeText}
             value={text}
+            onFocus={() => setTimeout(() => onInputFocus(true), 50)}
           />
 
-          {loadingCommentPost && this.renderPostLoader()}
+          <View style={{ position: 'absolute', right: 0, flexDirection: 'row', flex: 1, }}>
+            {!text && !loadingCommentPost && this.renderImageUpload()}
+            {!!text && !loadingCommentPost && this.renderSubmit()}
+            {loadingCommentPost && this.renderPostLoader()}
+          </View>
         </KeyboardAvoidingView>
       </View>
     );
@@ -134,11 +183,11 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     padding: 10,
     left: 15,
-    width: width - 60,
+    width: width - (IOS ? 75 : 60),
   },
-  sendButton: {
+  button: {
     zIndex: 1,
-    position: 'absolute',
+    position: 'relative',
     top: 0,
     right: 0,
     height: 52,
@@ -146,13 +195,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.white
+    backgroundColor: theme.white,
   },
-  sendButtonIcon: {
+  buttonIcon: {
     backgroundColor: theme.transparent,
-    color: theme.blue2,
+    color: theme.primary,
     fontSize: 25,
-  }
+  },
+  imageButtonIcon: {
+    color: theme.grey,
+  },
 });
 
 export default CommentForm;

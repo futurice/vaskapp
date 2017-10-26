@@ -8,148 +8,229 @@ import {
   Platform,
   Dimensions
 } from 'react-native';
-import theme from '../../style/theme';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Text from '../common/MyText';
+import ParsedText from 'react-native-parsed-text';
 import time from '../../utils/time';
+import theme from '../../style/theme';
+import AnimateMe from '../AnimateMe';
+
 
 const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
 
-const CommentPost = props => {
-  const { item, openUserPhotos } = props;
+const CommentAuthor = ({ name, ago, avatar, id, onAuthorPress }) => (
+  <View style={styles.authorField}>
+    <TouchableOpacity onPress={() => onAuthorPress({ name, id }, avatar)}>
+      <Text style={styles.commentAuthor}>{name}</Text>
+    </TouchableOpacity>
+    <Text style={styles.itemTimestamp}>{ago}</Text>
+  </View>
+);
+
+const CommentText = ({ text, style }) => (
+  <ParsedText
+    style={[style, { fontFamily: IOS ? 'Futurice' : 'Futurice-Regular' }]}
+    parse={[{
+      type: 'url',
+      style: { textDecorationLine: 'underline' },
+      onPress: (url) => Linking.openURL(url) },
+    ]}
+  >
+    {text}
+  </ParsedText>
+);
+
+
+
+const Comment = ({ item, openUserView }) => {
+  const ago = time.getTimeAgo(item.get('createdAt'));
+  const profilePicture = item.get('profilePicture');
+
+  const hasImage = !!item.get('imagePath');
+
+  const authorProps = {
+    avatar: profilePicture,
+    onAuthorPress: openUserView,
+    id: item.get('userId'),
+    name: item.get('userName'),
+    ago: ago,
+  };
+
+  return (
+    <AnimateMe delay={140} duration={200} animationType="fade-in">
+      <View style={styles.comment}>
+        <View style={styles.commentContent}>
+          <View style={styles.commentAvatarCol}>
+            <View style={styles.commentAvatar}>
+              {profilePicture
+                ? <Image source={{ uri: profilePicture }} style={styles.commentAvatarImage} />
+                : <Icon name="person" style={styles.commentAvatarIcon} />
+              }
+            </View>
+          </View>
+
+          <View style={styles.commentTextContent}>
+
+            {hasImage
+            ?
+              <View>
+                <CommentAuthor {...authorProps} />
+                <Image style={{ width: 120, height: 120 }} source={{ uri: item.get('imagePath') }} />
+              </View>
+            :
+              <View>
+                <CommentAuthor {...authorProps} />
+                <CommentText style={styles.commentText} text={item.get('text')} />
+              </View>
+            }
+
+          </View>
+        </View>
+      </View>
+    </AnimateMe>
+  );
+};
+
+const CommentPost = ({ item, openUserView }) => {
 
   if (!item) {
     return null;
   }
 
   const ago = time.getTimeAgo(item.get('createdAt'));
-  const isItemImage = item.get('type') === 'IMAGE';
+  const profilePicture = item.getIn(['author', 'profilePicture']);
+  const userName = item.getIn(['author', 'name']);
+  const userId = item.getIn(['author', 'id']);
+  const hasImage = item.get('type') === 'IMAGE';
+  const hasText = !!item.get('text')
+
+  const authorProps = {
+    avatar: profilePicture,
+    onAuthorPress: openUserView,
+    id: userId,
+    name: userName,
+    ago: ago,
+  };
 
   return (
-      <View style={styles.itemWrapper}>
-        <View style={[styles.itemContent,
-          isItemImage ? styles.itemContent_image : {}
-        ]}>
-
-        {/*
-          <TouchableOpacity activeOpacity={IOS ? 0.7 : 1} style={styles.feedItemListItemInfo} onPress={() => openUserPhotos(item.author)}>
-            <View style={styles.feedItemListItemAuthor}>
-              <Text style={styles.itemAuthorName}>{item.getIn(['author','name'])}</Text>
-              <Text style={styles.itemAuthorTeam}>{item.getIn(['author','team'])}</Text>
+    <AnimateMe delay={0} duration={200} animationType="fade-in">
+      <View style={styles.comment}>
+        <View style={styles.commentContent}>
+          <View style={styles.commentAvatarCol}>
+            <View style={styles.commentAvatar}>
+              {profilePicture
+                ? <Image source={{ uri: profilePicture }} style={styles.commentAvatarImage} />
+                : <Icon name="person" style={styles.commentAvatarIcon} />
+              }
             </View>
-            <Text style={styles.itemTimestamp}>{ago}</Text>
-          </TouchableOpacity>
-        */}
+          </View>
 
-          {isItemImage ?
-            <View style={styles.itemImageWrapper}>
-              <Image
-              source={{ uri: item.get('url') }}
-              style={styles.feedItemListItemImg} />
-            </View>
-          :
-            <View style={styles.itemTextWrapper}>
-              <Text style={styles.feedItemListText}>{item.get('text')}</Text>
-            </View>
-          }
+          <View style={styles.commentTextContent}>
+            {hasImage &&
+              <View>
+                <CommentAuthor {...authorProps} />
+                <Image style={{ width: 120, height: 120 }} source={{ uri: item.get('url') }} />
+              </View>
+            }
+            {hasText &&
+              <View style={{ marginTop: hasImage ? 10 : 0, }}>
+                {!hasImage && <CommentAuthor {...authorProps} />}
+                <CommentText style={styles.commentText} text={item.get('text')} />
+              </View>
+            }
 
+          </View>
         </View>
       </View>
+    </AnimateMe>
   );
 };
 
 
 const styles = StyleSheet.create({
-  itemWrapper: {
-    width,
+  comment:{
     flex: 1,
-    backgroundColor: theme.white,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    padding: 15,
     paddingBottom: 10,
-    paddingTop: 0,
   },
-
-  itemContent:{
-    flexGrow: 1,
-    justifyContent: 'flex-start',
-    marginLeft: 0,
-    marginRight: 0,
-    borderRadius: 0,
-    borderBottomWidth: IOS ? 0 : 1,
-    borderBottomColor: 'rgba(0, 0, 0, .075)',
-    // // # Drop shadows
-    elevation: 2,
-    shadowColor: '#000000',
-    shadowOpacity: 0.075,
-    shadowRadius: 1,
-    shadowOffset: {
-      height: 2,
-      width: 0
-    },
-    backgroundColor: '#fff'
+  commentContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingBottom: 10,
   },
-
-  itemContent_image: {
-    marginLeft: 0,
-    marginRight: 0,
-    borderRadius: 0,
+  commentAvatarCol: {
+    paddingRight: 18,
   },
-  itemImageWrapper: {
-    width: width,
-    height: width,
-    overflow: 'hidden'
+  commentAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: theme.grey,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  itemTextWrapper: {
-    paddingLeft: 30,
-    paddingRight: 30,
-    paddingTop: 16,
-    paddingBottom: 12,
-    top: -10,
+  commentAvatarImage: {
+    width: 36,
+    height: 36,
+    borderRadius: 18
   },
-  feedItemListText: {
+  commentAvatarIcon: {
+    top: 0,
+    left: 0,
     textAlign: 'center',
-    fontSize: 17,
-    lineHeight: 25,
-    color: theme.dark
+    width: 36,
+    height: 36,
+    borderWidth: 2,
+    borderColor: theme.earth1,
+    borderRadius: 18,
+    color: theme.white,
+    fontSize: 36,
+    lineHeight: 44,
+    backgroundColor: theme.transparent
   },
-  feedItemListItemImg: {
+  commentText: {
+    textAlign: 'left',
+    color: theme.primary
+  },
+  commentListItemImg: {
     width: width,
     height: width,
     backgroundColor: 'transparent',
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
-
-  feedItemListItemInfo: {
+  commentTextContent:{
+    flex: 1,
+  },
+  authorField: {
     flex: 1,
     flexDirection: 'row',
-    padding: 13,
-    paddingTop: 13,
-    paddingLeft: 15,
-    paddingRight: 15,
-    alignItems: 'flex-start',
-    justifyContent: 'space-between'
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 7,
   },
-  feedItemListItemAuthor:{
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-start'
-  },
-  itemAuthorName: {
-    fontSize: 13,
+  commentAuthor: {
+    color: theme.primary,
     fontWeight: 'bold',
-    color: theme.secondary,
-    paddingRight: 10
-  },
-  itemAuthorTeam:{
-    fontSize:11,
-    color: '#aaa'
   },
   itemTimestamp: {
-    top:  IOS ? 1 : 2,
+    marginLeft: 10,
+    top: 2,
+    flex: 1,
     color: '#aaa',
-    fontSize: 11,
+    fontSize: 12,
+    fontWeight: 'normal'
   },
 });
 
-export default CommentPost;
+
+export {
+  Comment,
+  CommentPost,
+};
