@@ -7,85 +7,63 @@
  * https://github.com/facebook/react-native/blob/master/Examples/UIExplorer/Navigator/NavigationBarSample.js
  */
 
-'use strict';
-
 import React from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   ActionSheetIOS,
   Platform,
   Image,
-  TouchableHighlight,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
+import Share from 'react-native-share';
 
-
+import Text from './MyText';
 import theme from '../../style/theme';
 import SortSelector from '../header/SortSelector';
 import Icon from 'react-native-vector-icons/Ionicons';
+import EIcon from 'react-native-vector-icons/EvilIcons';
+import MDIcon from 'react-native-vector-icons/MaterialIcons';
 import Tabs from '../../constants/Tabs';
+import { openSettings } from '../../services/router';
 
-let showShareActionSheet = function(url) {
-  if (Platform.OS === 'ios') {
-    ActionSheetIOS.showShareActionSheetWithOptions({
-      url: url
-    },
-  (error) => { /* */ },
-  (success, method) => {
-    /* */
-  });
-  }
-}
 
 let NavigationBarRouteMapper = props => ({
   LeftButton: function(route, navigator, index, navState) {
     if (index > 0) {
       return (
-        <TouchableHighlight
-          underlayColor={'transparent'}
-          onPress={() => { navigator.pop() }}>
+        <TouchableOpacity activeOpacity={0.6} onPress={() => { navigator.pop() }}>
           <Icon name='ios-arrow-back' style={styles.navBarIcon} />
-        </TouchableHighlight>
-      )
-    }
-
-    /*
-    if (route.onLeftActionPress) {
-      return (
-        <TouchableOpacity
-          underlayColor={'transparent'}
-          onPress={() => route.onLeftActionPress()}
-        >
-          <Icon name='ios-add' style={styles.navBarIcon} />
         </TouchableOpacity>
       )
     }
-    */
-
-
 
     return null;
   },
 
   RightButton: function(route, navigator, index, navState) {
 
+    if (route.share) {
+      return (
+        <TouchableOpacity activeOpacity={0.6} onPress={() => Share.open(route.share)}>
+          <EIcon name='share-apple' style={[styles.navBarIcon, styles.navBarIconShare]} />
+        </TouchableOpacity>
+      )
+    }
+
     if (props.currentTab === Tabs.FEED && index === 0) {
       return (<SortSelector />);
     }
 
-    if (route.actions) {
+
+    if (props.currentTab === Tabs.SETTINGS && index === 0) {
       return (
-        <TouchableHighlight
-        onPress={() => {
-          showShareActionSheet(route.post.link)
-        }}
-        >
-          <Icon name='ios-upload-outline' style={styles.navBarIcon} />
-        </TouchableHighlight>
-        );
+        <TouchableOpacity activeOpacity={0.6} onPress={() => openSettings(navigator)}>
+          <EIcon name='gear' style={styles.navBarIcon} />
+        </TouchableOpacity>
+      );
     }
+
     return null;
   },
 
@@ -93,8 +71,8 @@ let NavigationBarRouteMapper = props => ({
 
     if (route.showName) {
       return (
-        <Text style={styles.navBarTitle}>
-        {route.name}
+        <Text style={styles.navBarTitle} numberOfLines={1} ellipsizeMode={'tail'}>
+          {route.name}
         </Text>
       );
     }
@@ -122,24 +100,30 @@ var styles = StyleSheet.create({
   },
   navBarIcon:{
     color: theme.primary,
-    padding:6,
-    paddingLeft:10,
-    paddingRight:10,
-    fontSize:28,
-    textAlign:'center',
+    padding: 8,
+    paddingHorizontal: 10,
+    fontSize: 25,
+    textAlign: 'center',
+  },
+  navBarIconShare: {
+    top: 3,
+    fontSize: 27,
+    paddingHorizontal: 8,
   },
   navBarLogo:{
     width: 60,
-    height: 38,
+    height: 32,
     tintColor: theme.primary,
-    top: 1,
+    top: 3,
   },
   navBarTitle:{
-    padding:10,
-    fontSize:16,
+    padding: 10,
+    paddingTop: 14,
+    paddingHorizontal: 30,
+    fontSize: 17,
     color: theme.primary,
-    textAlign:'center',
-    fontWeight:'bold',
+    textAlign: 'center',
+    fontWeight: 'normal',
   }
 });
 

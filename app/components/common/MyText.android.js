@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-const MyText = ({ children, style, ...props }) => (
-  <Text style={[{ fontFamily: 'Futurice_regular' }, style]} {...props} >
+const MyText = ({ children, style, bold, ...props }) => (
+  <Text style={[{ fontFamily: bold ? 'Futurice_bold' : 'Futurice_regular' }, style]} {...props} >
     {children}
   </Text>
 );

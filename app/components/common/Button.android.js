@@ -8,6 +8,7 @@ import {
   StyleSheet
 } from 'react-native';
 
+import theme from '../../style/theme';
 
 class Button extends Component {
   // propTypes: Object.assign({},
@@ -25,7 +26,7 @@ class Button extends Component {
   _renderInnerText() {
     return (
       <Text style={[styles.textButton, this.props.textStyle]}>
-        {this.props.children.toUpperCase()}
+        {this.props.children}
       </Text>
     );
   }
@@ -64,10 +65,11 @@ const styles = StyleSheet.create({
     flex:1,
     height: 50,
     justifyContent: 'center',
-    backgroundColor: '#50E3C2',
+    backgroundColor: theme.primary,
     borderRadius: 2,
     paddingLeft: 0,
-    paddingRight: 0
+    paddingRight: 0,
+    elevation: 2,
   },
   textButton: {
     alignSelf: 'center',

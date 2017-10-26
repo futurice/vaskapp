@@ -1,10 +1,9 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import {
   ToolbarAndroid,
-  StyleSheet,
-  PropTypes
+  StyleSheet
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../../style/theme';
@@ -18,24 +17,20 @@ const styles = StyleSheet.create({
 });
 
 class ToolBar extends Component {
-  propTypes: {
-    title: PropTypes.string.isRequired,
-    leftIcon: PropTypes.string,
-    leftIconClick: PropTypes.func
-  }
-
   render() {
+    const { leftIconClick, leftIcon, title, style, titleColor, iconColor } = this.props;
+
     return (
       <Icon.ToolbarAndroid
-        onIconClicked={this.props.leftIconClick}
-        navIconName={this.props.leftIcon}
-        titleColor={theme.secondary}
-        iconColor={theme.secondary}
-        style={[styles.toolbar, this.props.styles || {}]}
-        title={this.props.title}
+        onIconClicked={leftIconClick}
+        navIconName={leftIcon}
+        titleColor={titleColor || theme.secondary}
+        iconColor={iconColor || theme.secondary}
+        style={[styles.toolbar, style || {}]}
+        title={title}
       />
     );
   }
 }
 
-module.exports = ToolBar;
+export default ToolBar;

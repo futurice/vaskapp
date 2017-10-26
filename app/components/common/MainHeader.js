@@ -8,16 +8,17 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../../style/theme';
 import Tabs from '../../constants/Tabs';
 import SortTypes from '../../constants/SortTypes';
+import { openSettings } from '../../services/router';
 
 const styles = StyleSheet.create({
   toolbar: {
-    backgroundColor: theme.yellow,
+    backgroundColor: theme.white,
     elevation: 2,
     height: 56,
   }
 });
 
-const iconColor = theme.blue2;
+const iconColor = theme.primary;
 
 const selectedActionIcon = '• '; //‣ • ● ♥
 
@@ -37,9 +38,12 @@ const getActions = (tab, sortType) => {
   switch (tab) {
     case Tabs.FEED: {
       return [
-        { title: `${sortType === SortTypes.SORT_NEW ? selectedActionIcon : '  '} Newest`, id: SortTypes.SORT_NEW, show: 'never' },
-        { title: `${sortType === SortTypes.SORT_HOT ? selectedActionIcon : '  '} Trending`, id: SortTypes.SORT_HOT, show: 'never' },
+        { title: `${sortType === SortTypes.SORT_NEW ? selectedActionIcon : '  '} NEW`, id: SortTypes.SORT_NEW, show: 'never' },
+        { title: `${sortType === SortTypes.SORT_HOT ? selectedActionIcon : '  '} HOT`, id: SortTypes.SORT_HOT, show: 'never' },
       ];
+    }
+    case Tabs.SETTINGS: {
+      return [{ title: 'Settings', id: 'gear', show: 'always', iconName: 'settings' }]
     }
     default: {
       return [];
@@ -48,10 +52,16 @@ const getActions = (tab, sortType) => {
   return [];
 };
 
-class EventDetailToolbar extends Component {
+class MainHeader extends Component {
   @autobind
   onActionSelected(position) {
     const { currentTab, navigator } = this.props;
+
+    if (currentTab === Tabs.SETTINGS && position === 0) {
+      openSettings(navigator);
+      return;
+    }
+
     switch (position) {
       case 0: {
         this.props.setFeedSortType(SortTypes.SORT_NEW);
@@ -87,19 +97,19 @@ class EventDetailToolbar extends Component {
     }
 
     return (
-      <ToolbarAndroid
+      <Icon.ToolbarAndroid
         actions={getActions(currentTab, selectedSortType)}
-        logo={require('../../../assets/logo/futurice.png')}
+        logo={require('../../../assets/logo/vaskapp.png')}
         overflowIconName={'sort'}
         overflowIcon={require('../../../assets/icons/sort.png')}
         title={''}
         onActionSelected={this.onActionSelected}
-        iconColor={theme.blue2}
-        titleColor={titleColor || theme.blue2}
+        iconColor={theme.primary}
+        titleColor={titleColor || theme.primary}
         style={toolbarStyles}
       />
     );
   }
 }
 
-export default EventDetailToolbar;
+export default MainHeader;
