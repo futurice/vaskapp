@@ -66,11 +66,11 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     color: theme.primary,
     paddingRight: 10,
-    paddingTop: IOS ? 2 : 0,
+    paddingTop: IOS ? 4 : 0,
   },
   itemAuthorTeam:{
-    fontSize: IOS ? 12 : 11,
-    marginTop: IOS ? 1: 0,
+    fontSize: 12,
+    marginTop: 1,
     color: '#aaa'
   },
   itemAuthorTeam__my: {
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   itemTimestamp: {
     color: '#aaa',
-    fontSize: 14,
+    fontSize: 12,
   },
 });
 

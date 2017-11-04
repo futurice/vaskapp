@@ -20,10 +20,11 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     paddingTop: 8,
     flex: 1,
-    minHeight: 210,
+    minHeight: 200,
   },
   itemContent: {
     flexGrow: 1,
+    justifyContent: 'space-between',
     marginHorizontal: 10,
     overflow: 'visible',
     borderWidth: 0,
@@ -96,8 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.grey1,
     width: 60,
     height: 16,
-    margin: 10,
-    marginHorizontal: 15,
+    margin: 15,
   },
 });
 

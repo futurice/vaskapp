@@ -31,7 +31,7 @@ import { openLightBox } from '../../concepts/lightbox';
 import { openComments } from '../../concepts/comments';
 import { openUserView } from '../../concepts/user';
 
-import { openRegistrationView, getUserTeam } from '../../concepts/registration';
+import { openRegistrationView, getUserTeam, getUserName } from '../../concepts/registration';
 import permissions from '../../services/android-permissions';
 
 import ImageEditor from './ImageEditor';
@@ -110,7 +110,6 @@ class FeedList extends Component {
 
   componentDidMount() {
     this.props.fetchFeed();
-
     this.props.updateCooldowns();
   }
 
@@ -396,8 +395,9 @@ const mapDispatchToProps = {
 };
 
 const select = store => {
-  const isRegistrationInfoValid = store.registration.get('name') !== '' &&
-    store.registration.get('selectedTeam') > 0;
+  const userTeam =  getUserTeam(store);
+  const userName = getUserName(store);
+  const isRegistrationInfoValid = !!userName;
 
   return {
     feed: store.feed.get('list'),
@@ -408,7 +408,7 @@ const select = store => {
     isNotificationVisible: store.competition.get('isNotificationVisible'),
     notificationText: store.competition.get('notificationText'),
     isSending: store.competition.get('isSending'),
-    userTeam: getUserTeam(store),
+    userTeam,
     editableImage: store.competition.get('editableImage'),
 
     isRegistrationInfoValid,
