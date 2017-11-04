@@ -3,6 +3,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Animated, Dimensions, View, StyleSheet } from 'react-native';
 import autobind from 'autobind-decorator';
+import { noop } from 'lodash';
 
 import PlatformTouchable from './PlatformTouchable';
 import Text from './MyText';
@@ -20,9 +21,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 0,
-    paddingRight: 20,
+    paddingRight: 0,
   },
   iconWrap: {
+    borderRadius: 28,
+    width: 56,
+    height: 56,
+    marginRight: 0,
+  },
+  rightIconWrap: {
     borderRadius: 28,
     width: 56,
     height: 56,
@@ -64,11 +71,13 @@ class ScrollHeader extends Component {
       onIconClick,
       actions,
       elevation,
+      rightIcon,
+      onRightIconClick,
     } = this.props;
 
     return (
 
-      <View style={[styles.toolbar, { elevation }]}>
+      <View style={[styles.toolbar, { elevation, paddingRight: rightIcon ? 0 : 20 }]}>
         <View style={styles.iconWrap}>
           <PlatformTouchable
             delayPressIn={0}
@@ -84,6 +93,20 @@ class ScrollHeader extends Component {
           {!!title && <Text style={styles.title}>{title}</Text>}
           {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
         </View>
+
+        {rightIcon &&
+        <View style={styles.rightIconWrap}>
+          <PlatformTouchable
+            delayPressIn={0}
+            onPress={onRightIconClick}
+            background={PlatformTouchable.SelectableBackgroundBorderless()}
+          >
+            <View style={styles.icon}>
+              <Icon name={rightIcon} style={[styles.iconText, { color: theme.grey4 }]} />
+            </View>
+          </PlatformTouchable>
+        </View>
+        }
       </View>
     );
   }
@@ -94,6 +117,8 @@ ScrollHeader.defaultProps = {
   title: null,
   subtitle: null,
   elevation: 3,
+  rightIcon: null,
+  onRightIconClick: noop,
 }
 
 export default ScrollHeader;

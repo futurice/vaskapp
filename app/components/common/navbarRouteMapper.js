@@ -15,6 +15,7 @@ import {
   Platform,
   Image,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import Share from 'react-native-share';
 
@@ -25,11 +26,21 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 import Tabs from '../../constants/Tabs';
-import { openSettings } from '../../services/router';
+import { openSettings, openConversations } from '../../services/router';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 
 let NavigationBarRouteMapper = props => ({
   LeftButton: function(route, navigator, index, navState) {
+
+    if (props.currentTab === Tabs.FEED && index === 0) {
+      return (
+        <View style={styles.leftButtonWrap}>
+          <SortSelector />
+        </View>
+      );
+    }
+
     if (index > 0) {
       return (
         <TouchableOpacity activeOpacity={0.6} onPress={() => { navigator.pop() }}>
@@ -42,24 +53,40 @@ let NavigationBarRouteMapper = props => ({
   },
 
   RightButton: function(route, navigator, index, navState) {
-
     if (route.share) {
       return (
         <TouchableOpacity activeOpacity={0.6} onPress={() => Share.open(route.share)}>
-          <EIcon name='share-apple' style={[styles.navBarIcon, styles.navBarIconShare]} />
+          <EIcon name='share-apple' style={[styles.navBarIcon, styles.evilIcon, styles.light]} />
         </TouchableOpacity>
       )
     }
 
+    if (route.showOpenLink && route.url) {
+      return (
+      <TouchableOpacity activeOpacity={0.6} onPress={() => Linking.openURL(route.url)}>
+        <MDIcon name='open-in-new' style={[styles.navBarIcon, styles.mdIcon, styles.light]} />
+      </TouchableOpacity>
+      );
+    }
+
     if (props.currentTab === Tabs.FEED && index === 0) {
-      return (<SortSelector />);
+      return (
+        <View style={{ flexDirection: 'row'}}>
+          <TouchableOpacity activeOpacity={0.6} onPress={() => openConversations(navigator)}>
+            <MDIcon
+              name='chat-bubble-outline'
+              style={[styles.navBarIcon, styles.mdIcon, styles.light, { fontSize: 17, top: 5 }]}
+            />
+          </TouchableOpacity>
+        </View>
+        );
     }
 
 
     if (props.currentTab === Tabs.SETTINGS && index === 0) {
       return (
         <TouchableOpacity activeOpacity={0.6} onPress={() => openSettings(navigator)}>
-          <EIcon name='gear' style={styles.navBarIcon} />
+          <MDIcon name='settings' style={[styles.navBarIcon, styles.mdIcon, styles.light]} />
         </TouchableOpacity>
       );
     }
@@ -80,7 +107,7 @@ let NavigationBarRouteMapper = props => ({
       <View style={styles.navBarLogoWrap}>
         <Image
           resizeMode={'contain'}
-          source={require('../../../assets/logo/vask.png')}
+          source={require('../../../assets/logo/new.png')}
           style={styles.navBarLogo} />
       </View>
     );
@@ -90,7 +117,10 @@ let NavigationBarRouteMapper = props => ({
 var styles = StyleSheet.create({
   navBarLogoWrap:{
     flex:1,
-    alignItems:'center'
+    alignItems:'center',
+  },
+  leftButtonWrap: {
+    marginLeft: isIphoneX() ? 10 : 0,
   },
   navBarButton:{
     color: theme.primary,
@@ -101,19 +131,25 @@ var styles = StyleSheet.create({
   navBarIcon:{
     color: theme.primary,
     padding: 8,
-    paddingHorizontal: 10,
+    paddingHorizontal: isIphoneX() ? 20 : 10,
     fontSize: 25,
     textAlign: 'center',
   },
-  navBarIconShare: {
-    top: 3,
+  light: {
+    color: theme.grey4
+  },
+  evilIcon: {
     fontSize: 27,
-    paddingHorizontal: 8,
+    padding: 12,
+  },
+  mdIcon: {
+    top: 2,
+    fontSize: 20,
   },
   navBarLogo:{
     width: 60,
     height: 32,
-    tintColor: theme.primary,
+    tintColor: theme.secondaryDark,
     top: 3,
   },
   navBarTitle:{

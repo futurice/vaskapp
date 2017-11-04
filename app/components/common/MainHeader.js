@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../../style/theme';
 import Tabs from '../../constants/Tabs';
 import SortTypes from '../../constants/SortTypes';
-import { openSettings } from '../../services/router';
+import { openSettings, openConversations } from '../../services/router';
 
 const styles = StyleSheet.create({
   toolbar: {
@@ -40,6 +40,7 @@ const getActions = (tab, sortType) => {
       return [
         { title: `${sortType === SortTypes.SORT_NEW ? selectedActionIcon : '  '} NEW`, id: SortTypes.SORT_NEW, show: 'never' },
         { title: `${sortType === SortTypes.SORT_HOT ? selectedActionIcon : '  '} HOT`, id: SortTypes.SORT_HOT, show: 'never' },
+        { title: 'Conversations', id: 'conversations', show: 'always', iconName: 'chat' },
       ];
     }
     case Tabs.SETTINGS: {
@@ -62,23 +63,28 @@ class MainHeader extends Component {
       return;
     }
 
-    switch (position) {
-      case 0: {
-        this.props.setFeedSortType(SortTypes.SORT_NEW);
-        break;
-      }
-      case 1: {
-        this.props.setFeedSortType(SortTypes.SORT_HOT);
-        break;
-      }
+    if (currentTab === Tabs.FEED) {
+      switch (position) {
+        case 0: {
+          this.props.setFeedSortType(SortTypes.SORT_NEW);
+          break;
+        }
+        case 1: {
+          this.props.setFeedSortType(SortTypes.SORT_HOT);
+          break;
+        }
+        case 2: {
+          openConversations(navigator);
+        }
 
-      default: {
-        console.log('No action for this selection');
-        break;
+        default: {
+          console.log('No action for this selection');
+          break;
+        }
       }
-
-      return;
     }
+
+    return;
   }
 
   render() {
@@ -99,12 +105,12 @@ class MainHeader extends Component {
     return (
       <Icon.ToolbarAndroid
         actions={getActions(currentTab, selectedSortType)}
-        logo={require('../../../assets/logo/vaskapp.png')}
+        // logo={require('../../../assets/logo/vaskapp.png')}
         overflowIconName={'sort'}
-        overflowIcon={require('../../../assets/icons/sort.png')}
-        title={''}
+        // overflowIcon={require('../../../assets/icons/sort.png')}
+        title={'vask'}
         onActionSelected={this.onActionSelected}
-        iconColor={theme.primary}
+        iconColor={theme.grey4}
         titleColor={titleColor || theme.primary}
         style={toolbarStyles}
       />
