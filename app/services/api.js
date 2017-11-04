@@ -4,6 +4,7 @@ import { isEmpty, isObject } from 'lodash';
 
 import Endpoints from '../constants/Endpoints';
 import STORAGE_KEYS from '../constants/StorageKeys';
+import { getUserToken } from '../services/token';
 import { version as VERSION_NUMBER } from '../../package.json';
 import * as ENV from '../../env';
 
@@ -45,33 +46,28 @@ const fetchComments = (postId, params) => {
   return cachedFetch(url);
 };
 
-
 const postAction = (params, location, queryParams) => {
-  let payload = Object.assign({}, params, { user: DeviceInfo.getUniqueID() });
+  let payload = params;
 
   // Add location to payload, if it exists
   if (location) {
     payload.location = location;
   }
 
-  return _post(Endpoints.urls.action, payload, queryParams);
+  return getUserToken().then((uuid) => {
+    payload.user = uuid;
+    return _post(Endpoints.urls.action, payload, queryParams);
+  })
+
 };
 
-// const postComment = (parentId, params, location, queryParams) => {
-//   let payload = Object.assign({}, params, { user: DeviceInfo.getUniqueID() });
-
-//   // Add location to payload, if it exists
-//   if (location) {
-//     payload.location = location;
-//   }
-
-//   return _post(Endpoints.urls.feedItem(parentId), payload, queryParams);
-// };
-
 const putMood = (params) => {
-  let payload = Object.assign({}, params, { user: DeviceInfo.getUniqueID() });
+  let payload = params;
 
-  return _put(Endpoints.urls.mood, payload);
+  return getUserToken().then((uuid) => {
+    payload.user = uuid;
+    return _post(Endpoints.urls.mood, payload);
+  })
 };
 
 const getImages = eventId => {
@@ -147,20 +143,21 @@ const wapuFetch = (url, opts) => {
   opts = opts || {};
   opts.headers = opts.headers || {};
 
+  // opts.headers['x-user-uuid'] = USER_UUID;
   opts.headers['x-client-version'] = VERSION_NUMBER;
-  opts.headers['x-user-uuid'] = USER_UUID;
   opts.headers['x-token'] = API_TOKEN;
 
   return AsyncStorage.getItem(STORAGE_KEYS.token).then((token) => {
     // Auth0 token contains:
     // accessToken, idToken and refreshToken
     const tokenObj = token ? JSON.parse(token) : {};
-    const { idToken, accessToken } = tokenObj;
+    const { idToken, accessToken, userToken } = tokenObj;
 
     if (!idToken) {
       return Promise.resolve();
     }
 
+    opts.headers['x-user-uuid'] = userToken;
     opts.headers['Authorization'] = `Bearer ${idToken}`;
 
     return fetch(url, opts);
@@ -232,17 +229,19 @@ const queryParametrize = (url, query) => {
 }
 
 const refreshAuthToken = token => {
-  let payload = Object.assign({}, { user: DeviceInfo.getUniqueID() });
+  // Not used anywhere ATM
+  //
+  // let payload = Object.assign({}, { user: DeviceInfo.getUniqueID() });
 
-  return _post(Endpoints.urls.refreshToken(token), payload)
-    .then(response => response.json())
-    .then(newToken => {
-      console.log('AUTH/REFRESH_TOKEN', newToken);
-      return newToken;
-    })
-    .catch(error => {
-      console.log('AUTH/REFRESH_TOKEN_ERROR', error);
-    });
+  // return _post(Endpoints.urls.refreshToken(token), payload)
+  //   .then(response => response.json())
+  //   .then(newToken => {
+  //     console.log('AUTH/REFRESH_TOKEN', newToken);
+  //     return newToken;
+  //   })
+  //   .catch(error => {
+  //     console.log('AUTH/REFRESH_TOKEN_ERROR', error);
+  //   });
 };
 
 export default {
@@ -254,7 +253,6 @@ export default {
   getUser,
   getUserProfile,
   postAction,
-  // postComment,
   putMood,
   putUser,
   refreshAuthToken,
