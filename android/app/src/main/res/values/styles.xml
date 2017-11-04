@@ -3,12 +3,18 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#46289A</item>
+        <item name="colorPrimary">#210F00</item>
         <!-- Status Bar color -->
-        <item name="colorPrimaryDark">#46289A</item>
+        <item name="colorPrimaryDark">#EEEEEE</item>
         <!-- Plain buttons -->
         <item name="colorAccent">#500A5A</item>
         <!-- text -->
         <item name="android:textColor">#46289A</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">#EEEEEE</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+
     </style>
 </resources>
