@@ -17,12 +17,12 @@ import { removeFeedItem, voteFeedItem,} from '../../actions/feed';
 import { openRegistrationView, getUserName, getUserId } from '../../concepts/registration';
 
 import { openLightBox } from '../../concepts/lightbox';
+import { openComments } from '../../concepts/comments';
 
 import ParallaxView from 'react-native-parallax-view';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { openComments } from '../../concepts/comments';
 
-import ImageGrid from './ImageGrid';
+import ImageGrid from '../image/ImageGrid';
 import theme from '../../style/theme';
 import typography from '../../style/typography';
 import Header from '../common/Header';
@@ -155,11 +155,12 @@ const styles = StyleSheet.create({
   profileInfo: {
     backgroundColor: 'rgba(255, 255, 255, .6)',
     padding: 25,
+    paddingBottom: 20,
     alignItems: 'flex-start',
   },
-  headerTitle: typography.h1,
-  headerSubTitle: typography.h2,
-  profileInfoText: typography.paragraph,
+  headerTitle: typography.h1({  marginBottom: 0, }),
+  headerSubTitle: typography.h2({ marginBottom: 0 }),
+  profileInfoText: typography.paragraph({ marginTop: 20, marginBottom: 5 }),
   avatar: {
     marginBottom: 0,
     justifyContent: 'center',
