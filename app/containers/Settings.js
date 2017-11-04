@@ -111,7 +111,6 @@ class Settings extends Component {
         <View style={styles.groupList}>
           {links.map(this.renderItem)}
         </View>
-
       </View>
     );
   }
@@ -139,7 +138,7 @@ class Settings extends Component {
     const { logoutUser } = this.props;
 
     const logoutItem = {
-      title: 'Log out',
+      title: 'LOG OUT',
       onPress: () => logoutUser(),
       separatorAfter: true,
     }
@@ -181,6 +180,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.white,
     marginBottom: 20,
     paddingVertical: 20,
+    elevation: 2,
     shadowColor: theme.secondaryDark,
     shadowOpacity: 0.06,
     shadowRadius: 7,
@@ -191,12 +191,13 @@ const styles = StyleSheet.create({
   },
   groupTitle: {
     padding: 20,
-    paddingVertical: 15,
+    paddingBottom: 15,
+    paddingTop: IOS ? 15 : 5,
     top: IOS ? 3 : 0,
   },
-  groupTitleText: typography.h1,
+  groupTitleText: typography.h1(),
   groupList: {
-    backgroundColor: theme.dark,
+    backgroundColor: theme.white,
   },
   customButtonWrap: {
     flex: 1,
