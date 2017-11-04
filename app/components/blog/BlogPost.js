@@ -18,6 +18,7 @@ import { get } from 'lodash';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ParallaxView from 'react-native-parallax-view';
+import Share from 'react-native-share';
 
 import PlatformTouchable from '../common/PlatformTouchable';
 import AnimateMe from '../AnimateMe';
@@ -25,6 +26,7 @@ import Text from '../common/MyText';
 import ScrollHeader from '../common/ScrollHeader';
 import theme from '../../style/theme';
 import typography from '../../style/typography';
+import { unescapeHtml } from '../../utils/html';
 
 const { width } = Dimensions.get('window');
 const headerImage = require('../../../assets/patterns/sea.png');
@@ -68,7 +70,7 @@ var BlogPost = React.createClass({
     const { route, navigator } = this.props;
     const { refresh, webViewHeight } = this.state;
 
-    const { post } = route;
+    const { post, share } = route;
     const postImage = get(post, 'enclosure.link');
     const postDate = moment(get(post, 'pubDate')).format('DD.MM.YYYY');
 
@@ -97,7 +99,7 @@ var BlogPost = React.createClass({
     <!DOCTYPE html>
     <html>
       <style>
-        html,body {margin:0;padding:0, min-height: 100%; max-width: ${width - 50}px; }
+        html,body {margin:0;padding:0, min-height: 100%; max-width: ${width - 50}px; overflow-x:hidden; }
         h1, h2, h3 {color: ${theme.dark}; font-weight: 100; }
         h1, h2 {
           margin: 0 0 15px;
@@ -108,7 +110,7 @@ var BlogPost = React.createClass({
           padding: 0;
         }
         a { text-transform: underline; color: ${theme.dark} }
-        html, body, p { font-family: '${fontFamilySerif}', serif; font-weight: 100, font-size: 14px; line-Height: 23px; color: ${theme.dark} }
+        html, body, p { font-family: '${fontFamily}', serif; font-weight: 100, font-size: 14px; line-Height: 23px; color: ${theme.dark} }
         p { margin-bottom: 25px; }
         ul, ol { padding-left: 30px; margin-left: 0; }
         img, iframe {max-width:100%;}
@@ -147,7 +149,10 @@ var BlogPost = React.createClass({
         <ScrollHeader
           icon="arrow-back"
           onIconClick={() => navigator.pop()}
-          subtitle={post.title} />
+          subtitle={post.title}
+          rightIcon="share"
+          onRightIconClick={() => Share.open(share)}
+          />
         }
         <ParallaxView
           onScroll={this._onScroll}
@@ -162,7 +167,7 @@ var BlogPost = React.createClass({
 
           <View style={styles.content}>
             <AnimateMe delay={300} animationType="fade-from-bottom">
-              <Text style={styles.detailTitle} >{post.title}</Text>
+              <Text style={styles.detailTitle} >{unescapeHtml(post.title)}</Text>
             </AnimateMe>
             <AnimateMe delay={400} animationType="fade-from-bottom">
               <Text style={styles.detailPersonTitle}>
@@ -206,8 +211,8 @@ var styles = StyleSheet.create({
   content:{
     padding: 25,
   },
-  detailTitle: typography.h1,
-  detailPersonTitle: typography.h2,
+  detailTitle: typography.h1(),
+  detailPersonTitle: typography.h2(),
 });
 
 export default BlogPost;

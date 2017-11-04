@@ -11,6 +11,7 @@ import {
   Platform,
   View,
   WebView,
+  Linking,
 } from 'react-native';
 import { get, isNil } from 'lodash';
 import moment from 'moment';
@@ -26,7 +27,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import typography from '../../style/typography';
 import theme from '../../style/theme';
 import BlogPost from './BlogPost'
+import { unescapeHtml } from '../../utils/html';
 
+const headerImage = require('../../../assets/patterns/sea.png');
+const headerImageAudio = require('../../../assets/patterns/sea-play.png');
 const { width } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
 const defaultCount = 10;
@@ -104,12 +108,14 @@ var BlogApp = React.createClass({
   showSinglePost(post){
     const { navigator } = this.props;
     const { title, link } = post;
+    const postTitle = unescapeHtml(title);
+
     navigator.push({
       component: BlogPost,
       post,
       showName: true,
-      name: title,
-      share: { url: link, title, message: title }
+      name: postTitle,
+      share: { url: link, title: postTitle, message: postTitle }
     });
   },
   onLoadMoreItems() {
@@ -141,16 +147,34 @@ var BlogApp = React.createClass({
   },
 
   renderPost(post, i) {
+
+    const link = get(post, 'enclosure.link');
+    const linkType = get(post, 'enclosure.type');
+    const isAudio = linkType && linkType.includes('audio');
+
+    let postCardImage = !isAudio && link ? { uri: link } : headerImage;
+    if (isAudio) {
+      postCardImage = headerImageAudio;
+    }
+
+    const onPostPress = () => {
+      if (isAudio) {
+        Linking.openURL(link);
+      } else {
+        this.showSinglePost(post);
+      }
+    }
+
     return (
       <View style={styles.card}>
-        <PlatformTouchable onPress={this.showSinglePost.bind(this, post)} activeOpacity={1}>
+        <PlatformTouchable onPress={onPostPress} activeOpacity={1}>
           <View>
             <View style={styles.cardImgWrap}>
-              <Image source={{ uri: get(post, 'enclosure.link') }} style={styles.cardImg} />
+              <Image source={postCardImage} style={styles.cardImg} />
             </View>
 
             <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>{post.title}</Text>
+              <Text style={styles.cardTitle}>{unescapeHtml(post.title)}</Text>
               {post.author ? <Text style={styles.cardSubTitle}>by {post.author} {this.daysAgo(post.pubDate)} ago</Text> : <View /> }
               <Text style={styles.cardText} numberOfLines={3} ellipsizeMode={'tail'}>{post.description}</Text>
             </View>
@@ -221,9 +245,9 @@ var styles = StyleSheet.create({
     flex:1,
     padding: 25,
   },
-  cardTitle: typography.h1,
-  cardSubTitle: typography.h2,
-  cardText: typography.paragraph,
+  cardTitle: typography.h1(),
+  cardSubTitle: typography.h2(),
+  cardText: typography.paragraph(),
 });
 
 export default BlogApp;
