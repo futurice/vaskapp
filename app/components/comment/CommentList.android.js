@@ -27,18 +27,62 @@ import SimpleEmojiPicker from './SimpleEmojiPicker';
 
 const { width, height } = Dimensions.get('window');
 
+const insertText = (str, index, indexEnd, value) =>
+  str.substr(0, index) + value + str.substr(index + (indexEnd - index));
 
 class CommentList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showEmojiPicker: false,
+      cursorPositionStart: 0,
+      cursorPositionEnd: 0,
+    }
+  }
+
   @autobind
-  scrollBottom(animated = false) {
+  onAddCustomText(customChar) {
+    const { editCommentText } = this.props;
+    const { cursorPositionStart, cursorPositionEnd } = this.state;
+
+    // if there is existing value from last edit, and user has not focused input
+    const start = editCommentText && cursorPositionStart > editCommentText.length ? 0 : cursorPositionStart;
+
+    const newText = insertText(editCommentText || '', start, cursorPositionEnd, customChar);
+    this.props.editComment(newText);
+  }
+
+  @autobind
+  toggleEmojiPicker() {
+    this.setState({ showEmojiPicker: !this.state.showEmojiPicker })
+  }
+
+  @autobind
+  closeEmojiPicker() {
+    this.setState({ showEmojiPicker: false })
+  }
+
+  @autobind
+  setCursorPosition({ nativeEvent: { selection: { start, end } } }) {
+    this.setState({
+      cursorPositionStart: start,
+      cursorPositionEnd: end,
+    })
+  }
+
+  @autobind
+  scrollBottom(animated = false, timeout = 0) {
     if (this.commentScrollView){
-      this.commentScrollView.scrollToEnd({ animated });
+      setTimeout(() => {
+        this.commentScrollView.scrollToEnd({ animated });
+      }, timeout);
     }
   }
 
   @autobind
   postComment(comment) {
     this.props.postComment(comment);
+    this.closeEmojiPicker();
     this.scrollBottom(true);
   }
 
@@ -78,8 +122,17 @@ class CommentList extends Component {
             }
           </View>
 
+          {this.state.showEmojiPicker &&
+            <View style={styles.emojiPicker}>
+              <SimpleEmojiPicker onEmojiPress={this.onAddCustomText} />
+            </View>
+          }
+
           <View style={styles.commentForm}>
             <CommentForm
+              toggleEmojiPicker={this.toggleEmojiPicker}
+              setCursorPosition={this.setCursorPosition}
+
               postComment={this.postComment}
               editComment={editComment}
               text={editCommentText}
@@ -128,6 +181,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  emojiPicker: {
+    zIndex: 20,
+    position: 'absolute',
+    left: 0,
+    bottom: 50,
+    width: 54,
+    minHeight: 260,
+    flex: 0,
   },
 });
 

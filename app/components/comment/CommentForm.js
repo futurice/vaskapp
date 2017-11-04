@@ -9,10 +9,11 @@ import {
   Dimensions,
   TextInput,
   KeyboardAvoidingView,
+  Keyboard,
   ActivityIndicator,
 } from 'react-native';
 import autobind from 'autobind-decorator';
-import { isEmpty } from 'lodash';
+import { isEmpty, noop } from 'lodash';
 import PlatformTouchable from '../common/PlatformTouchable';
 import AnimateMe from '../AnimateMe';
 
@@ -24,6 +25,7 @@ import SimpleEmojiPicker from './SimpleEmojiPicker';
 import permissions from '../../services/android-permissions';
 import ImagePickerManager from 'react-native-image-picker';
 import ImageCaptureOptions from '../../constants/ImageCaptureOptions';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
@@ -42,6 +44,10 @@ class CommentForm extends Component {
       loadingCommentPost
     } = this.props;
 
+    if (!text) {
+      Keyboard.dismiss();
+    }
+
     if (!text || isEmpty(text.trim()) || loadingCommentPost) {
       return;
     }
@@ -50,7 +56,7 @@ class CommentForm extends Component {
   }
 
   renderPostLoader() {
-    return <ActivityIndicator style={styles.button} size={'small'} color={theme.blue2} />;
+    return <ActivityIndicator style={styles.button} size={'small'} color={theme.primary} />;
   }
 
   @autobind
@@ -109,7 +115,7 @@ class CommentForm extends Component {
   @autobind
   renderSubmit() {
     return (
-      <AnimateMe animationType="fade-from-right" duration={250}>
+      <AnimateMe animationType="fade-from-left" duration={250}>
         <View style={styles.button}>
           <TouchableOpacity onPress={this.onSendText} >
             <Text>
@@ -148,6 +154,11 @@ class CommentForm extends Component {
             onChangeText={this.onChangeText}
             value={text}
             onSelectionChange={this.props.setCursorPosition}
+            onFocus={() => {
+              // With android need additional input focus callback
+              // To scroll to bottom of the list!
+              !IOS && this.props.onInputFocus(true, 200)
+            }}
           />
 
           <View style={styles.rightButtons}>
@@ -161,12 +172,17 @@ class CommentForm extends Component {
   }
 };
 
+CommentForm.defaultProps = {
+  onInputFocus: noop,
+}
+
 
 const styles = StyleSheet.create({
   itemWrapper: {
     width,
-    height: 52,
-    position: 'relative',
+    height: isIphoneX() ? 62 : 52,
+    paddingBottom: isIphoneX() ? 10 : 0,
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,

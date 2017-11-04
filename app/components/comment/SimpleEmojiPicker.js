@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   emojiPicker: {
     position: 'absolute',
     left: 5,
-    width: 44,
+    width: IOS ? 44 : 48,
     bottom: 10,
     minHeight: 200,
 
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     },
   },
   emojiButtonText: {
-    fontSize: 25,
+    fontSize: IOS ? 25 : 20,
     backgroundColor: 'transparent',
     paddingVertical: 5,
   }
@@ -56,7 +56,7 @@ const SimpleEmojiPicker = ({ onEmojiPress, emojis }) => {
       <View style={styles.emojiPicker}>
         {emojiSelection.map((emoji, index) => (
           <View>
-            <AnimateMe animationType="fade-from-bottom" duration={200} delay={100}>
+            <AnimateMe style={{ flex: 0 }} animationType="fade-from-bottom" duration={200} delay={100}>
               <TouchableOpacity onPress={() => onEmojiPress(emoji)}>
                 <Text style={styles.emojiButtonText}>{emoji}</Text>
               </TouchableOpacity>

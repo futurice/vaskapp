@@ -69,14 +69,6 @@ class CommentsView extends Component {
 
     return (
       <View style={styles.container}>
-        {/*
-        <View style={styles.header}>
-          <TouchableOpacity onPress={this.onClose} style={styles.closeLink}>
-            <Icon style={styles.closeLinkIcon} name="close" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Comment</Text>
-        </View>
-        */}
         <CommentList
           openUserView={this.openUserView}
           postItem={commentItem}
@@ -115,41 +107,8 @@ CommentsView.defaultProps = {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-  },
-  header: {
-    height: 56,
-    backgroundColor: theme.yellow,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 15,
-    paddingTop: 28,
-    zIndex: 2,
-
-    elevation: 10,
-    shadowColor: theme.secondaryDark,
-    shadowOpacity: 0.09,
-    shadowRadius: 7,
-    shadowOffset: {
-      height: 5,
-      width: 0
-    },
-  },
-  headerTitle: {
-    color: theme.primary,
-    fontWeight: 'normal',
-    top: IOS ? 3 : 0,
-  },
-  closeLink: {
-    position: 'absolute',
-    left: 0,
-    width: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  closeLinkIcon: {
-    top: 5,
-    fontSize: 20,
-    color: theme.dark
+    paddingTop: 20,
+    backgroundColor: theme.white,
   }
 });
 

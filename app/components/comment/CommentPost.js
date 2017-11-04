@@ -77,7 +77,7 @@ const Comment = ({ item, openUserView }) => {
             ?
               <View>
                 <CommentAuthor {...authorProps} />
-                <Image style={{ width: 120, height: 120 }} source={{ uri: item.get('imagePath') }} />
+                <Image style={styles.commentImage} source={{ uri: item.get('imagePath') }} />
               </View>
             :
               <View>
@@ -131,7 +131,7 @@ const CommentPost = ({ item, openUserView }) => {
             {hasImage &&
               <View>
                 <CommentAuthor {...authorProps} />
-                <Image style={{ width: 120, height: 120 }} source={{ uri: item.get('url') }} />
+                <Image style={styles.commentImage} source={{ uri: item.get('url') }} />
               </View>
             }
             {hasText &&
@@ -194,6 +194,11 @@ const styles = StyleSheet.create({
     lineHeight: 44,
     backgroundColor: theme.transparent
   },
+  commentImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 5,
+  },
   commentText: {
     textAlign: 'left',
     color: theme.primary
@@ -217,11 +222,12 @@ const styles = StyleSheet.create({
   },
   commentAuthor: {
     color: theme.primary,
-    fontWeight: 'bold',
+    fontWeight: IOS ? 'bold' : 'normal',
+    fontFamily: IOS ? 'Futurice' : 'Futurice_bold',
   },
   itemTimestamp: {
-    marginLeft: 10,
-    top: 2,
+    marginLeft: 12,
+    top: IOS ? 2 : 0,
     flex: 1,
     color: '#aaa',
     fontSize: 12,

@@ -37,8 +37,8 @@ class CommentList extends Component {
     super(props);
     this.state = {
       showEmojiPicker: false,
-      cursorPositionStart: null,
-      cursorPositionEnd: null,
+      cursorPositionStart: 0,
+      cursorPositionEnd: 0,
     }
   }
 
@@ -49,9 +49,7 @@ class CommentList extends Component {
     const { cursorPositionStart, cursorPositionEnd } = this.state;
 
     // if there is existing value from last edit, and user has not focused input
-    const start = editCommentText && cursorPositionStart > editCommentText.length
-      ? 0
-      : cursorPositionStart;
+    const start = editCommentText && cursorPositionStart > editCommentText.length ? 0 : cursorPositionStart;
 
     const newText = insertText(editCommentText || '', start, cursorPositionEnd, customChar);
     this.props.editComment(newText);
@@ -68,8 +66,7 @@ class CommentList extends Component {
   }
 
   @autobind
-  setCursorPosition({ selection }) {
-    const { start, end } = selection;
+  setCursorPosition({ nativeEvent: { selection: { start, end } } }) {
     this.setState({
       cursorPositionStart: start,
       cursorPositionEnd: end,
@@ -108,11 +105,13 @@ class CommentList extends Component {
     } = this.props;
 
     return (
-      <KeyboardAvoidingView
-        behavior={IOS ? 'position' : 'position'}
-        keyboardVerticalOffset={IOS ? 0 : 300}
-        style={styles.commentList}
-      >
+      <View style={styles.commentList}>
+        <KeyboardAvoidingView
+          style={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1  }}
+          behavior={IOS ? 'position' : 'position'}
+          keyboardVerticalOffset={IOS ? 60 : 300}
+        >
         <View style={styles.commentView}>
           <View style={styles.commentScroll}>
             {loadingComments
@@ -133,7 +132,7 @@ class CommentList extends Component {
 
 
           {this.state.showEmojiPicker &&
-            <View style={{ zIndex: 20, position: 'absolute', left: 0, bottom: 50, width: 50, flex: 1 }}>
+            <View style={styles.emojiPicker}>
               <SimpleEmojiPicker onEmojiPress={this.onAddCustomText} />
             </View>
           }
@@ -151,7 +150,8 @@ class CommentList extends Component {
             />
           </View>
         </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     )
   }
 }
@@ -161,25 +161,26 @@ const styles = StyleSheet.create({
 
   // # <CommentList />
   commentList: {
-    flex: 1,
+    // flex: 1,
     flexGrow: 1,
     backgroundColor: theme.white,
   },
   commentView: {
-    paddingBottom: 52,
-    minHeight: height - 56,
-    maxHeight: height - 56,
+    // minHeight: height - 40,
+    // maxHeight: height - 40,
+    // flex: 1,
+    // justifyContent: 'space-between',
     flexGrow: 1,
     backgroundColor: theme.white,
-    justifyContent: 'space-between',
   },
   commentScroll: {
     // flex: 1,
+    // flexGrow: 1,
+    // minHeight: height - 107,
+    flex: 1,
     alignItems: 'stretch',
     justifyContent: 'center',
-    flexGrow: 1,
     backgroundColor: theme.white,
-    minHeight: height - 107,
     paddingBottom: IOS ? 0 : 20,
   },
   commentForm: {
@@ -190,85 +191,13 @@ const styles = StyleSheet.create({
     bottom: IOS ? 0 : 25,
   },
 
-
-  // # <Comment />
-  comment:{
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    padding: IOS ? 25 : 20,
-    paddingBottom: 10,
-    paddingTop: 15,
-  },
-  commentContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingBottom: 10,
-  },
-  commentAvatarCol: {
-    paddingRight: 18,
-  },
-  commentAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: theme.earth1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  commentAvatarImage: {
-    width: 36,
-    height: 36,
-    borderRadius: 18
-  },
-  commentAvatarIcon: {
-    top: 0,
+  emojiPicker: {
+    zIndex: 20,
+    position: 'absolute',
     left: 0,
-    textAlign: 'center',
-    width: 36,
-    height: 36,
-    borderWidth: 2,
-    borderColor: theme.earth1,
-    borderRadius: 18,
-    color: theme.white,
-    fontSize: 36,
-    lineHeight: 44,
-    backgroundColor: theme.transparent
-  },
-  commentText: {
-    textAlign: 'left',
-    color: theme.primary
-  },
-  commentListItemImg: {
-    width: width,
-    height: width,
-    backgroundColor: 'transparent',
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-  commentTextContent:{
+    bottom: 50,
+    width: 50,
     flex: 1,
-  },
-  authorField: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 7,
-  },
-  commentAuthor: {
-    color: theme.primary,
-    fontWeight: 'bold',
-  },
-  itemTimestamp: {
-    marginLeft: 10,
-    top: 2,
-    flex: 1,
-    color: '#aaa',
-    fontSize: 12,
-    fontWeight: 'normal'
   },
 });
 
