@@ -49,11 +49,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Futubohemia requires access to the camera</string>
+	<string>Vask requires access to the camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Futubohemia requires access to the photo library</string>
+	<string>Vask requires access to the photo library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
