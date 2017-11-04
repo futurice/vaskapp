@@ -52,10 +52,10 @@ export default function team(state = initialState, action) {
 //
 // Selectors
 //
-export const getTeams = state => state.team.get('teams', List());
+export const getTeamsState = state => state.team.get('teams', List());
 export const getCurrentCity = state => state.city.get('id', null);
 
-
+export const getTeams = createSelector(getTeamsState, teams => teams.sortBy(t => t.get('id')))
 export const getCityTeams = createSelector(
   getTeams, getCurrentCity,
   (teams, cityId) => teams.filter(t => t.get('city') === cityId)

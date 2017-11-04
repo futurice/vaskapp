@@ -16,6 +16,7 @@ import location from '../concepts/location';
 import lightbox from '../concepts/lightbox';
 import settings from '../concepts/settings';
 import competition from '../concepts/competition';
+import conversations from '../concepts/conversations';
 import registration from '../concepts/registration';
 
 export {
@@ -25,6 +26,7 @@ export {
   city,
   comments,
   competition,
+  conversations,
   errors,
   event,
   feed,

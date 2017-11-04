@@ -1,5 +1,5 @@
 'use strict';
-import Immutable from 'immutable';
+import { fromJS, List } from 'immutable';
 import { isNil } from 'lodash';
 
 import {
@@ -17,12 +17,12 @@ import {
 import LoadingStates from '../constants/LoadingStates';
 
 // # Selectors
-export const getFeed = state => state.feed.get('list') || Immutable.List([]);
+export const getFeed = state => state.feed.get('list') || List([]);
 export const getAllPostsInStore = getFeed;
 
 
 // # Reducer
-const initialState = Immutable.fromJS({
+const initialState = fromJS({
   list: [],
   listState: LoadingStates.NONE,
   isRefreshing: false,
@@ -31,11 +31,11 @@ const initialState = Immutable.fromJS({
 export default function feed(state = initialState, action) {
   switch (action.type) {
     case SET_FEED:
-      return state.set('list', Immutable.fromJS(action.feed));
+      return state.set('list', fromJS(action.feed));
     case APPEND_FEED:
       return (action.feed && action.feed.length) ?
-        state.set('list', Immutable.fromJS(state.get('list')
-          .concat(Immutable.fromJS(action.feed)))) :
+        state.set('list', fromJS(state.get('list')
+          .concat(fromJS(action.feed)))) :
         state;
     case GET_FEED_REQUEST:
       return state.set('listState', LoadingStates.LOADING);
@@ -66,8 +66,8 @@ export default function feed(state = initialState, action) {
         return state;
       } else {
         return state.mergeIn(['list', voteItemIndex], {
-          'userVote': action.value,
-          'votes': action.votes
+          userVote: action.value,
+          votes: action.votes
         });
       }
     }

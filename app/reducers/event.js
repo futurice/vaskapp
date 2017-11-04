@@ -56,8 +56,8 @@ export default function event(state = initialState, action) {
         return state;
       } else {
         return state.mergeIn(['images', voteItemIndex], {
-          'userVote': action.value,
-          'votes': action.votes
+          userVote: action.value,
+          votes: action.votes
         });
       }
     }
