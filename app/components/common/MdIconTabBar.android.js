@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingBottom: 0
+    marginHorizontal: 10,
   },
   tabs: {
     elevation: 4,
@@ -41,15 +41,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '100',
     textAlign:'center',
-    // position:'absolute',
+    position:'absolute',
     marginTop: 2,
     left:0,
     right:0,
-    bottom: 0
+    bottom: 7
   }
 });
 
 
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 var MdIconTabBar = React.createClass({
   propTypes: {
     goToPage: React.PropTypes.func,
@@ -61,16 +62,22 @@ var MdIconTabBar = React.createClass({
   },
 
   getInitialState() {
+    const { activeTab } = this.props;
     return {
-      buttonAnimations: this.props.tabs.map(() => new Animated.Value(1))
+      buttonAnimations: this.props.tabs.map((t, index) =>
+        new Animated.Value(index === activeTab ? 1 : 0)
+      )
     };
   },
 
   componentWillReceiveProps(nextProps) {
     const { buttonAnimations } = this.state;
-    if (nextProps.activeTab !== this.props.activeTab) {
-      buttonAnimations.map(b => b.setValue(0));
-      Animated.timing(buttonAnimations[nextProps.activeTab], { duration: 330, easing: Easing.ease, toValue: 1}).start();
+    const { activeTab } = this.props;
+    if (nextProps.activeTab !== activeTab) {
+      buttonAnimations.map(b => {
+        b.setValue(0);
+      });
+      Animated.timing(buttonAnimations[nextProps.activeTab], { duration: 250, easing: Easing.ease, toValue: 1}).start();
     }
   },
 
@@ -85,26 +92,26 @@ var MdIconTabBar = React.createClass({
       key={item.title}
       onPress={() => this.props.goToPage(page)}
       background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
-      delayPressIn={1}
+      delayPressIn={0}
       style={{ flex: 1 }}
     >
-      <View style={[styles.tab, { paddingLeft: isTabActive ? 0 : 0, paddingRight: isTabActive ? 0 : 0 }]}>
-        <Icon
+      <Animated.View style={styles.tab}>
+        <AnimatedIcon
           name={item.icon}
           size={item.iconSize || 26}
           style={{
-            top: 0,
+            bottom: buttonAnimation.interpolate({ inputRange: [0, 1], outputRange: [0, 8] }),
             color: isTabActive ? activeTextColor : inactiveTextColor,
           }} />
 
-        {item.titlex && isTabActive &&
+        {item.title && isTabActive &&
           <Animated.Text style={[
             styles.textLabel,
             {
               color: activeTextColor,
-              opacity: isTabActive ? buttonAnimation : 1,
+              opacity: buttonAnimation,
               transform: [{
-                scale: isTabActive ? buttonAnimation : 0
+                scale: buttonAnimation
               }]
             }
           ]}>
@@ -112,7 +119,7 @@ var MdIconTabBar = React.createClass({
           </Animated.Text>
         }
 
-      </View>
+      </Animated.View>
     </TouchableNativeFeedback>
     );
   },

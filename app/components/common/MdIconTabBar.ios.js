@@ -13,6 +13,7 @@ import {
 import Text from '../common/MyText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TouchableNativeFeedback from './PlatformTouchable';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 const styles = StyleSheet.create({
   tab: {
@@ -30,7 +31,8 @@ const styles = StyleSheet.create({
       height: 1,
       width: 0
     },
-    height: 54,
+    height: isIphoneX() ? 62 : 54,
+    paddingBottom: isIphoneX() ? 15 : 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderWidth: 0,
@@ -42,15 +44,18 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     textAlign:'center',
     fontFamily: 'Futurice',
-    // position:'absolute',
+    position:'absolute',
     marginTop: 2,
     left:0,
     right:0,
-    bottom: -1
+    bottom: isIphoneX() ? 4 : 7
   }
 });
 
 
+const defaultIconSize = 22;
+
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 var MdIconTabBar = React.createClass({
   propTypes: {
     goToPage: React.PropTypes.func,
@@ -62,16 +67,21 @@ var MdIconTabBar = React.createClass({
   },
 
   getInitialState() {
+    const { activeTab } = this.props;
     return {
-      buttonAnimations: this.props.tabs.map(() => new Animated.Value(1))
+      buttonAnimations: this.props.tabs.map((t, index) =>
+        new Animated.Value(index === activeTab ? 1 : 0)
+      )
     };
   },
 
   componentWillReceiveProps(nextProps) {
     const { buttonAnimations } = this.state;
     if (nextProps.activeTab !== this.props.activeTab) {
-      buttonAnimations.map(b => b.setValue(0));
-      Animated.timing(buttonAnimations[nextProps.activeTab], { duration: 330, easing: Easing.ease, toValue: 1}).start();
+      buttonAnimations.map((b, index) => {
+        b.setValue(0);
+      });
+      Animated.timing(buttonAnimations[nextProps.activeTab], { duration: 330, easing: Easing.elastic(1), toValue: 1}).start();
     }
   },
 
@@ -86,13 +96,15 @@ var MdIconTabBar = React.createClass({
       key={item.title}
       onPress={() => this.props.goToPage(page)}
       style={{ flex: 1 }}
+      activeOpacity={0.9}
     >
       <View style={[styles.tab, { paddingLeft: isTabActive ? 0 : 0, paddingRight: isTabActive ? 0 : 0 }]}>
-        <Icon
+
+        <AnimatedIcon
           name={item.icon}
-          size={item.iconSize || 22}
+          size={item.iconSize || defaultIconSize}
           style={{
-            top: 0,
+            bottom: buttonAnimation.interpolate({ inputRange: [0, 1], outputRange: [0, 7] }),
             color: isTabActive ? activeTextColor : inactiveTextColor,
           }} />
 
