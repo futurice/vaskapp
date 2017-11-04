@@ -12,7 +12,7 @@ const links = [
 ];
 
 const terms = [
-  {title: 'Terms of Service', link: `${ROOT_URL}/terms.html`, icon: 'info-outline', component: TermsView, showInWebview: false},
+  {title: 'Terms of Service', link: `${ROOT_URL}/terms.html`, icon: 'info-outline', component: TermsView},
   {title: 'Privacy', link: `${ROOT_URL}/privacy.html`, icon: 'lock-outline', showInWebview: true},
   {title: 'Licenses', link: `${ROOT_URL}/licences.html`, icon: 'help-outline', showInWebview: true},
 ];

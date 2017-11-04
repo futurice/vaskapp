@@ -6,6 +6,7 @@ const tokenKeys = {
   token: `${ROOT_KEY}:token`,
   city: `${ROOT_KEY}:city`,
   mapCategory: `${ROOT_KEY}:mapCategory`,
+  loginInProgress: `${ROOT_KEY}:loginInProgress`,
 }
 
 export default tokenKeys

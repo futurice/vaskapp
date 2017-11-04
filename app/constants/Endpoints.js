@@ -20,6 +20,7 @@ const EndpointUrls = {
   cities: `${ROOT_URL}/cities`,
   radio: `${ROOT_URL}/radio`,
   mood: `${ROOT_URL}/mood`,
+  conversations: `${ROOT_URL}/conversations`,
   userProfile: (userId) => `${ROOT_URL}/users?userId=${userId}`,
   refreshToken: (token) => `${ROOT_URL}/auth/${token}`,
 };
