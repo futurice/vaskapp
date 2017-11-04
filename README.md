@@ -1,6 +1,6 @@
-* Backend repository here: https://github.com/kaupunki-apina/prahapp-backend/
+* Backend repository here: https://github.com/futurice/vaskapp-backend
 
-* Originally based on https://github.com/futurice/wappuapp-client
+* Originally based on https://github.com/futurice/prahapp-client
 
 # Vask! App
 
