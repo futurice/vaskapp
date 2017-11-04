@@ -107,11 +107,11 @@ class TextActionView extends Component {
         animationType={'slide'}
       >
         <LinearGradient
-          style={[styles.container, styles.modalBackgroundStyle]}
+          style={styles.container}
           locations={[0, 1]}
           start={{x: 0.35, y: 0}}
           end={{x: 1, y: 1}}
-          colors={[theme.white, '#eee']}
+          colors={[theme.white, theme.secondarySubtle]}
         >
 
           <TouchableHighlight underlayColor="#f4f4f4" onPress={this.onClose} style={styles.closeButton}>
@@ -126,21 +126,13 @@ class TextActionView extends Component {
               <Icon name='done' style={styles.okSign} />
             </Animated.View>
             <View style={{ marginTop: 20 }}>
-              <Text style={styles.okText}>Let's vask your message...</Text>
+              <Text style={styles.okText}>Let's send your message...</Text>
             </View>
           </Animated.View>
 
 
           <Animated.View style={[styles.innerContainer, {opacity:this.state.formAnimation}]}>
           <KeyboardAvoidingView behavior={IOS ? 'position' : 'height'} keyboardVerticalOffset={IOS ? -100 : 30} style={styles.inputContainer}>
-          {/*
-            <View>
-              <View style={styles.title}>
-                <Icon name='textsms' style={styles.titleIcon} />
-                <Text style={styles.titleText}> Post Text</Text>
-              </View>
-            </View>
-          */}
             <TextInput
               autoFocus={true}
               multiline={true}
@@ -159,22 +151,13 @@ class TextActionView extends Component {
               autoCorrect={false}
               value={this.state.text} />
 
-
-          {/*
-            <View style={styles.bottomInfo}>
-              <Text style={styles.bottomInfoText}>
-                How is it going?
-              </Text>
-            </View>
-          */}
-
             <View style={styles.bottomButtons}>
               <Button
                 onPress={this.onSendText}
-                style={[styles.button, styles.modalButton]}
+                style={[styles.button, styles.mainButton]}
                 textStyle={{ color: theme.primary }}
                 isDisabled={!this.state.text}>
-                Post
+                POST
               </Button>
             </View>
             </KeyboardAvoidingView>
@@ -204,26 +187,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexGrow: 1,
   },
-  title:{
-    padding: 10,
-    paddingBottom: 100,
-    paddingTop: 0,
-    backgroundColor:'transparent',
-    flexDirection: 'row',
-    justifyContent: IOS ? 'center' : 'center',
-  },
-  titleText:{
-    fontSize: 20,
-    color: theme.primary,
-    fontWeight: 'bold',
-    textAlign: IOS ? 'center' : 'left',
-  },
-  titleIcon:{
-    top:5,
-    fontSize:20,
-    marginRight:5,
-    color:theme.primary,
-  },
   bottomButtons:{
     flexDirection: 'row',
     alignItems: IOS ? 'stretch' : 'flex-end',
@@ -248,7 +211,7 @@ const styles = StyleSheet.create({
       width: 0
     }
   },
-  modalButton: {
+  mainButton: {
     flex: 1,
     marginLeft: 15,
     backgroundColor: theme.white,
@@ -275,9 +238,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
     backgroundColor: '#aaa',
   },
-  modalBackgroundStyle: {
-    backgroundColor: theme.secondary
-  },
   inputField: {
     fontSize: 18,
     margin: 0,
@@ -285,20 +245,9 @@ const styles = StyleSheet.create({
     marginTop: IOS ? 110 : 0,
     color: theme.primary,
     textAlign: 'center',
-    fontFamily: IOS ? 'Futurice' : 'Futurice-Regular',
+    fontFamily: IOS ? 'Futurice' : 'Futurice_regular',
     height: 220,
     width: width - 40,
-  },
-  bottomInfo:{
-    padding: 15,
-    paddingBottom:10,
-    paddingTop:5,
-    backgroundColor: 'transparent'
-  },
-  bottomInfoText:{
-    textAlign: IOS ? 'center' : 'left',
-    fontSize: 12,
-    color: 'rgba(255,255,255,.7)'
   },
   okView: {
     position: 'absolute',

@@ -38,7 +38,6 @@ const fetchFeed = () => (dispatch, getState) => {
       type: SET_FEED,
       feed: items
     });
-
     dispatch({ type: GET_FEED_SUCCESS });
   })
   .catch(error => dispatch({ type: GET_FEED_FAILURE, error: true, payload: error }));
