@@ -3,21 +3,23 @@ import React, { Component } from 'react';
 import {
   Alert,
   View,
-  Text,
   StyleSheet,
   Dimensions,
   Platform,
   BackHandler,
-  Modal
+  Modal,
+  CameraRoll,
 } from 'react-native';
 import { connect } from 'react-redux';
 import theme from '../../style/theme';
-// import ModalBox from 'react-native-modalbox';
+import Text from '../common/MyText';
+import ModalBox from 'react-native-modalbox';
 
 import { openRegistrationView } from '../../concepts/registration';
 import { voteFeedItem, removeFeedItem } from '../../actions/feed';
 import { getLightboxItem, closeLightBox, isLightBoxOpen } from '../../concepts/lightbox';
 import abuse from '../../services/abuse';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PlatformTouchable from '../common/PlatformTouchable';
@@ -64,23 +66,22 @@ class LightBox extends Component {
     this.props.closeLightBox();
   }
 
-  parseUrl(url) {
-    return url;
-    // const urlParts = url.split('/');
-    // const imageId = urlParts[urlParts.length - 1];
-    // return 'https://wappu.futurice.com/i/' + imageId;
-  }
+
 
   onShare(imgUrl) {
-    const url = this.parseUrl(imgUrl);
+    const title = 'Vask';
+    if (!IOS) {
+      const shareOptions = { title, url: imgUrl };
+      Share.open(shareOptions);
+      return;
+    }
 
-    const shareOptions = {
-      title: 'Futubohemia',
-      url: url,
-      message: 'Futubohemia'
-    };
-
-    Share.open(shareOptions);
+    //HOX Android CameraRoll cannot access to url directly
+    CameraRoll.saveToCameraRoll(imgUrl)
+    .then(localImagePath => {
+      const shareOptions = { title, url: localImagePath };
+      Share.open(shareOptions);
+    });
   }
 
   itemIsCreatedByMe(item) {
@@ -133,16 +134,26 @@ class LightBox extends Component {
     const itemAuthor = lightBoxItem.getIn(['author', 'name']);
     const isSystemUser = lightBoxItem.getIn(['author', 'type'], '') === 'SYSTEM';
     const created = moment(lightBoxItem.get('createdAt', ''));
+    const itemText = lightBoxItem.get('text');
 
     return (
-      <Modal
+      <ModalBox
         onRequestClose={this.onClose}
         visible={isLightBoxOpen}
         backButtonClose={true}
         style={styles.modal}
         transparent={true}
         supportedOrientations={['portrait']}
-        animationType={IOS ? 'none' : 'slide'}
+        animationType={IOS ? 'slide' : 'slide'}
+
+        // ModalBox
+        isOpen={isLightBoxOpen}
+        backdropPressToClose={true}
+        backButtonClose={true}
+        onClosed={this.onClose}
+        swipeToClose={true}
+        backdrop={false}
+
       >
         <ModalBackgroundView style={styles.container} blurType="light" >
           {IOS
@@ -191,33 +202,40 @@ class LightBox extends Component {
           </View>
 
           <View style={styles.toolbar}>
+            {!!itemText &&
             <View>
-              <VotePanel
-                item={lightBoxItem.toJS()}
-                voteFeedItem={this.props.voteFeedItem}
-                openRegistrationView={this.props.openRegistrationView}
-              />
+              <Text style={styles.imageCaptionText}>{itemText}</Text>
             </View>
-            <View style={styles.toolbar__buttons}>
-              {!isSystemUser &&
-              <PlatformTouchable onPress={() => this.showRemoveDialog(lightBoxItem)}>
-                <View style={styles.toolbar__button}>
-                  <Icon style={styles.toolbar__icon} name={this.itemIsCreatedByMe(lightBoxItem) ? 'delete' : 'flag'} />
-                  <Text style={styles.toolbar__button__text}>{this.itemIsCreatedByMe(lightBoxItem) ? 'Remove' : 'Report'}</Text>
-                </View>
-              </PlatformTouchable>
-              }
-              <PlatformTouchable onPress={this.onShare.bind(this, itemImage)}>
-                <View style={styles.toolbar__button}>
-                  <Icon style={styles.toolbar__icon} name="share" />
-                  <Text style={styles.toolbar__button__text}>Share</Text>
-                </View>
-              </PlatformTouchable>
-            </View>
+            }
+            <View style={styles.toolbarRow}>
+              <View>
+                <VotePanel
+                  item={lightBoxItem.toJS()}
+                  voteFeedItem={this.props.voteFeedItem}
+                  openRegistrationView={this.props.openRegistrationView}
+                />
+              </View>
+              <View style={styles.toolbar__buttons}>
+                {!isSystemUser &&
+                <PlatformTouchable onPress={() => this.showRemoveDialog(lightBoxItem)}>
+                  <View style={styles.toolbar__button}>
+                    <Icon style={styles.toolbar__icon} name={this.itemIsCreatedByMe(lightBoxItem) ? 'delete' : 'flag'} />
+                    <Text style={styles.toolbar__button__text}>{this.itemIsCreatedByMe(lightBoxItem) ? 'Remove' : 'Report'}</Text>
+                  </View>
+                </PlatformTouchable>
+                }
+                <PlatformTouchable onPress={this.onShare.bind(this, itemImage)}>
+                  <View style={styles.toolbar__button}>
+                    <Icon style={styles.toolbar__icon} name="share" />
+                    <Text style={styles.toolbar__button__text}>Share</Text>
+                  </View>
+                </PlatformTouchable>
+              </View>
+          </View>
 
           </View>
         </ModalBackgroundView>
-      </Modal>
+      </ModalBox>
     );
   }
 }
@@ -234,8 +252,8 @@ const styles = StyleSheet.create({
     backgroundColor: IOS ? 'transparent' : theme.white,
   },
   header: {
-    height: 56,
-    marginTop: IOS ? 8 : 0,
+    height: isIphoneX() ? 66 : 56,
+    marginTop: IOS ? (isIphoneX() ? 18 : 8) : 0,
     justifyContent: 'center',
     position: 'absolute',
     left: 0,
@@ -269,20 +287,34 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     fontSize: 12
   },
+  imageCaptionText: {
+    color: theme.black,
+    padding: 20,
+    paddingTop: 10,
+    paddingBottom: 0,
+    fontSize: 16,
+    lineHeight: 25,
+  },
   toolbar: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
-    alignItems: 'center',
     padding: 0,
-    paddingRight: 10,
-    paddingLeft: 5,
+    paddingBottom: isIphoneX() ? 10 : 0,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 58,
+    minHeight: isIphoneX() ? 68 : 58,
     zIndex: 3,
     backgroundColor: IOS ? 'transparent' : 'rgba(255,255,255,.3)',
+  },
+  toolbarRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    minHeight: 58,
+    alignItems: 'center',
+    paddingRight: 10,
+    paddingLeft: 5,
   },
   toolbar__buttons: {
     justifyContent:'flex-end',
@@ -302,14 +334,14 @@ const styles = StyleSheet.create({
   toolbar__icon: {
     backgroundColor: 'transparent',
     fontSize: 24,
-    color: theme.secondaryLight,
+    color: theme.dark,
   },
   toolbar__button__text: {
     textAlign: 'center',
     backgroundColor: 'transparent',
     fontSize: 10,
     marginTop: 2,
-    color: theme.midgrey
+    color: theme.dark
   }
 });
 
