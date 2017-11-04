@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import autobind from 'autobind-decorator';
-import _ from 'lodash';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import WebViewer from '../webview/WebViewer';
@@ -25,7 +24,6 @@ import { getApps } from '../../concepts/apps';
 import { getCurrentCityName } from '../../concepts/city';
 import {
   openRegistrationView,
-  postProfilePicture,
   getUserName,
   getUserInfo,
   getUserImage,
@@ -33,9 +31,6 @@ import {
 } from '../../concepts/registration';
 import feedback from '../../services/feedback';
 
-import permissions from '../../services/android-permissions';
-import ImagePickerManager from 'react-native-image-picker';
-import ImageCaptureOptions from '../../constants/ImageCaptureOptions';
 import ProfileLink from './ProfileLink';
 import AppList from './AppList';
 import ImageSection from './ImageSection';
@@ -73,7 +68,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   heroItem: {
-    height: 250,
+    height: IOS ? 230 : 220,
     marginBottom: 20,
     flex: 0,
   },
@@ -83,7 +78,7 @@ const styles = StyleSheet.create({
   },
   listItemSeparator: {
     marginBottom: 20,
-    elevation: 0,
+    elevation: 2,
     borderBottomWidth: 0,
     backgroundColor: theme.white,
     borderBottomColor: '#eee',
@@ -162,43 +157,11 @@ const styles = StyleSheet.create({
     fontWeight: IOS ? 'bold' : 'normal',
     backgroundColor: theme.transparent,
     textAlign: 'center',
-    color: IOS ? theme.white : theme.dark,
+    color: IOS ? theme.white : theme.primary,
   },
 });
 
 class Profile extends Component {
-  @autobind
-  chooseImage() {
-    if (IOS) {
-      this.openImagePicker();
-    } else {
-      permissions.requestCameraPermission(() => {
-        setTimeout(() => {
-          this.openImagePicker();
-        });
-      });
-    }
-  }
-
-  @autobind
-  openImagePicker() {
-    // Create selfie image capture options
-    const selfieCaptureOptions = Object.assign(
-      _.cloneDeep(ImageCaptureOptions),
-      {
-        title: 'Change Avatar',
-        cameraType: 'front',
-        takePhotoButtonTitle: 'Take a selfie',
-      },
-    );
-
-    ImagePickerManager.showImagePicker(selfieCaptureOptions, (response) => {
-      if (!response.didCancel && !response.error) {
-        const image = 'data:image/jpeg;base64,' + response.data;
-        this.props.postProfilePicture(image);
-      }
-    });
-  }
 
   @autobind
   onLinkPress(url, text, openInWebview) {
@@ -294,7 +257,7 @@ class Profile extends Component {
     } else if (item.id === 'apps') {
       return this.renderAppList(item, key);
     } else if (item.id === 'images') {
-      return <ImageSection title={item.title} key={key}/>
+      return <ImageSection navigator={this.props.navigator} title={item.title} key={key}/>
     }
 
     return null;
@@ -333,7 +296,7 @@ class Profile extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.scrollView}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {listData.map(this.renderItem)}
         </ScrollView>
       </View>
@@ -352,6 +315,6 @@ const select = state => ({
   cityName: getCurrentCityName(state),
 });
 
-const mapDispatchToProps = { openRegistrationView, postProfilePicture };
+const mapDispatchToProps = { openRegistrationView };
 
 export default connect(select, mapDispatchToProps)(Profile);

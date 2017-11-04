@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 20,
     padding: 0,
+    elevation: 2,
     shadowColor: theme.secondaryDark,
     shadowOpacity: 0.06,
     shadowRadius: 7,
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: typography.h1,
-  subtitle: Object.assign({}, typography.paragraph, { textAlign: 'center' }),
+  title: typography.h1(),
+  subtitle: typography.paragraph({ textAlign: 'center' }),
 
 });

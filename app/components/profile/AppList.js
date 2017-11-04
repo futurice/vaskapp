@@ -16,18 +16,15 @@ import Button from '../common/Button';
 import Text from '../common/MyText';
 import theme from '../../style/theme';
 import typography from '../../style/typography';
+import AppTypes from '../../constants/AppTypes';
 
 import BlogList from '../blog/BlogList';
 import WebViewer from '../webview/WebViewer';
 import Section from './Section';
 
-const IOS = Platform.OS === 'ios';
 
-// todo constans
-const APP_TYPES = {
-  LINK: 'LINK',
-  RSS: 'RSS'
-};
+
+const IOS = Platform.OS === 'ios';
 
 const appLinkPress = (app, navigator) => {
   const url = app.get('url');
@@ -35,16 +32,23 @@ const appLinkPress = (app, navigator) => {
   const name = app.get('name');
 
   let component;
+  let params = {};
 
   switch(type) {
-    case APP_TYPES.LINK: {
+    case AppTypes.WEBAPP: {
       component = WebViewer;
+      params.showOpenLink = true;
       break;
     }
 
-    case APP_TYPES.RSS: {
+    case AppTypes.RSS: {
       component = BlogList;
       break;
+    }
+
+    case AppTypes.LINK: {
+      Linking.openURL(url);
+      return;
     }
 
     default: {
@@ -54,7 +58,7 @@ const appLinkPress = (app, navigator) => {
 
   // Open component
   if (component) {
-    navigator.push({ component, name, url, showName: true })
+    navigator.push({ component, name, url, showName: true, ...params })
   }
 }
 
@@ -97,7 +101,8 @@ const styles = StyleSheet.create({
   appGroupList: {
     flex: 1,
     flexDirection: 'row',
-    paddingBottom: 20,
+    paddingTop: 20,
+    paddingBottom: 15,
   },
   appIcon: {
     width: 80,
@@ -120,20 +125,23 @@ const styles = StyleSheet.create({
   },
   listItem: {
     flex: 1,
-    padding: 20,
+    paddingLeft: 20,
     paddingRight: 10,
+    paddingTop: 0,
+    paddingBottom: 0,
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
   listItemTitles: {
     paddingHorizontal: 0,
-    maxWidth: 115,
+    width: 110,
     flexDirection: 'column',
   },
-  listItemText: Object.assign({}, typography.h2, {
+  listItemText: typography.h2({
     marginBottom: 3,
+    letterSpacing: 0.5,
   }),
-  listItemDescription: Object.assign({}, typography.paragraph, {
+  listItemDescription: typography.paragraph({
     marginBottom: 0, fontSize: 12, lineHeight: 15,
   })
 });
