@@ -12,19 +12,7 @@ import theme from '../../style/theme';
 
 
 class Button extends Component {
-  // propTypes: Object.assign({},
-  //   {
-  //     textStyle: Text.propTypes.style,
-  //     disabledStyle: Text.propTypes.style,
-  //     children: PropTypes.string.isRequired,
-  //     isDisabled: PropTypes.bool,
-  //     onPress: PropTypes.func,
-  //     onPressIn: PropTypes.func,
-  //     onPressOut: PropTypes.func
-  //   },
-  // ),
-
-  _renderInnerText() {
+  renderInnerText() {
     return (
       <Text style={[styles.textButton, this.props.textStyle]}>
         {this.props.children}
@@ -37,7 +25,7 @@ class Button extends Component {
       return (
         <View style={[styles.button, this.props.style,
             this.props.disabledStyle || styles.opacity]}>
-          {this._renderInnerText()}
+          {this.renderInnerText()}
         </View>
       );
     } else {
@@ -48,8 +36,9 @@ class Button extends Component {
       };
       return (
         <TouchableOpacity {...touchableProps}
+          activeOpacity={0.8}
           style={[styles.button, this.props.style]}>
-          {this._renderInnerText()}
+          {this.renderInnerText()}
         </TouchableOpacity>
       );
     }
@@ -69,7 +58,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     textAlign: 'center',
     fontSize: 14,
-    fontWeight: 'normal',
+    fontWeight: 'bold',
     color: '#fff'
   },
   opacity: {
