@@ -1,12 +1,18 @@
 import { createSelector } from 'reselect';
 import { fromJS, List, Map } from 'immutable';
-import { parseInt } from 'lodash';
+import { parseInt, isNil } from 'lodash';
 import moment from 'moment';
 
 import api from '../services/api';
 import {createRequestActionTypes} from '../actions';
 import { VOTE_FEED_ITEM_REQUEST } from '../actions/feed';
 import { SET_COMMENTS } from './comments';
+import { getUserId } from './registration';
+
+const PROFILE_TYPES = {
+  MY: 'MY',
+  OTHER: 'OTHER',
+}
 
 // # Selectors
 export const getUserProfile = state => state.user.get('profile', Map());
@@ -16,6 +22,8 @@ export const getUserTeam = state => state.user.getIn(['profile', 'team'], List()
 export const getTotalSimas = state => state.user.getIn(['profile', 'numSimas'], '') || '';
 export const getSelectedUser = state => state.user.get('selectedUser', Map()) || Map();
 export const isLoadingUserImages = state => state.user.get('isLoading', false) || false;
+
+export const getMyImages = state => state.user.getIn(['myProfile', 'images'], List()) || List();
 
 export const getTotalVotesForUser = createSelector(
   getUserImages, (posts) => {
@@ -48,17 +56,28 @@ const {
 const SET_USER_PROFILE = 'user/SET_USER_PROFILE';
 const CLOSE_USER_VIEW = 'user/CLOSE_USER_VIEW';
 
-export const fetchUserImages = (userId) => (dispatch) => {
+export const fetchUserImages = (userId, myProfile) => (dispatch) => {
   dispatch({ type: GET_USER_PROFILE_REQUEST });
   return api.getUserProfile(userId)
     .then(images => {
       dispatch({
         type: SET_USER_PROFILE,
+        subType: myProfile ? PROFILE_TYPES.MY : PROFILE_TYPES.OTHER,
         payload: images
       });
       dispatch({ type: GET_USER_PROFILE_SUCCESS });
     })
     .catch(error => dispatch({ type: GET_USER_PROFILE_FAILURE, error: true, payload: error }));
+}
+
+
+// Fetchs this/current user profile
+export const fetchUserProfile = () => (dispatch, getState) => {
+  const id = getUserId(getState());
+
+  if (!isNil(id)) {
+    dispatch(fetchUserImages(id, true));
+  }
 }
 
 // # Open user view
@@ -74,6 +93,7 @@ export const closeUserView = () => ({ type: CLOSE_USER_VIEW });
 
 // # Reducer
 const initialState = fromJS({
+  myProfile: {},
   profile: {},
   isLoading: false,
   selectedUser: null,
@@ -82,7 +102,8 @@ const initialState = fromJS({
 export default function city(state = initialState, action) {
   switch (action.type) {
     case SET_USER_PROFILE: {
-      return state.set('profile', fromJS(action.payload));
+      const target = action.subType === PROFILE_TYPES.MY ? 'myProfile' : 'profile';
+      return state.set(target, fromJS(action.payload));
     }
 
     case CLOSE_USER_VIEW: {
@@ -104,13 +125,17 @@ export default function city(state = initialState, action) {
     case VOTE_FEED_ITEM_REQUEST: {
       const list = state.getIn(['profile', 'images'], List());
       const voteItemIndex = list.findIndex((item) => item.get('id') === action.feedItemId);
+
+      // const myList = state.getIn(['myProfile', 'images'], List());
+      // const myVoteItemIndex = myList.findIndex((item) => item.get('id') === action.feedItemId);
+
       if (voteItemIndex < 0) {
         return state;
       } else {
-        return state.mergeIn(['profile', 'images', voteItemIndex], {
-          'userVote': action.value,
-          'votes': action.votes
-        });
+        return state.mergeIn(['profile', 'images', voteItemIndex], fromJS({
+          userVote: action.value,
+          votes: action.votes
+        }));
       }
     }
 
