@@ -8,8 +8,8 @@ const IOS = Platform.OS === 'ios';
 
 const h1 = {
   backgroundColor: 'transparent',
-  fontSize: 22,
-  lineHeight: IOS ? 26 : 33,
+  fontSize: 21,
+  lineHeight: IOS ? 25 : 32,
   fontWeight: 'normal',
   marginBottom: 5,
   color:theme.primary,
@@ -17,6 +17,7 @@ const h1 = {
 
 const h2 = {
   fontSize: 14,
+  lineHeight: 20,
   marginBottom: 25,
   fontWeight: 'normal',
   letterSpacing: 2,
@@ -26,11 +27,13 @@ const h2 = {
 const paragraph = {
   color: theme.midgrey,
   fontSize: 14,
-  lineHeight: 23,
+  lineHeight: 20,
 }
 
+const extendStyle = style => extension => Object.assign({}, style, extension);
+
 module.exports = {
-  h1,
-  h2,
-  paragraph,
+  h1: extendStyle(h1),
+  h2: extendStyle(h2),
+  paragraph: extendStyle(paragraph),
 };

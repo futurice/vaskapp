@@ -11,7 +11,9 @@ const theme = {
   secondary:      '#664cb5',
   secondaryLight: '#ad9ddb',
   secondaryDark:  '#281956',
+  secondaryClear: '#42308E',
   secondaryLayer: 'rgba(102, 76, 181, .3)',
+  secondarySubtle:'#f0ecf6',
 
   accent:         '#FFFB38',
   accentLight:    '#FEFF77',
@@ -25,8 +27,9 @@ const theme = {
   subtlegrey:     '#999',
   lightgrey:      '#f2f2f2',
   grey:           '#aaa',
+  noData:         '#ccc',
 
-  black:          '#222',
+  black:          '#000',
   white:          '#fff',
 
   lightgreen:     '#CDECE4',
@@ -39,6 +42,11 @@ const theme = {
   grey2:          '#aaaaaa',
   grey3:          '#ccc',
   grey4:          '#93909b',
+  grey5:          '#93909b',
+
+  gold:           '#FDF5E5',
+  goldDark:       '#DCCBBE',
+
 
   yellow:         '#fff',
   yellowDark:     '#eddead',
