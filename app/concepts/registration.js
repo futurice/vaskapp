@@ -1,4 +1,3 @@
-import DeviceInfo from 'react-native-device-info';
 import { AsyncStorage, Platform } from 'react-native';
 import _ from 'lodash';
 import { fromJS, Map } from 'immutable';
@@ -9,6 +8,7 @@ import { AUTH0_CLIENTID, AUTH0_DOMAIN } from '../../env';
 import STORAGE_KEYS from '../constants/StorageKeys';
 import namegen from '../services/namegen';
 import { createRequestActionTypes } from '../actions';
+import { getUserToken } from '../services/token';
 
 import { changeTab } from '../actions/navigation';
 import { getTeams } from '../reducers/team';
@@ -40,6 +40,8 @@ const {
 
 const OPEN_REGISTRATION_VIEW = 'OPEN_REGISTRATION_VIEW';
 const CLOSE_REGISTRATION_VIEW = 'CLOSE_REGISTRATION_VIEW';
+const OPEN_LOGIN_TEAM_SELECTOR = 'OPEN_LOGIN_TEAM_SELECTOR';
+const CLOSE_LOGIN_TEAM_SELECTOR = 'CLOSE_LOGIN_TEAM_SELECTOR';
 const UPDATE_NAME = 'UPDATE_NAME';
 const UPDATE_USER_INFO = 'UPDATE_USER_INFO';
 const UPDATE_PROFILE = 'UPDATE_PROFILE';
@@ -50,11 +52,11 @@ const DISMISS_INTRODUCTION = 'DISMISS_INTRODUCTION';
 
 
 // # Selectors
-export const getUserId = state => state.registration.getIn(['profile','userId']);
+export const getUserId = state => state.registration.getIn(['profile','id']);
 export const getUserName = state => state.registration.getIn(['profile','name']);
 export const getUserInfo = state => state.registration.getIn(['profile','info']);
 export const getUserImage = state => state.registration.getIn(['profile','profilePicture']);
-export const getUserTeamId = state => state.registration.getIn(['profile','team'], 0);
+export const getUserTeamId = state => state.registration.getIn(['profile','team'], 1);
 export const getToken = state => state.registration.get('userToken', fromJS({})) || fromJS({});
 export const getUserTeam = createSelector(getUserTeamId, getTeams,
   (teamId, teams) => teams.find(item => item.get('id') === teamId)) || fromJS({});
@@ -72,7 +74,8 @@ export const getUser = createSelector(
 );
 
 export const isUserLoggedIn = createSelector(getToken, token => !!token && !token.isEmpty())
-
+export const isLoadingProfilePicture = state => state.registration.get('isLoadingProfilePicture');
+export const isLoginTeamSelectorOpen = state => state.registration.get('isLoginTeamSelectorOpen');
 
 // # Action creators
 export const openRegistrationView = () => ({ type: OPEN_REGISTRATION_VIEW });
@@ -82,15 +85,20 @@ export const dismissIntroduction = () => ({ type: DISMISS_INTRODUCTION });
 export const putUser = () => {
   return (dispatch, getState) => {
     dispatch({ type: CREATE_USER_REQUEST });
-    const uuid = DeviceInfo.getUniqueID();
     const state = getState();
 
+    // const team = getUserTeamId(state);
     const name = getUserName(state);
-    const info = getUserInfo(state);;
-    const team = getUserTeamId(state);
+    const info = getUserInfo(state);
+    const team = getUserTeamId(state) || 1;
     const profilePicture = getUserImage(state);
 
-    return api.putUser({ uuid, info, name, team, profilePicture })
+    const params = Object.assign({ name, team, profilePicture },
+      info ? { info } : {}
+    );
+
+    return getUserToken().then(uuid =>
+      api.putUser({ uuid, ...params })
       .then(response => {
         dispatch({ type: CREATE_USER_SUCCESS });
         dispatch({ type: CLOSE_REGISTRATION_VIEW });
@@ -99,12 +107,15 @@ export const putUser = () => {
           dispatch(changeTab(Tabs.SETTINGS));
         }
       })
-      .catch(error => dispatch({ type: CREATE_USER_FAILURE, error: error }));
+      .catch(error => {
+        dispatch({ type: CREATE_USER_FAILURE, error: error })
+        return Promise.reject(error);
+      })
+    );
   };
 };
 
 export const selectTeam = teamId => (dispatch) => {
-  dispatch({ type: CLOSE_TEAM_SELECTOR });
   dispatch({ type: SELECT_TEAM, payload: teamId });
 };
 
@@ -134,43 +145,50 @@ export const generateName = () => {
 export const fetchUser = () => {
   return dispatch => {
     dispatch({ type: GET_USER_REQUEST });
-    const uuid = DeviceInfo.getUniqueID();
-    return api.getUser(uuid)
+
+    return getUserToken().then((uuid) =>
+      api.getUser(uuid)
       .then(user => {
         dispatch({ type: GET_USER_SUCCESS, payload: user });
+        return user;
       })
       .catch(error => {
         dispatch({ type: GET_USER_FAILURE, error: error });
-      });
+      })
+    );
   };
 };
-
 
 export const postProfilePicture = imageData => {
   return (dispatch, getState) => {
     dispatch({ type: POST_PROFILE_PICTURE_REQUEST });
-    const uuid = DeviceInfo.getUniqueID();
 
     // These are being sent just because API is WIP
-    const name = getState().registration.get('name');
-    const team = getState().registration.get('selectedTeam');
+    const name = getUserName(getState());
+    const team = getUserTeamId(getState());
 
-    return api.putUser({ uuid, name, team, imageData })
+    return getUserToken().then((uuid) =>
+      api.putUser({ uuid, name, team, imageData })
       .then(response => {
-        Promise.resolve(dispatch(getUser()))
+        Promise.resolve(dispatch(fetchUser()))
         .then(() => {
           dispatch({ type: POST_PROFILE_PICTURE_SUCCESS });
         });
       })
-      .catch(error => dispatch({ type: POST_PROFILE_PICTURE_FAILURE, error: error }));
+      .catch(error => dispatch({ type: POST_PROFILE_PICTURE_FAILURE, error: error }))
+    );
   };
 }
 
+
+export const openLoginTeamSelector = () => ({ type: OPEN_LOGIN_TEAM_SELECTOR });
+export const closeLoginTeamSelector = () => ({ type: CLOSE_LOGIN_TEAM_SELECTOR });
 
 const initialState = fromJS({
   profile: {
     id: null,
     name: null,
+    email: null,
     info: null,
     profilePicture: null,
     team: null,
@@ -185,10 +203,12 @@ const initialState = fromJS({
 
   // Valid flags
   isRegistrationViewOpen: false,
+  isLoginTeamSelectorOpen: false,
   isLoading: false,
   isError: false,
   isIntroductionDismissed: false,
   userToken: {},
+  isLoadingProfilePicture: false,
 });
 
 export default function registration(state = initialState, action) {
@@ -201,6 +221,12 @@ export default function registration(state = initialState, action) {
         isIntroductionDismissed: false,
         isRegistrationViewOpen: false
       });
+
+    case OPEN_LOGIN_TEAM_SELECTOR:
+      return state.set('isLoginTeamSelectorOpen', true);
+
+    case CLOSE_LOGIN_TEAM_SELECTOR:
+      return state.set('isLoginTeamSelectorOpen', false);
 
     case DISMISS_INTRODUCTION:
       return state.set('isIntroductionDismissed', true);
@@ -259,6 +285,13 @@ export default function registration(state = initialState, action) {
 
     case SET_TOKEN:
       return state.set('userToken', fromJS(action.payload));
+
+    case POST_PROFILE_PICTURE_REQUEST:
+      return state.set('isLoadingProfilePicture', true);
+
+    case POST_PROFILE_PICTURE_SUCCESS:
+    case POST_PROFILE_PICTURE_FAILURE:
+      return state.set('isLoadingProfilePicture', false);
 
     default:
       return state;
