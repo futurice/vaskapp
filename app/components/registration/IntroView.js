@@ -13,12 +13,15 @@ import {
   Platform
 } from 'react-native';
 
-
+import LinearGradient from 'react-native-linear-gradient';
 import Text from '../common/MyText';
+import AnimateMe from '../AnimateMe';
 import theme from '../../style/theme';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import MdIcon from 'react-native-vector-icons/MaterialIcons';
+import PlatformTouchable from '../../components/common/PlatformTouchable';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
@@ -31,59 +34,97 @@ class InstructionView extends Component {
      };
    }
 
-   handlePress(id) {
-     this.props.onSelect(id);
-
-     this.state.springAnim.setValue(0);
-      Animated.timing(
-        this.state.springAnim,
-        {
-          toValue: 1,
-          duration: 800,
-          easing: Easing.elastic(1)}
-      ).start();
-   }
-
   render() {
-    const containerStyles = [styles.container, styles.modalBackgroundStyle];
-    const { springAnim } = this.state;
+    const { loginFailed, onPressMainAction } = this.props;
+    const containerStyles = [styles.container, isIphoneX() && { paddingTop: 30, }];
 
+    // TODO image animation
+    const { springAnim } = this.state;
     const active = springAnim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [1, 1.2, 1] });
     const unactive = springAnim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [1, 1, 1] });
 
     return (
+      <LinearGradient
+        style={{ flex: 1 }}
+        locations={[0, 1]}
+        start={{x: 0.35, y: 0}}
+        end={{x: 1, y: 1}}
+        colors={[theme.gold, theme.goldDark]}
+      >
        <View style={containerStyles}>
 
-          <View style={styles.topArea} level={20}>
+          <View style={styles.topArea}>
             <View style={styles.iconWrap}>
 
-              <Image
-                style={{ left: 20, top: -15,  width: 60, height: 60, position: 'absolute' }}
-                resizeMode="contain"
-                source={require('../../../assets/chilicorn.png')} />
+              <AnimateMe style={{ flex: 0 }} animationType="fade-from-bottom" duration={300} delay={1500}>
+                <AnimateMe style={{ flex: 0 }} animationType="shake3" duration={4000} delay={1500} infinite>
+                  <View style={{ left: 35, top: -23, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '5deg' }] }}>
+                    <Text style={{fontSize: 40, backgroundColor: 'transparent'}}>🦄</Text>
+                  </View>
+                </AnimateMe>
+              </AnimateMe>
 
-              <Image
-                style={{ right: 5, top: -5, width: 180, height: 180, position: 'absolute' }}
-                resizeMode="contain"
-                source={require('../../../assets/illustrations/planet.png')} />
+              <AnimateMe style={{ flex: 0 }} animationType="fade-from-right" duration={400} delay={2000}>
+                <AnimateMe style={{ flex: 0 }} animationType="shake3" duration={3000} delay={1500} infinite>
+                  <View style={{ top: 45, left: -5, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '5deg' }] }}>
+                    <Text style={{fontSize: 45, backgroundColor: 'transparent'}}>🚴</Text>
+                  </View>
+                </AnimateMe>
+              </AnimateMe>
 
-              <Image
-                style={{ right: 30, bottom: 55, overflow: 'visible', width: 40, height: 40, position: 'absolute',}}
-                resizeMode="contain"
-                source={require('../../../assets/illustrations/chat-dark.png')} />
+              <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-from-bottom" duration={400} delay={1200}>
+                <Image
+                  style={{ right: 10, top: -5, width: 180, height: 180, position: 'absolute' }}
+                  resizeMode="contain"
+                  source={require('../../../assets/illustrations/planet-purple.png')} />
+              </AnimateMe>
 
-              <View style={{ right: 20,  top: 5,  backgroundColor: theme.primary, justifyContent: 'center', alignItems: 'center', width: 36, height: 36, borderRadius: 21, position: 'absolute', transform: [{ rotate: '-5deg' }] }}>
-                <MdIcon
-                  style={{ fontSize: 20, color: theme.white, backgroundColor: 'transparent' }}
-                  name="hot-tub" />
+              <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-in" duration={400} delay={2200}>
+                <AnimateMe style={{ flex: 0 }} animationType="shake2" duration={2000} delay={1500} infinite>
+                  <View style={{ right: 20,  top: 5, justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '-5deg' }] }}>
+                    <Text style={{fontSize: 40, backgroundColor: 'transparent'}}>🕹️</Text>
+                  </View>
+                </AnimateMe>
+              </AnimateMe>
+
+              <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-from-bottom" duration={400} delay={2900}>
+                <AnimateMe style={{ flex: 0 }} animationType="shake2" duration={2000} delay={1500} infinite>
+                  <View style={{ right: 36,  top: 65, justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '-5deg' }] }}>
+                    <Text style={{fontSize: 15, backgroundColor: 'transparent', color: theme.gold, fontWeight: 'bold'}} bold>#thank️</Text>
+                  </View>
+                </AnimateMe>
+              </AnimateMe>
+
+              <AnimateMe style={{ flex: 0 }} animationType="fade-in" duration={400} delay={2500}>
+                <AnimateMe style={{ flex: 1 }} animationType="shake2" duration={2000} delay={1500} infinite>
+                  <View style={{ right: 35, top: 76, justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '-5deg' }] }}>
+                    <Text style={{fontSize: 45, backgroundColor: 'transparent'}}>🙏</Text>
+                  </View>
+                </AnimateMe>
+              </AnimateMe>
+
+              <AnimateMe style={{ flex: 1 }} animationType="fade-in" duration={400} delay={2600}>
+                <AnimateMe style={{ flex: 1 }} animationType="shake" duration={1500} delay={500} infinite>
+                  <View style={{ bottom: 10, left: 15, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '5deg' }] }}>
+                    <Text style={{fontSize: 70, backgroundColor: 'transparent'}}>🍕</Text>
+                  </View>
+                </AnimateMe>
+              </AnimateMe>
+
+
+
+              <AnimateMe style={{ flex: 0 }} animationType="fade-in" duration={400} delay={1600}>
+                <View style={{ bottom: 190, right: 50, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '10deg' }] }}>
+                  <Text stylestyle={{ fontSize: 25, backgroundColor: 'transparent'}}>✨✨</Text>
+                </View>
+              </AnimateMe>
+
+            <AnimateMe style={{ flex: 0 }} animationType="fade-in" duration={400} delay={1800}>
+              <View style={{ bottom: 40, right: 70, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '-20deg' }]}}>
+                <Text style={{fontSize: 12, backgroundColor: 'transparent'}}>✨✨</Text>
               </View>
+            </AnimateMe>
 
-
-              <View style={{ bottom: 60, left: 25, backgroundColor: theme.primary, justifyContent: 'center', alignItems: 'center', width: 36, height: 36, borderRadius: 21, position: 'absolute', transform: [{ rotate: '5deg' }] }}>
-                <Icon
-                  style={{ fontSize: 20, top: 2, color: theme.white, backgroundColor: 'transparent' }}
-                  name="md-trophy"  />
-              </View>
 
             </View>
           </View>
@@ -94,21 +135,53 @@ class InstructionView extends Component {
 
                   <View style={styles.content}>
                     <View style={styles.textContainer}>
-
+                    {/*
                       <Image
                         resizeMode="contain"
-                        style={{ width: 120, height: 70, tintColor: theme.primary }}
-                        source={require('../../../assets/logo/vask.png')}
+                        style={{ width: 120, height: 70, tintColor: theme.secondaryDark }}
+                        source={require('../../../assets/logo/new.png')}
                       />
-                      <Text style={styles.subTitle}>Praise the Culture</Text>
-                      {/*<Text style={styles.text}>of your team</Text>*/}
+                    */}
+                      <Text style={styles.subTitle} bold>Praise the Culture</Text>
+                      <Text style={styles.text}>Login with your company Google account.</Text>
                     </View>
+
+                   {loginFailed &&
+                      <AnimateMe animationType="fade-from-bottom" duration={150}>
+                        <Text style={styles.loginError}>Unfortunately there was a problem with login.</Text>
+                      </AnimateMe>
+                    }
+
+
+                    {!IOS
+                    ?
+                    <View style={styles.loginButton}>
+                      <View style={{ flex: 1 }}>
+                        <PlatformTouchable
+                          onPress={onPressMainAction}
+                          background={PlatformTouchable.SelectableBackgroundBorderless()}
+                        >
+                            <Text style={styles.loginButtonText}>LOG IN</Text>
+                        </PlatformTouchable>
+                      </View>
+                    </View>
+                    :
+                      <PlatformTouchable
+                        onPress={onPressMainAction}
+                        activeOpacity={0.8}
+                      >
+                        <View style={styles.loginButton}>
+                          <Text style={styles.loginButtonText}>LOG IN</Text>
+                        </View>
+                      </PlatformTouchable>
+                  }
+
                   </View>
                 </View>
-
               </View>
             </ScrollView>
         </View>
+      </LinearGradient>
     );
   }
 }
@@ -116,29 +189,36 @@ class InstructionView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.yellow,
+    backgroundColor: theme.transparent,
     alignSelf: 'stretch'
   },
   area: {
     alignItems: 'stretch'
   },
   topArea: {
-    backgroundColor: theme.yellow,
+    backgroundColor: theme.transparent,
     minHeight: height / 2.3,
     alignItems: 'center',
     justifyContent: 'flex-start',
+    marginBottom: 30,
   },
   bottomArea: {
     flex: 1,
   },
   iconWrap: {
+    /*
+    width,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    flex: 1,
+    */
     position: 'absolute',
     width: 200,
     height: 200,
-    borderRadius: 100,
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    left: width / 2 - 90,
-    top: IOS ? width / 6 : width / 8,
+    borderRadius: 0,
+    backgroundColor: 'rgba(255,255,255,0)',
+    left: width / 2 - 100,
+    top: IOS ? 100 : 50,
     overflow: 'visible'
   },
   icon: {
@@ -202,25 +282,20 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   subTitle: {
-    color: theme.primary,
-    fontSize: 20,
+    color: theme.secondaryClear,
+    fontSize: 22,
     margin: 15,
-    marginTop: 35,
-    marginBottom: 10,
-    // fontFamily: IOS ? 'Futurice' : 'Futurice_bold',
+    marginTop: 30,
+    marginBottom: 15,
+    fontWeight: IOS ? 'bold' : 'normal',
   },
   text: {
-    fontSize: 20,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 20,
     marginTop: 0  ,
-    color: theme.blue1,
+    color: theme.secondaryClear,
+    opacity: 0.8,
     textAlign: 'center',
-  },
-  cities: {
-    marginTop: 0,
-    justifyContent: 'center',
-    flexDirection: 'row',
-    flex: 1
   },
   button: {
     height: 120,
@@ -230,71 +305,37 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 50,
   },
-  touchable: {
-    height: 100,
-    width: 100,
-    borderRadius: 50,
+  loginError: {
+    color: theme.red,
+    marginTop: -8,
+    marginBottom: -9,
+    top: 10,
   },
-  circle: {
-    flex: 1,
-    backgroundColor: theme.secondary,
-    padding: 12,
-    paddingTop: 16,
-    borderWidth: 2,
-    borderColor: theme.white,
+  loginButton: {
+    marginTop: 40,
+    marginBottom: 10,
+    padding: 5,
+    paddingTop: IOS ? 14 : 12,
+    paddingBottom: 12,
+    justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 25,
+    elevation: 6,
+    backgroundColor: theme.secondaryClear,
+    width: 250,
+    shadowColor: '#000000',
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: {
+      height: 10,
+      width: 0
+    }
   },
-  cityIcon: {
-    width: 40,
-    height: 40,
-    zIndex: 4,
-  },
-  cityText: {
-    fontSize: 12,
+  loginButtonText: {
+    fontSize: 16,
+    fontWeight: IOS ? 'bold' : 'normal',
     color: theme.white,
-    fontWeight: '500',
-    marginBottom: 10,
-    backgroundColor: 'transparent',
-    zIndex: 3,
-  },
-  activeCityText: {
-    color: theme.accentLight
-  },
-  cityTitle: {
-    fontSize: 15,
-    color: 'white',
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  checked: {
-    zIndex: 2,
-    position: 'absolute',
-    bottom: 5,
-    right: 35,
-    fontSize: 25,
-    color: theme.accentLight,
-    opacity: 1,
-    backgroundColor: 'rgba(0,0,0,0)',
-  },
-  bottomButtons:{
-    flex:1,
-    flexDirection:'column',
-    margin:0,
-    marginBottom:0,
-    marginLeft:0,
-    marginRight:0,
-    height: 50,
-    alignItems:'stretch',
-    position:'absolute',
-    bottom:0,
-    left:0,
-    right:0,
-  },
-  modalButton: {
-    borderRadius:0,
-    flex:1,
-    marginLeft:0,
+    fontFamily: IOS ? 'Futurice' : 'Futurice_bold'
   }
 });
 

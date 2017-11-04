@@ -23,6 +23,7 @@ import Button from '../../components/common/Button';
 import InstructionView from './InstructionView';
 import SkipView from './SkipView';
 import IntroView from './IntroView';
+import LoginLoader from './LoginLoader';
 import ModalBox from 'react-native-modalbox';
 import {
   putUser,
@@ -32,7 +33,7 @@ import {
   isUserLoggedIn,
 } from '../../concepts/registration';
 import { getCityIdByTeam, getCityId } from '../../concepts/city';
-import { openLoginView } from '../../concepts/auth';
+import { openLoginView, isLoginFailed, isLoadingAppAuth } from '../../concepts/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const IOS = Platform.OS === 'ios';
@@ -60,17 +61,6 @@ class AppIntroView extends Component {
   }
 
   @autobind
-  onRegister() {
-    this.props.putUser();
-  }
-
-  @autobind
-  onSelectCity(id) {
-    this.setState({ selectedCity: id });
-  }
-
-
-  @autobind
   onClose() {
     this.props.reset();
     this.props.dismissIntroduction();
@@ -84,62 +74,68 @@ class AppIntroView extends Component {
     });
   }
 
-
-  @autobind
-  scrollToNameSelection() {
-    const regScroll = this.containerScrollViewRef;
-    if (regScroll && !IOS) {
-      setTimeout(() => {
-        regScroll.scrollTo({x: 0, y: 2000, animated: true});
-      }, 750);
-    }
-  }
-
-  render() {
-
+  renderAppIntro() {
     return (
-      <ModalBox
-        isOpen={!this.props.isUserLogged}
-        swipeToClose={false}
-        backdropPressToClose={false}
-        animationDuration={0}
-      >
-        <AppIntro
-          skipBtnLabel={<Text style={{ fontWeight: '500', fontSize: 18 }}>SKIP</Text>}
-          doneBtnLabel={<Text style={{ fontWeight: '500', fontSize: 18, lineHeight: IOS ? 22 : 32 }}>SKIP</Text>}
-          onSkipBtnClick={this.onClose}
-          onDoneBtnClick={this.onClose}
-          showSkipButton={false}
-          // showDoneButton={SOME_CONDITION}
-          showDoneButton={false}
-          onSlideChange={(index) => this.changeSlide(index)}
-          defaultIndex={this.state.index}
-          leftTextColor={theme.blue2}
-          rightTextColor={theme.blue2}
-          activeDotColor={theme.blue2}
-          nextBtnLabel={<Icon name="chevron-right" style={{ lineHeight: IOS ? 40 : 40 }} size={32} />}
-          style={{backgroundColor: theme.yellow }}
-          dotColor={'rgba(0, 0, 0, .3)'}>
-          {/* Slide 1 */}
-          <IntroView style={styles.slide} selectedCity={this.state.selectedCity} onSelect={this.onSelectCity} cities={this.props.cities} />
-
-          {/* Slide 2 */}
-          <View style={[styles.slide, styles.slideIntro]} >
-            <View style={styles.topArea} level={10} >
-              <View style={styles.iconWrap}>
-                <Image style={styles.subImage} source={require('../../../assets/chilicorn.png')} />
-              </View>
+      <View
+        skipBtnLabel={<Text>SKIP</Text>}
+        doneBtnLabel={<Text>SKIP</Text>}
+        onSkipBtnClick={this.onClose}
+        onDoneBtnClick={this.onClose}
+        showSkipButton={false}
+        // showDoneButton={SOME_CONDITION}
+        showDoneButton={false}
+        onSlideChange={(index) => this.changeSlide(index)}
+        defaultIndex={this.state.index}
+        leftTextColor={theme.primary}
+        rightTextColor={theme.primary}
+        activeDotColor={theme.primary}
+        nextBtnLabel={<Icon name="chevron-right" style={{ lineHeight: 40 }} size={32} />}
+        style={{ backgroundColor: theme.white, flex: 1 }}
+        dotColor={'rgba(0, 0, 0, .3)'}>
+        {/* Slide 1 */}
+        <IntroView style={styles.slide}
+          onPressMainAction={() => {
+            this.onClose();
+            this.props.openLoginView();
+          }}
+          loginFailed={this.props.loginFailed}
+        />
+        {/* Slide 2
+        <View style={[styles.slide, styles.slideIntro]} >
+          <View style={styles.topArea} level={10} >
+            <View style={styles.iconWrap}>
+              <Image style={styles.subImage} source={require('../../../assets/chilicorn.png')} />
             </View>
-            <View level={-10} >
-              <SkipView onPressProfileLink={() => {
+          </View>
+          <View level={-10} >
+            <SkipView
+              onPressMainAction={() => {
                 this.onClose();
                 this.props.openLoginView();
               }}
-              />
-            </View>
+              loginFailed={this.props.loginFailed}
+            />
           </View>
+        </View>
+         */}
+      </View>
+    );
+  }
 
-        </AppIntro>
+  render() {
+    const { isUserLogged, isLoginLoading } = this.props;
+    const showUserLoginView = !isUserLogged || isLoginLoading;
+
+    return (
+      <ModalBox
+        style={{ flex: 1 }}
+        isOpen={true}
+        // visible={showUserLoginView}
+        swipeToClose={false}
+        backdropPressToClose={false}
+        animationDuration={300}
+      >
+        {isLoginLoading ? <LoginLoader /> : this.renderAppIntro()}
       </ModalBox>
     );
   }
@@ -157,7 +153,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
     alignItems: 'center',
-    backgroundColor: theme.yellow,
+    backgroundColor: theme.white,
     padding: 0,
   },
   text: {
@@ -168,7 +164,7 @@ const styles = StyleSheet.create({
   // Slide top
 
   slideIntro: {
-    backgroundColor: theme.yellow,
+    backgroundColor: theme.white,
     paddingTop: height / 2.3,
   },
   topArea: {
@@ -178,7 +174,7 @@ const styles = StyleSheet.create({
     right: 0,
     flex: 1,
     flexGrow: 1,
-    backgroundColor: theme.yellow,
+    backgroundColor: theme.white,
     minHeight: height / 2.3,
     // alignItems: 'center',
     // justifyContent: 'flex-start',
@@ -214,7 +210,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     // tintColor: theme.white,
-    color: theme.blue2,
+    color: theme.primary,
   },
   subIcon: {
     backgroundColor: theme.transparent,
@@ -267,6 +263,8 @@ const select = store => {
     isRegistrationInfoValid: !!store.registration.get('name') &&
       !!store.registration.get('selectedTeam'),
     isUserLogged: isUserLoggedIn(store),
+    loginFailed: isLoginFailed(store),
+    isLoginLoading: isLoadingAppAuth(store),
   };
 };
 

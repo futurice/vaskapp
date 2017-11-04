@@ -11,20 +11,21 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Text from '../common/MyText';
 import theme from '../../style/theme';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 
 const styles = StyleSheet.create({
   toolbar: {
     backgroundColor: theme.white,
-    height: 60,
+    height: isIphoneX() ? 70 : 60,
     flexDirection: 'row',
-    paddingTop: 20,
+    paddingTop: isIphoneX() ? 30 : 20,
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   icon: {
     fontSize: 20,
-    paddingLeft: 10,
+    paddingLeft: isIphoneX() ? 20 : 10,
     paddingRight: 10,
     color: theme.primary
   },
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
     fontWeight: 'normal'
   },
   buttonPush: {
-    width: 25,
+    width: isIphoneX() ? 35 : 25,
   }
 });
 

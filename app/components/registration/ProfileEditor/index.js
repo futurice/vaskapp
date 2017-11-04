@@ -11,18 +11,26 @@ import {
   TouchableOpacity,
   ScrollView,
   BackHandler,
-  Modal
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
 import autobind from 'autobind-decorator';
+import { cloneDeep } from 'lodash';
+
+import permissions from '../../../services/android-permissions';
+import ImageCaptureOptions from '../../../constants/ImageCaptureOptions';
+import ImagePickerManager from 'react-native-image-picker';
 
 import Text from '../../common/MyText';
 import Button from '../../common/Button';
+import ScrollHeader from '../../common/ScrollHeader';
 import theme from '../../../style/theme';
 import typography from '../../../style/typography';
+import { getNameInitials } from '../../../utils/name-format';
 
-import Team from '../Team';
 import Toolbar from '../RegistrationToolbar';
+import Team from '../Team';
 import {
   putUser,
   updateName,
@@ -31,11 +39,12 @@ import {
   reset,
   closeRegistrationView,
   isUserLoggedIn,
+  isLoadingProfilePicture,
   getUser,
   getUserName,
+  postProfilePicture,
 } from '../../../concepts/registration';
 import { setCity, getCityIdByTeam, getCityId } from '../../../concepts/city';
-import { showChooseTeam } from '../../../actions/team';
 import { getTeams } from '../../../reducers/team';
 
 import * as keyboard from '../../../utils/keyboard';
@@ -61,6 +70,44 @@ class ProfileEditorView extends Component {
     this.state = { selectedCity: props.selectedCityId || 2 };
   }
 
+  @autobind
+  chooseImage() {
+    // cancel action if already loading image
+    if (this.props.isLoadingPicture) {
+      return;
+    }
+
+    if (IOS) {
+      this.openImagePicker();
+    } else {
+      permissions.requestCameraPermission(() => {
+        setTimeout(() => {
+          this.openImagePicker();
+        });
+      });
+    }
+  }
+
+  @autobind
+  openImagePicker() {
+    // Create selfie image capture options
+    const selfieCaptureOptions = Object.assign(
+      cloneDeep(ImageCaptureOptions),
+      {
+        title: 'Change Avatar',
+        cameraType: 'front',
+        takePhotoButtonTitle: 'Take a selfie',
+      },
+    );
+
+    ImagePickerManager.showImagePicker(selfieCaptureOptions, (response) => {
+      if (!response.didCancel && !response.error) {
+        const image = 'data:image/jpeg;base64,' + response.data;
+        this.props.postProfilePicture(image);
+      }
+    });
+  }
+
 
   @autobind
   onSelectTeam(id) {
@@ -71,11 +118,6 @@ class ProfileEditorView extends Component {
   @autobind
   onSelectCity(id) {
     this.setState({ selectedCity: id });
-  }
-
-  @autobind
-  onShowChooseTeam() {
-    this.props.showChooseTeam();
   }
 
   @autobind
@@ -111,16 +153,26 @@ class ProfileEditorView extends Component {
     return false;
   }
 
-  renderAvatar(item, index) {
-    const avatar = this.props.userData.get('image');
+  renderAvatar() {
+    const { userData, isLoadingPicture } = this.props;
+    const avatar = userData.get('image');
+    const name = userData.get('name');
 
     return (
       <View style={styles.avatarInput}>
         <View style={styles.profilePicWrap}>
-          {avatar ?
-            <Image style={styles.profilePic} source={{ uri: avatar }} /> :
-            <Icon style={[styles.avatarFallback]} name="camera-alt" />
-          }
+          <TouchableOpacity onPress={this.chooseImage} activeOpacity={isLoadingPicture ? 1 : 0.6}>
+            {avatar
+              ? <Image style={styles.profilePic} source={{ uri: avatar }} />
+              : <Text style={styles.profileInitials}>{getNameInitials(name)}</Text>
+            }
+            <View style={styles.avatarChangeLayer}>
+              {isLoadingPicture
+                ? <ActivityIndicator size="small" color={theme.white} />
+                : <Icon style={styles.avatarChangeIcon} name="camera-alt" />
+              }
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -129,9 +181,17 @@ class ProfileEditorView extends Component {
   renderProfileEditor() {
     return (
       <View style={styles.container}>
-        <Toolbar icon={'done'}
+
+        { IOS
+          ? <Toolbar icon={'done'}
           iconClick={this.onCloseProfileEditor}
           title='Your Profile' />
+          :  <ScrollHeader
+          icon="done"
+          elevation={0}
+          onIconClick={this.onCloseProfileEditor}
+          title={'Your Profile'} />
+        }
 
         <ScrollView
           ref={view => this.containerScrollViewRef = view}
@@ -140,8 +200,11 @@ class ProfileEditorView extends Component {
         >
           <View style={[styles.innerContainer]}>
 
-            {this.renderAvatar()}
-            {this.renderNameSelect()}
+            <View style={styles.inputGroup}>
+              {this.renderAvatar()}
+              {this.renderNameSelect()}
+            </View>
+
             {this.renderTeamSelect()}
           </View>
         </ScrollView>
@@ -151,7 +214,7 @@ class ProfileEditorView extends Component {
             onPress={this.onRegister}
             style={styles.modalButton}
             isDisabled={!this.props.isRegistrationInfoValid}>
-            Save
+            SAVE
           </Button>
         </View>
       </View>
@@ -159,20 +222,22 @@ class ProfileEditorView extends Component {
   }
 
   renderTeamSelect() {
+    const { teams, userData } = this.props;
     return (
       <View style={styles.inputGroup}>
         <View style={styles.inputLabel}>
           <Text style={styles.inputLabelText}>Tribe</Text>
         </View>
-        <View style={styles.inputFieldWrap}>
+        <View>
 
-          <ScrollView style={{flex:1, height: IOS ? 210 : null}}>
-            {this.props.teams.map(team => <Team
+          <ScrollView style={{ flex:1 }}>
+            {teams.map((team, index) => <Team
+              last={index + 1 === teams.size}
               key={team.get('id')}
               name={team.get('name')}
               teamid={team.get('id')}
               logo={team.get('imagePath')}
-              selected={this.props.userData.get('teamId')}
+              selected={userData.get('teamId')}
               onPress={this.onSelectTeam.bind(this, team.get('id'))}/>
             )}
           </ScrollView>
@@ -184,7 +249,7 @@ class ProfileEditorView extends Component {
   renderNameSelect() {
     const { userData } = this.props;
     return (
-      <View style={styles.inputGroup}>
+      <View style={styles.inputGroupx}>
         <View style={styles.inputLabel}>
           <Text style={styles.inputLabelText}>Name</Text>
         </View>
@@ -209,7 +274,7 @@ class ProfileEditorView extends Component {
         </View>
 
         <View style={styles.inputLabel}>
-          <Text style={styles.inputLabelText}>Your Introduction</Text>
+          <Text style={styles.inputLabelText}>Introduction</Text>
         </View>
         <View style={styles.inputFieldWrap}>
           <TextInput
@@ -279,7 +344,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: theme.white,
     marginBottom: 15,
-    elevation:1,
+    elevation: 2,
     flex:1,
     borderRadius: 0,
     overflow:'hidden'
@@ -297,15 +362,16 @@ const styles = StyleSheet.create({
   },
 
   inputLabel:{
-    paddingBottom: 0,
+    paddingBottom: IOS ? 0 : 5,
   },
-  inputLabelText: Object.assign({}, typography.h2, { marginBottom: 0 }),
+  inputLabelText: typography.h2({ marginBottom: 0 }),
   inputFieldWrap:{
     paddingTop: 4,
     marginBottom: 25,
   },
   staticText: {
     fontSize: 16,
+    color: theme.primary,
   },
   inputField: {
     height: 40,
@@ -333,7 +399,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 15,
-    paddingTop: 50,
+    paddingTop: 20,
+    paddingBottom: 50,
   },
   profilePicWrap:{
     backgroundColor: theme.stable,
@@ -351,6 +418,28 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
   },
+  profileInitials: {
+    fontSize: 34,
+    top: IOS ? 7 : 0,
+    color: theme.dark,
+  },
+  avatarChangeLayer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: theme.secondaryLayer,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: 0.8,
+  },
+  avatarChangeIcon: {
+    color: theme.white,
+    fontSize: 30,
+    opacity: 1,
+  }
 });
 
 
@@ -362,7 +451,7 @@ const mapDispatchToProps = {
   setCity,
   selectTeam,
   closeRegistrationView,
-  showChooseTeam
+  postProfilePicture,
 };
 
 const select = store => ({
@@ -374,7 +463,8 @@ const select = store => ({
   teams: getTeams(store),
   cities: store.city.get('list'),
   isRegistrationInfoValid: !!getUserName(store),
-  isUserLogged: isUserLoggedIn(store)
+  isUserLogged: isUserLoggedIn(store),
+  isLoadingPicture: isLoadingProfilePicture(store)
 })
 
 export default connect(select, mapDispatchToProps)(ProfileEditorView);
