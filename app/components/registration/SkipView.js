@@ -10,6 +10,7 @@ import {
   Dimensions
 } from 'react-native';
 
+import AnimateMe from '../AnimateMe';
 import Text from '../common/MyText';
 import theme from '../../style/theme';
 import PlatformTouchable from '../../components/common/PlatformTouchable';
@@ -21,7 +22,7 @@ const IOS = Platform.OS === 'ios';
 class SkipView extends Component {
 
   render() {
-
+    const { loginFailed, onPressMainAction } = this.props;
     return (
        <View style={styles.container}>
           <ScrollView style={{flex:1, width: null, height: null}}>
@@ -30,20 +31,25 @@ class SkipView extends Component {
                   <Image
                     resizeMode="contain"
                     style={{ width: 120, height: 70, tintColor: theme.primary }}
-                    source={require('../../../assets/logo/vask.png')}
+                    source={require('../../../assets/logo/new.png')}
                   />
-                  <Text style={styles.text}>Login with your
-                    <Text style={{fontWeight: 'normal' }}> @futurice </Text>email address.
+                  <Text style={styles.text}>Login with your company email address
                   </Text>
                 </View>
-                <PlatformTouchable onPress={this.props.onPressProfileLink}>
+
+                {loginFailed &&
+                  <AnimateMe animationType="fade-from-bottom" duration={150}>
+                    <Text style={styles.loginError}>Unfortunately there was a problem with login.</Text>
+                  </AnimateMe>
+                }
+
+                <PlatformTouchable onPress={onPressMainAction} activeOpacity={0.8}>
                   <View style={styles.loginButton}>
-                    <Text style={styles.loginButtonText}>LOGIN</Text>
+                    <Text style={styles.loginButtonText}>LOG IN</Text>
                   </View>
                 </PlatformTouchable>
               </View>
             </ScrollView>
-
         </View>
     );
   }
@@ -135,19 +141,22 @@ const styles = StyleSheet.create({
     color: theme.primary,
     textAlign: 'center',
   },
+  loginError: {
+    color: theme.red,
+    marginTop: -8,
+    marginBottom: -9,
+  },
   loginButton: {
     marginTop: 40,
     marginBottom: 10,
     padding: 5,
-    paddingTop: 15,
-    paddingBottom: 10,
+    paddingTop: IOS ? 14 : 12,
+    paddingBottom: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: IOS ? 25 : 2,
+    borderRadius: IOS ? 25 : 3,
     elevation: 3,
-    borderWidth: 0,
-    borderColor: theme.grey,
-    backgroundColor: theme.blue2,
+    backgroundColor: theme.primary,
     width: 250,
     shadowColor: '#000000',
     shadowOpacity: 0.25,
@@ -157,8 +166,9 @@ const styles = StyleSheet.create({
       width: 0
     }
   },
-  loginButtonText: { fontSize: 16,
-    fontWeight: 'normal',
+  loginButtonText: {
+    fontSize: 16,
+    fontWeight: IOS ? 'bold' : 'normal',
     color: theme.white,
     fontFamily: IOS ? 'Futurice' : 'Futurice_bold'
   }
