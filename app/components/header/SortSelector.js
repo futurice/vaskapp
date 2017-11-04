@@ -90,16 +90,19 @@ class SortSelector extends Component {
 
 var styles = StyleSheet.create({
   sortSelector: {
+    top: 1,
     paddingTop: 14,
     paddingRight: 25,
+    paddingLeft: 25,
   },
   filterText: {
-    color: theme.blue2,
-    fontSize: 15
+    color: theme.grey4,
+    fontSize: 14,
+    top: 1,
   },
   indicators: {
     position: 'absolute',
-    right: 10,
+    left: 10,
     top: 12,
     width: 8,
     alignItems: 'center',
@@ -111,8 +114,8 @@ var styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    opacity: 0.3,
-    backgroundColor: theme.blue1,
+    opacity: 0.4,
+    backgroundColor: theme.grey4,
   },
   activeIndicator: {
     opacity: 1,
