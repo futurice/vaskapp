@@ -11,8 +11,6 @@ import CalendarView from './CalendarView';
 import CompetitionView from './CompetitionNavigator';
 import FeedView from './FeedView';
 import ProfileView from './ProfileView';
-import MoodView from './MoodView';
-
 
 import Tabs from '../constants/Tabs';
 import { isUserLoggedIn } from '../concepts/registration';
@@ -58,9 +56,9 @@ class Navigation extends Component {
         prerenderingSiblingsNumber={0}
         renderTabBar={() => <IconTabBar />}
       >
-        <FeedView navigator={navigator} id={Tabs.FEED} tabLabel={{ title: 'Buzz', icon:'bubble-chart' }} />
+        <FeedView navigator={navigator} id={Tabs.FEED} tabLabel={{ title: 'Feed', icon:'looks' }} />
         {false && !!events.size && <CalendarView id={Tabs.CALENDAR} navigator={navigator} tabLabel={{ title: 'Event', icon: 'event' }} />}
-        <EventMapView navigator={navigator} id={Tabs.MAP} tabLabel={{ title: 'Geo', icon: 'public' }} />
+        <EventMapView navigator={navigator} id={Tabs.MAP} tabLabel={{ title: 'Map', icon: 'public' }} />
         <ProfileView navigator={navigator} id={Tabs.SETTINGS} tabLabel={{ title: 'Personal', icon:'account-circle' }} />
       </ScrollableTabs>
     )

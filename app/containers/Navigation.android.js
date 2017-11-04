@@ -96,7 +96,7 @@ class AndroidTabNavigation extends Component {
           initialPage={initialTabIndex}
           tabBarPosition={'bottom'}
           tabBarBackgroundColor={theme.white}
-          tabBarActiveTextColor={theme.darker}
+          tabBarActiveTextColor={theme.secondary}
           tabBarInactiveTextColor={theme.grey4}
           locked={true}
           scrollWithoutAnimation={true}
@@ -107,7 +107,7 @@ class AndroidTabNavigation extends Component {
             onScrollUp={() => this.toggleHeader(true)}
             onScrollDown={() => this.toggleHeader(false)}
             navigator={navigator}
-            tabLabel={{ title: 'Feed', icon: 'bubble-chart' }}
+            tabLabel={{ title: 'Feed', icon: 'looks' }}
             id={Tabs.FEED}
           />
           {false && <CalendarView id={Tabs.CALENDAR} navigator={navigator} tabLabel={{ title: 'Event', icon: 'event' }} />}

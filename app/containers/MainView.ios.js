@@ -3,15 +3,19 @@ import { View, StyleSheet } from 'react-native';
 import { Navigator } from 'react-native-deprecated-custom-components';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 import sceneConfig from '../utils/sceneConfig';
 import NavRouteMapper from '../components/common/navbarRouteMapper';
 import errorAlert from '../utils/error-alert';
 
+import { isUserLoggedIn } from '../concepts/registration';
+import { isLoadingAppAuth } from '../concepts/auth';
 
 import IOSTabNavigation from './Navigation';
 import AppIntroView from '../components/registration/AppIntroView';
 import ProfileEditor from '../components/registration/ProfileEditor';
+import TeamSelector from '../components/registration/TeamSelector';
 import CheckInActionView from '../components/actions/CheckInActionView';
 import TextActionView from '../components/actions/TextActionView';
 import LightBox from '../components/lightbox/Lightbox';
@@ -27,11 +31,17 @@ class MainView extends Component {
   }
 
   render() {
-    const { showCitySelection, errors, dispatch } = this.props;
+    const { showCitySelection, errors, dispatch, isUserLogged, isLoginLoading } = this.props;
+    const showUserLoginView = !isUserLogged || isLoginLoading;
+
     const immutableError = errors.get('error');
     if (immutableError) {
       const error = immutableError.toJS();
       errorAlert(dispatch, get(error, 'header'), get(error, 'message'));
+    }
+
+    if (showUserLoginView) {
+      return <AppIntroView />;
     }
 
     return (
@@ -52,10 +62,10 @@ class MainView extends Component {
         />
 
         { /* Modals */}
-        <AppIntroView />
         <LightBox />
         <ProfileEditor />
         <TextActionView />
+        <TeamSelector />
       </View>
     );
   }
@@ -63,12 +73,13 @@ class MainView extends Component {
 
 const styles = StyleSheet.create({
   navigator: {
-    paddingTop: 42,
+    paddingTop: isIphoneX() ? 52 : 42,
     paddingBottom:0,
   },
   navbar: {
-    backgroundColor: theme.white,
+    backgroundColor: theme.gold,
     height: 62,
+    top: isIphoneX() ? 10 : 0,
     paddingBottom: 5,
     flexDirection: 'row',
     alignItems: 'center',
@@ -85,7 +96,9 @@ const styles = StyleSheet.create({
 const select = state => {
   return {
     errors: state.errors,
-    currentTab: state.navigation.get('currentTab')
+    currentTab: state.navigation.get('currentTab'),
+    isUserLogged: isUserLoggedIn(state),
+    isLoginLoading: isLoadingAppAuth(state),
   }
 };
 

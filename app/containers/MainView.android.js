@@ -11,8 +11,13 @@ import { Navigator } from 'react-native-deprecated-custom-components';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
+import { isUserLoggedIn } from '../concepts/registration';
+import { isLoadingAppAuth } from '../concepts/auth';
+
 import AndroidTabNavigation from './Navigation';
 import AppIntroView from '../components/registration/AppIntroView';
+import TeamSelector from '../components/registration/TeamSelector';
+import ProfileEditor from '../components/registration/ProfileEditor';
 import TextActionView from '../components/actions/TextActionView';
 import LightBox from '../components/lightbox/Lightbox';
 import errorAlert from '../utils/error-alert';
@@ -38,10 +43,17 @@ class MainView extends Component {
   }
 
   render() {
-    const immutableError = this.props.errors.get('error');
+    const { showCitySelection, errors, dispatch, isUserLogged, isLoginLoading } = this.props;
+    const showUserLoginView = !isUserLogged || isLoginLoading;
+
+    const immutableError = errors.get('error');
     if (immutableError) {
       const error = immutableError.toJS();
-      errorAlert(this.props.dispatch, _.get(error, 'header'), _.get(error, 'message'));
+      errorAlert(dispatch, _.get(error, 'header'), _.get(error, 'message'));
+    }
+
+    if (showUserLoginView) {
+      return <AppIntroView />;
     }
 
     return (
@@ -58,17 +70,21 @@ class MainView extends Component {
             ...Navigator.SceneConfigs.FloatFromBottomAndroid
           })}
         />
-        <AppIntroView />
         <LightBox />
+        <ProfileEditor />
         <TextActionView />
+        <TeamSelector />
       </View>
     )
   }
 }
 
-const select = store => {
+const select = state => {
   return {
-    errors: store.errors
+    errors: state.errors,
+    currentTab: state.navigation.get('currentTab'),
+    isUserLogged: isUserLoggedIn(state),
+    isLoginLoading: isLoadingAppAuth(state),
   }
 };
 

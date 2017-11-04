@@ -36,13 +36,14 @@ class RootView extends Component {
     // Location watcher
     store.dispatch(startLocationWatcher());
 
+    // Get login info
+    store.dispatch(checkUserLogin());
+
     // Statusbar style
     if (IOS) {
       StatusBar.setHidden(false);
       StatusBar.setBarStyle('dark-content');
     }
-
-    store.dispatch(checkUserLogin());
   }
 
   componentWillUnmount() {
