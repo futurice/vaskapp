@@ -7,6 +7,7 @@ import * as NotificationMessages from '../utils/notificationMessage';
 import { refreshFeed } from '../actions/feed';
 import { sortFeedChronological } from '../concepts/sortType';
 import { getCityId } from '../concepts/city';
+import { fetchUserProfile } from '../concepts/user';
 import { createRequestActionTypes } from '../actions';
 
 // # Selectors
@@ -56,13 +57,10 @@ export const CLEAR_EDITABLE_IMAGE = 'CLEAR_EDITABLE_IMAGE';
 
 
 // # Action Creators
-const openTextActionView = () => ({ type: OPEN_TEXTACTION_VIEW });
-
-const closeTextActionView = () => ({ type: CLOSE_TEXTACTION_VIEW });
-
-const openCheckInView = () => ({ type: OPEN_CHECKIN_VIEW });
-
-const closeCheckInView = () => ({ type: CLOSE_CHECKIN_VIEW });
+export const openTextActionView = () => ({ type: OPEN_TEXTACTION_VIEW });
+export const closeTextActionView = () => ({ type: CLOSE_TEXTACTION_VIEW });
+export const openCheckInView = () => ({ type: OPEN_CHECKIN_VIEW });
+export const closeCheckInView = () => ({ type: CLOSE_CHECKIN_VIEW });
 
 const _postAction = (payload, addLocation) => {
   return (dispatch, getState) => {
@@ -78,6 +76,11 @@ const _postAction = (payload, addLocation) => {
           dispatch(sortFeedChronological())
         } else {
           dispatch(refreshFeed());
+        }
+
+        // Get user images if new image is posted
+        if (payload.type === ActionTypes.IMAGE) {
+          dispatch(fetchUserProfile());
         }
 
         dispatch({ type: POST_ACTION_SUCCESS, payload: { type: payload.type } });
