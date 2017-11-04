@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Animated, Platform, View } from 'react-native';
+import autobind from 'autobind-decorator';
+import { noop } from 'lodash';
 
 const IOS = Platform.OS === 'ios';
 
@@ -11,6 +13,39 @@ const getAnimationStyles = (type, animation) => {
     case 'scale-in':
       return { transform: [{ scale: animation }] };
 
+    case 'drop-in':
+      return {
+        opacity: animation,
+        transform: [{ scale: animation.interpolate({ inputRange: [0, 1], outputRange: [1.05, 1] }) }]
+      };
+
+    case 'shake':
+      return {
+        transform: [
+          { scale: animation.interpolate({ inputRange: [0, 1], outputRange: [1.025, 1] }) },
+          { rotate: animation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '3deg'] }) },
+        ]
+      };
+
+    case 'shake2':
+      return {
+        transform: [
+          { scale: animation.interpolate({ inputRange: [0, 1], outputRange: [1.01, 1] }) },
+          { rotate: animation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '-1deg'] }) },
+          { translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [0, -2] }) },
+        ]
+      };
+
+    case 'shake3':
+      return {
+        transform: [
+          { scale: animation.interpolate({ inputRange: [0, 1], outputRange: [1, 1.015] }) },
+          { rotate: animation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '4deg'] }) },
+          { translateX: animation.interpolate({ inputRange: [0, 1], outputRange: [0, -3] }) },
+          { translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [0, -2] }) },
+        ]
+      };
+
     case 'scale-small-in':
       return { transform: [{ scale: animation.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0.85, 1.2, 1] }) }] };
 
@@ -21,10 +56,23 @@ const getAnimationStyles = (type, animation) => {
       };
     }
 
-    case 'fade-from-right': {
+    case 'fade-from-top': {
+      return {
+        opacity: animation,
+        transform: [{ translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }) }],
+      };
+    }
+
+    case 'fade-from-left': {
       return {
         opacity: animation,
         transform: [{ translateX: animation.interpolate({ inputRange: [0, 1], outputRange: [-5, 0] }) }],
+      };
+    }
+    case 'fade-from-right': {
+      return {
+        opacity: animation,
+        transform: [{ translateX: animation.interpolate({ inputRange: [0, 1], outputRange: [5, 0] }) }],
       };
     }
   }
@@ -36,13 +84,37 @@ class AnimatedComponent extends Component {
     this.state = { animation: new Animated.Value(0) }
   }
 
+  animationRepeater = null
   componentDidMount() {
-    setTimeout(() => {
-      Animated.timing(
-        this.state.animation,
-        { toValue: 1, duration: this.props.duration }
-      ).start();
-    }, this.props.delay);
+    this.animationRepeater = true;
+    setTimeout(this.startAnimation, this.props.delay);
+  }
+
+  componentWillUnmount() {
+    if (this.animationRepeater) {
+      this.animationRepeater = null
+    }
+  }
+
+  @autobind
+  startAnimation() {
+    const next = this.props.infinite && this.animationRepeater ? this.repeatAnimation : noop;
+    Animated.timing(
+      this.state.animation,
+      { toValue: 1, duration: this.props.duration }
+    ).start(next);
+  }
+
+  @autobind
+  repeatAnimation() {
+    if (!this.state || !this.state.animation) {
+      return;
+    }
+
+    Animated.timing(
+      this.state.animation,
+      { toValue: 0, duration: this.props.duration }
+    ).start(this.startAnimation);
   }
 
   render() {
@@ -60,7 +132,12 @@ class AnimatedComponent extends Component {
 }
 
 AnimatedComponent.PropTypes = {
-  animationType: PropTypes.oneOf(['fade-in', 'scale-in', 'fade-from-bottom']),
+  animationType: PropTypes.oneOf([
+    'fade-in',
+    'scale-in',
+    'fade-from-bottom',
+    'fade-from-right'
+  ]),
   children: PropTypes.node,
   delay: PropTypes.number,
   duration: PropTypes.number,
