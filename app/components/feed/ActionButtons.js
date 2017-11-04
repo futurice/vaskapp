@@ -41,17 +41,17 @@ for (let i = 0; i < BUTTON_COUNT; i++) {
 const styles = StyleSheet.create({
   mainButton: {
     zIndex: 3,
-    elevation: 2,
-    shadowColor: '#000000',
-    shadowOpacity: 0.15,
-    shadowRadius: 1,
+    elevation: 6,
+    shadowColor: theme.secondaryDark,
+    shadowOpacity: 0.13,
+    shadowRadius: 5,
     shadowOffset: {
       height: 2,
       width: 0
     },
   },
   scrollTopButton: {
-    elevation: 2,
+    elevation: 6,
     shadowColor: '#000000',
     shadowOpacity: 0.15,
     shadowRadius: 1,
@@ -190,13 +190,13 @@ class ActionButtons extends Component {
 
       Animated.sequence([
         Animated.delay(isOpening ? ((i+1) * BUTTON_DELAY) : 0),
-        Animated.spring(buttons[i], { toValue: isOpening ? 1 : 0 })
+        Animated.timing(buttons[i], { toValue: isOpening ? 1 : 0, easing: Easing.elastic(1) })
       ]).start();
 
       // Animate action button labels, 200ms later than buttons
       Animated.sequence([
         Animated.delay(isOpening ? 200 + ((i + 1) * BUTTON_DELAY) : 0),
-        Animated.spring(labels[i], { duration:200, toValue: isOpening ? 1 : 0 })
+        Animated.timing(labels[i], { duration:200, toValue: isOpening ? 1 : 0, easing: Easing.elastic(1)  })
       ]).start(() => {
 
         // Change actual state after animations when CLOSING
@@ -228,7 +228,7 @@ class ActionButtons extends Component {
     } else {
 
       Animated.timing(this.state.overlayOpacity, {
-        duration: actionButtonsOpen ? 40 : 120,
+        duration: actionButtonsOpen ? 40 : 150,
         easing: Easing.ease,
         toValue: this.state.actionButtonsOpen ? 0 : 1
       }).start();
@@ -312,6 +312,7 @@ class ActionButtons extends Component {
         styles.buttonEnclosure,
         {
           transform: [{ scale: this.state.buttons[i] }],
+          opacity: this.state.labels[i],
           // width: this.state.actionButtonsWidth
         }
       ];
@@ -393,6 +394,7 @@ class ActionButtons extends Component {
 
     return (
       <Animated.View style={[style, { bottom: actionButtonsTranslate }]}>
+
         <Animated.View style={[styles.overlay, {
           transform:[{scale: overlayOpacity.interpolate({
             inputRange: [0, 1],
