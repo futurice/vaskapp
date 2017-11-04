@@ -66,15 +66,14 @@ const styles = StyleSheet.create({
     backgroundColor: theme.stable,
     height: width / 3 - 18,
     width: width / 3 - 18,
-    borderRadius: 0,
+    borderRadius: 6,
   },
   imageTitle: {
     textAlign: 'center',
-    color: theme.grey,
+    color: theme.noData,
     margin: 20,
     marginTop: 40,
     fontSize: 15,
-    fontWeight: '600'
   },
   imageTitleWrap: {
     flex: 1,
@@ -112,14 +111,15 @@ class ImageGrid extends Component {
       removeFeedItem,
       openRegistrationView,
       openComments,
-      openLightBox
+      openLightBox,
+      hideBorder
     } = this.props;
     const { selectedTab } = this.state;
 
     return (
     <View>
 
-      <View style={styles.filterRow}>
+      <View style={[styles.filterRow, hideBorder && { borderTopWidth: 0 }]}>
         {tabIcons.map((tab, index) =>
           <TouchableOpacity
             style={styles.filterRowBtn}
@@ -141,7 +141,7 @@ class ImageGrid extends Component {
 
       {!isLoading && !images.size &&
         <View style={styles.imageTitleWrap}>
-          <Text style={styles.imageTitle}>No photos</Text>
+          <Text style={styles.imageTitle}>No images</Text>
         </View>
       }
 
