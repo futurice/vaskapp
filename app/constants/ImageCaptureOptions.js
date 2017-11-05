@@ -8,8 +8,8 @@ export default {
   mediaType: 'photo',
   videoQuality: 'high',
   durationLimit: 10,
-  maxWidth: 1000,
-  maxHeight: 1000,
+  maxWidth: 1200,
+  maxHeight: 1200,
   aspectX: 2, // android only - aspectX:aspectY, the cropping image's ratio of width to height
   aspectY: 1, // android only - aspectX:aspectY, the cropping image's ratio of width to height
   quality: 0.95, // 0 to 1, photos only
