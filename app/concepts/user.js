@@ -4,6 +4,7 @@ import { parseInt, isNil } from 'lodash';
 import moment from 'moment';
 
 import api from '../services/api';
+import { trackEvent } from '../services/analytics';
 import {createRequestActionTypes} from '../actions';
 import { VOTE_FEED_ITEM_REQUEST } from '../actions/feed';
 import { SET_COMMENTS } from './comments';
@@ -85,6 +86,8 @@ export const fetchUserProfile = () => (dispatch, getState) => {
 // user: javascript object
 // avatar: string (url)
 export const openUserView = (user, avatar) => dispatch => {
+  trackEvent('user', 'open', user.name);
+
   dispatch(fetchUserImages(user.id));
   return dispatch({ type: SET_USER_PROFILE, payload: Object.assign(user, { profilePicture: avatar }) });
 }

@@ -9,7 +9,6 @@ import analytics from '../services/analytics';
 import FeedList from '../components/feed/FeedList';
 import theme from '../style/theme';
 
-
 const VIEW_NAME = 'FeedView';
 
 const styles = StyleSheet.create({

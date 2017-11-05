@@ -9,8 +9,11 @@ import { Navigator } from 'react-native-deprecated-custom-components';
 import autobind from 'autobind-decorator';
 
 import UserMap from '../components/map/UserMap';
+import analytics from '../services/analytics';
 import sceneConfig from '../utils/sceneConfig';
 import theme from '../style/theme';
+
+const VIEW_NAME = 'MapView';
 
 const styles = StyleSheet.create({
   navigator: {
@@ -28,6 +31,10 @@ const styles = StyleSheet.create({
 var _navigator; // eslint-disable-line
 
 class EventMapView extends Component {
+  componentDidMount() {
+    analytics.viewOpened(VIEW_NAME);
+  }
+
   @autobind
   renderScene(route, navigator) {
     _navigator = navigator;

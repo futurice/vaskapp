@@ -15,6 +15,7 @@ import {
   toggleLocateMe as _toggleLocateMe
 } from '../actions/event';
 import { fetchMarkers as _fetchMarkers } from '../actions/marker';
+import { trackEvent } from '../services/analytics';
 
 import { SET_COMMENTS } from './comments';
 import { isLocating, getShowFilter, getEvents, getEventListState } from '../reducers/event';
@@ -151,6 +152,8 @@ export const toggleLocateMe = _toggleLocateMe;
 export const selectMarker = (markerId, markerType) => ({ type: SELECT_MARKER, markerId, markerType });
 
 export const selectCategory = payload => (dispatch) => {
+  trackEvent('map', 'select-city', payload);
+
   AsyncStorage.setItem(StorageKeys.mapCategory, payload);
 
   return Promise.resolve(dispatch({ type: SELECT_CATEGORY, payload }))

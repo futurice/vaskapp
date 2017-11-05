@@ -21,8 +21,7 @@ import AppTypes from '../../constants/AppTypes';
 import BlogList from '../blog/BlogList';
 import WebViewer from '../webview/WebViewer';
 import Section from './Section';
-
-
+import { trackEvent } from '../../services/analytics';
 
 const IOS = Platform.OS === 'ios';
 
@@ -34,6 +33,8 @@ const appLinkPress = (app, navigator) => {
   let component;
   let params = {};
 
+
+  trackEvent('app', 'open', name)
   switch(type) {
     case AppTypes.WEBAPP: {
       component = WebViewer;
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     elevation: 2,
     shadowColor: theme.secondaryDark,
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.06,
     shadowRadius: 5,
     shadowOffset: {
       height: 4,

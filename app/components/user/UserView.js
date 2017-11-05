@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity,
-  TouchableHighlight, Image, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  Platform,
+} from 'react-native';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
@@ -30,15 +35,20 @@ import BackLink from '../common/BackLink';
 import AnimateMe from '../AnimateMe';
 import Loader from '../common/Loader';
 import Text from '../common/MyText';
+import { viewOpened } from '../../services/analytics';
 
 const headerImage = require('../../../assets/patterns/sea.png');
 
-const { height, width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
 const headerHeight = width;
 
 
 class UserView extends Component {
+  componentDidMount() {
+    viewOpened('UserView');
+  }
+
   render() {
 
     const { images, isLoading, totalVotes, totalSimas,

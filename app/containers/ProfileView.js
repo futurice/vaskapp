@@ -9,8 +9,11 @@ import { Navigator } from 'react-native-deprecated-custom-components';
 import { connect } from 'react-redux';
 import autobind from 'autobind-decorator';
 
+import analytics from '../services/analytics';
 import Profile from '../components/profile/Profile';
 
+
+const VIEW_NAME = 'ProfileView';
 const theme = require('../style/theme');
 
 const styles = StyleSheet.create({
@@ -28,6 +31,10 @@ const styles = StyleSheet.create({
 
 
 class ProfileView extends Component {
+  componentDidMount() {
+    analytics.viewOpened(VIEW_NAME);
+  }
+
   @autobind
   renderScene(route, navigator) {
     if (route.component) {
