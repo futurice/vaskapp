@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import permissions from '../services/android-permissions';
 
 const IOS = Platform.OS === 'ios';
-let watchId;
+let watchID;
 
 //
 // Constants
