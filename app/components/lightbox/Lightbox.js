@@ -8,12 +8,14 @@ import {
   Platform,
   BackHandler,
   Modal,
+  ScrollView,
   CameraRoll,
 } from 'react-native';
 import { connect } from 'react-redux';
 import theme from '../../style/theme';
 import Text from '../common/MyText';
-import ModalBox from 'react-native-modalbox';
+// import ModalBox from 'react-native-modalbox';
+import autobind from 'autobind-decorator';
 
 import { openRegistrationView } from '../../concepts/registration';
 import { voteFeedItem, removeFeedItem } from '../../actions/feed';
@@ -31,18 +33,18 @@ import Share from 'react-native-share';
 import PhotoView from 'react-native-photo-view';
 import ImageZoom from 'react-native-image-zoom';
 
-
 const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
+const DISMISS_SCROLL_DISTANCE = 100;
 
 class LightBox extends Component {
 
 
-  state = { loading: false };
   constructor(props) {
     super(props);
-
-    this.onClose = this.onClose.bind(this);
+    this.state = {
+      loading: false,
+    };
   }
 
   componentDidMount() {
@@ -55,18 +57,18 @@ class LightBox extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.isLightBoxOpen) {
+  componentWillReceiveProps({ isLightBoxOpen }) {
+    if (isLightBoxOpen && !this.props.isLightBoxOpen) {
+      // reset lightbox on start
       this.setState({ loading: true });
     }
   }
 
 
+  @autobind
   onClose() {
     this.props.closeLightBox();
   }
-
-
 
   onShare(imgUrl) {
     const title = 'Vask';
@@ -86,6 +88,37 @@ class LightBox extends Component {
 
   itemIsCreatedByMe(item) {
     return item.getIn(['author','type'],'') === 'ME';
+  }
+
+  @autobind
+  onScrollEnd(event) {
+    const scrollTop = event.nativeEvent.contentOffset.y;
+    const scrollDistance = Math.abs(scrollTop);
+    const isOverLimit = scrollDistance > DISMISS_SCROLL_DISTANCE;
+    if (isOverLimit) {
+      // this.onClose();
+    } else {
+      this.scrollTop();
+    }
+  }
+
+  @autobind
+  onScroll(event) {
+    const scrollTop = event.nativeEvent.contentOffset.y;
+    const scrollDistance = Math.abs(scrollTop);
+    const isOverLimit = scrollDistance > DISMISS_SCROLL_DISTANCE;
+    if (isOverLimit) {
+      this.onClose();
+    }
+  }
+
+
+
+  @autobind
+  scrollTop() {
+    if (this.refs._modalScroll){
+     this.refs._modalScroll.scrollTo({x: 0, y: 0, animated: true});
+    }
   }
 
   showRemoveDialog(item) {
@@ -137,7 +170,7 @@ class LightBox extends Component {
     const itemText = lightBoxItem.get('text');
 
     return (
-      <ModalBox
+      <Modal
         onRequestClose={this.onClose}
         visible={isLightBoxOpen}
         backButtonClose={true}
@@ -147,14 +180,23 @@ class LightBox extends Component {
         animationType={IOS ? 'slide' : 'slide'}
 
         // ModalBox
-        isOpen={isLightBoxOpen}
-        backdropPressToClose={true}
-        backButtonClose={true}
-        onClosed={this.onClose}
-        swipeToClose={true}
-        backdrop={false}
+        // isOpen={isLightBoxOpen}
+        // backdropPressToClose={true}
+        // backButtonClose={true}
+        // onClosed={this.onClose}
+        // swipeToClose={false}
+        // backdrop={false}
 
       >
+        <ScrollView
+          scrollEventThrottle={5}
+          ref="_modalScroll"
+          onScroll={this.onScroll}
+          onScrollEndDrag={this.onScrollEnd}
+          decelerationRate={0}
+          contentContainerStyle={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
         <ModalBackgroundView style={styles.container} blurType="light" >
           {IOS
           ?
@@ -231,11 +273,12 @@ class LightBox extends Component {
                   </View>
                 </PlatformTouchable>
               </View>
-          </View>
+            </View>
 
           </View>
         </ModalBackgroundView>
-      </ModalBox>
+        </ScrollView>
+      </Modal>
     );
   }
 }
@@ -273,6 +316,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     marginLeft: 15,
+    marginTop: IOS ? 6 : 0,
   },
   headerTitleText: {
     color: theme.primary,
