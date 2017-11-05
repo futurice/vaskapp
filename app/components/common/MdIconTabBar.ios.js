@@ -14,6 +14,7 @@ import Text from '../common/MyText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TouchableNativeFeedback from './PlatformTouchable';
 import { isIphoneX } from 'react-native-iphone-x-helper';
+import { isIpad } from '../../services/device-info';
 
 const styles = StyleSheet.create({
   tab: {
@@ -23,21 +24,21 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   tabs: {
-    elevation: 4,
     shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 1,
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
     shadowOffset: {
-      height: 1,
+      height: -2,
       width: 0
     },
     height: isIphoneX() ? 62 : 54,
     paddingBottom: isIphoneX() ? 15 : 0,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    paddingHorizontal: isIpad ? 100 : 0,
     borderWidth: 0,
     borderTopWidth: 0,
-    borderTopColor: '#f1f1f1'
+    borderTopColor: '#f1f1f1',
   },
   textLabel: {
     fontSize: 10,

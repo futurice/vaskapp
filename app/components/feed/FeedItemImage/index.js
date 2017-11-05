@@ -20,11 +20,15 @@ const styles = StyleSheet.create({
   itemImageWrapper: {
     width: width - (2 * FEED_ITEM_MARGIN_DEFAULT),
     height: width - (2 * FEED_ITEM_MARGIN_DEFAULT),
-    overflow: 'hidden'
+    maxWidth: 500,
+    maxHeight: 500,
+    overflow: 'hidden',
   },
   feedItemListItemImg: {
     width: width - (2 * FEED_ITEM_MARGIN_DEFAULT),
     height: width - (2 * FEED_ITEM_MARGIN_DEFAULT),
+    maxWidth: 500,
+    maxHeight: 500,
     backgroundColor: 'transparent',
   },
 });

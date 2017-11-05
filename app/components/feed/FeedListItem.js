@@ -7,7 +7,6 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  Platform,
   PropTypes,
   TouchableOpacity,
   Linking,
@@ -22,6 +21,7 @@ import { isEmpty, get } from 'lodash';
 import abuse from '../../services/abuse';
 import time from '../../utils/time';
 import theme from '../../style/theme';
+import { isIpad, IOS } from '../../services/device-info';
 
 import Text from '../common/MyText';
 import VotePanel from './VotePanel';
@@ -33,7 +33,6 @@ import CommentsLink from './CommentsLink';
 
 const { width } = Dimensions.get('window');
 const FEED_ITEM_MARGIN = 10;
-const IOS = Platform.OS === 'ios';
 
 const styles = StyleSheet.create({
   itemWrapper: {
@@ -42,12 +41,14 @@ const styles = StyleSheet.create({
     backgroundColor: theme.white,
     paddingBottom: IOS ? 15 : 12,
     paddingTop: 8,
+    alignItems: isIpad ? 'center' : null,
   },
   itemTouchable: {
     flexGrow: 1,
     flex: 1
   },
   itemContent: {
+    // width: isIpad ? 500 : null,
     flexGrow: 1,
     marginLeft: FEED_ITEM_MARGIN,
     marginRight: FEED_ITEM_MARGIN,
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
     // // # Drop shadows
     elevation: 2,
     shadowColor: theme.secondaryDark,
-    shadowOpacity: 0.09,
+    shadowOpacity: 0.11,
     shadowRadius: 7,
     shadowOffset: {
       height: 5,
