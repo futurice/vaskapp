@@ -46,12 +46,12 @@ class TeamSelector extends Component {
             <AnimateMe animationType={'fade-from-bottom'} delay={500} duration={300}>
               <Text style={styles.inputLabelText}>Welcome {firstName}!</Text>
             </AnimateMe>
-            <AnimateMe animationType={'fade-from-bottom'} delay={700} duration={300}>
+            <AnimateMe animationType={'fade-from-bottom'} delay={800} duration={300}>
               <Text style={styles.inputLabelSubtitle}>Choose your Tribe</Text>
             </AnimateMe>
           </View>
 
-          <AnimateMe animationType={'fade-in'} delay={1000} duration={1000} style={{ flex: 1 }}>
+          <AnimateMe animationType={'fade-from-left'} delay={1000} duration={600} style={{ flex: 1 }}>
             <ScrollView contentContainerStyle={styles.scrollView}>
               {teams.map((team, index) => <Team
                 last={index + 1 === teams.size}

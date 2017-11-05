@@ -296,7 +296,10 @@ class Profile extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
           {listData.map(this.renderItem)}
         </ScrollView>
       </View>

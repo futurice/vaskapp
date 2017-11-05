@@ -149,7 +149,7 @@ var styles = StyleSheet.create({
   navBarLogo:{
     width: 60,
     height: 32,
-    tintColor: theme.secondaryDark,
+    tintColor: theme.primary,
     top: 3,
   },
   navBarTitle:{

@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     paddingBottom:0,
   },
   navbar: {
-    backgroundColor: theme.gold,
+    backgroundColor: theme.white,
     height: 62,
     top: isIphoneX() ? 10 : 0,
     paddingBottom: 5,

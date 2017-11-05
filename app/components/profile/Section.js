@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     elevation: 2,
     shadowColor: theme.secondaryDark,
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.07,
     shadowRadius: 7,
     shadowOffset: {
       height: 5,

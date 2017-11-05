@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   listItemText: {
     fontSize: 14,
     letterSpacing: 0,
-    color: theme.dark,
+    color: theme.primary,
     top: IOS ? 3 : 0,
   }
 
