@@ -49,6 +49,7 @@ import {
   selectCategory,
   toggleLocateMe,
   updateShowFilter,
+  fetchPostsForCity,
 } from '../../concepts/map';
 
 import { openComments } from '../../concepts/comments';
@@ -78,6 +79,7 @@ class UserMap extends Component {
 
   componentDidMount() {
     analytics.viewOpened(VIEW_NAME);
+    this.props.fetchPostsForCity();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -614,6 +616,7 @@ const mapDispatchToProps = {
   updateShowFilter,
   openComments,
   openLightBox,
+  fetchPostsForCity,
 };
 
 export default connect(mapViewData, mapDispatchToProps)(UserMap);

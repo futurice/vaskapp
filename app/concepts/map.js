@@ -161,8 +161,8 @@ export const selectCategory = payload => (dispatch) => {
 };
 
 
-export const initializeUsersCitySelection = () => (dispatch, getState) => {
-  return AsyncStorage.getItem(StorageKeys.mapCategory)
+export const initializeUsersCitySelection = () => (dispatch, getState) =>
+  AsyncStorage.getItem(StorageKeys.mapCategory)
     .then(city => {
       if (city) {
         return dispatch(selectCategory(city))
@@ -170,10 +170,9 @@ export const initializeUsersCitySelection = () => (dispatch, getState) => {
       return Promise.resolve();
     })
     .catch(error => { console.log('error when initializing map category') });
-};
 
 
-const fetchPostsForCity = () => (dispatch, getState) => {
+export const fetchPostsForCity = () => (dispatch, getState) => {
   const state = getState();
 
   const cities = m.getMarkers(state);
