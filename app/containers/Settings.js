@@ -25,7 +25,7 @@ import SettingsLink from '../components/profile/SettingsLink';
 import { openRegistrationView, getUserName, getUserInfo } from '../concepts/registration';
 import { logoutUser } from '../concepts/auth';
 import feedback from '../services/feedback';
-import { terms, support, general } from '../constants/Links';
+import { terms, support } from '../constants/Links';
 
 import theme from '../style/theme';
 import typography from '../style/typography';
@@ -34,17 +34,12 @@ const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
 
 const settingsGroups = [
-  { name: 'General', links: general },
+  { name: 'General' },
   { name: 'Support', links: support },
   { name: 'Terms', links: terms },
 ];
 
 class Settings extends Component {
-
-  @autobind
-  openRegistration() {
-    this.props.openRegistrationView();
-  }
 
   @autobind
   onLinkPress(url, text, openInWebview) {
@@ -91,6 +86,12 @@ class Settings extends Component {
     return <SettingsLink item={item} index={index} onPress={onPress} />;
   }
 
+  renderFunctionItem(item, index) {
+    const { component, title, onPress } = item;
+    return <SettingsLink item={item} index={index} onPress={onPress} />;
+  }
+
+
   renderComponentItem(item, index) {
     const { navigator } = this.props;
     const { component, title } = item;
@@ -124,6 +125,8 @@ class Settings extends Component {
     const key = item.id || item.title;
     if (item.component) {
       return this.renderComponentItem(item, key);
+    } else if (item.onPress) {
+      return this.renderFunctionItem(item, key)
     } else if (item.link || item.mailto) {
       return this.renderLinkItem(item, key);
     } else if (item.id === 'profile') {
@@ -136,6 +139,17 @@ class Settings extends Component {
 
   render() {
     const { logoutUser } = this.props;
+
+    const generalLinks = [
+      {
+        onPress: this.props.openRegistrationView,
+        title: 'Edit profile',
+        link: 'https://github.com/futurice/vaskapp',
+        icon: 'create'
+      }
+    ];
+    const sections = settingsGroups;
+    sections[0].links = generalLinks;
 
     const logoutItem = {
       title: 'LOG OUT',
@@ -155,7 +169,7 @@ class Settings extends Component {
         }
 
         <ScrollView style={styles.scrollView}>
-          {settingsGroups.map(this.renderSettingsGroup)}
+          {sections.map(this.renderSettingsGroup)}
           {this.renderCustomItem(logoutItem, 'logout')}
         </ScrollView>
 
