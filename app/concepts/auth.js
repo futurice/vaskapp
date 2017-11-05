@@ -72,7 +72,7 @@ export const openLoginView = () => (dispatch, getState) => {
     };
 
     // Create userToken from email
-    const email = profile.emailVerified ? profile.email+''  : null;
+    const email = profile.emailVerified ? profile.email : null;
     tokens.userToken = md5((email || '').toLowerCase());
 
     // Save profile to state
@@ -200,7 +200,7 @@ export const checkUserLogin = () => (dispatch) => {
         dispatch(setTokenToStore(tokenObj));
 
         // Get all app content
-        dispatch(fetchAppContent());
+        return dispatch(fetchAppContent());
       }
     });
   });

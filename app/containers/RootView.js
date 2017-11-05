@@ -10,6 +10,7 @@ import loggerConfig from '../utils/loggerConfig';
 import * as reducers from '../reducers';
 import MainView from './MainView';
 import { checkUserLogin } from '../concepts/auth';
+import { initializeUsersCitySelection } from '../concepts/map';
 import { startLocationWatcher, stopLocationWatcher } from '../concepts/location';
 
 const IOS = Platform.OS === 'ios';
@@ -37,7 +38,8 @@ class RootView extends Component {
     store.dispatch(startLocationWatcher());
 
     // Get login info
-    store.dispatch(checkUserLogin());
+    Promise.resolve(store.dispatch(checkUserLogin()))
+    .then(() => store.dispatch(initializeUsersCitySelection()))
 
     // Statusbar style
     if (IOS) {
