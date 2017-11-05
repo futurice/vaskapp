@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Platform } from 'react-native';
 import Fab from '../common/Fab';
+import FabLinearGradient from '../common/FabLinearGradient';
 import theme from '../../style/theme';
 
 const styles = StyleSheet.create({
@@ -32,17 +33,19 @@ const styles = StyleSheet.create({
 class ActionButton extends Component {
   render() {
     const combinedStyle = [styles.button];
-    const { extraStyle, onPress, disabled, children, underLayColor } = this.props;
+    const { extraStyle, onPress, disabled, children, underLayColor, linearGradient } = this.props;
 
     if (extraStyle) {
       combinedStyle.push(extraStyle);
     }
 
+    const Button = linearGradient ? FabLinearGradient : Fab;
+
     return (
-      <Fab onPress={onPress} styles={combinedStyle}
-        disabled={disabled} underlayColor={underLayColor || theme.yellow}>
+      <Button onPress={onPress} styles={combinedStyle}
+        disabled={disabled} underlayColor={underLayColor || theme.secondary}>
         {children}
-      </Fab>
+      </Button>
     );
   }
 }

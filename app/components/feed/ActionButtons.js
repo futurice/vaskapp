@@ -42,17 +42,18 @@ const styles = StyleSheet.create({
   mainButton: {
     zIndex: 3,
     elevation: 6,
-    shadowColor: theme.secondaryDark,
-    shadowOpacity: 0.13,
-    shadowRadius: 5,
+    shadowColor: theme.black,
+    shadowOpacity: 0.15,
+    shadowRadius: 1,
     shadowOffset: {
       height: 2,
       width: 0
     },
+    backgroundColor: theme.secondary,
   },
   scrollTopButton: {
     elevation: 6,
-    shadowColor: '#000000',
+    shadowColor: theme.black,
     shadowOpacity: 0.15,
     shadowRadius: 1,
     shadowOffset: {
@@ -116,7 +117,8 @@ const styles = StyleSheet.create({
     color: theme.white,
   },
   mainButtonContent: {
-    color: theme.primary
+    backgroundColor: 'transparent',
+    color: theme.secondary
   },
   cooldown: {
     top: IOS ? 3 : 0
@@ -367,7 +369,12 @@ class ActionButtons extends Component {
     });
 
     return (
-      <ActionButton onPress={this.onToggleActionButtons} extraStyle={styles.mainButton}>
+      <ActionButton
+        linearGradient={IOS}
+        onPress={this.onToggleActionButtons}
+        extraStyle={styles.mainButton}
+        underLayColor={theme.goldDark}
+      >
         <Animated.View style={{ transform: [{ rotate: rotation }] }}>
           <Icon name={'add'} size={24} style={[styles.actionButtonContent, styles.mainButtonContent]}></Icon>
         </Animated.View>
