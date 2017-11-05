@@ -149,7 +149,7 @@ var BlogPost = React.createClass({
         <ScrollHeader
           icon="arrow-back"
           onIconClick={() => navigator.pop()}
-          subtitle={post.title}
+          subtitle={unescapeHtml(post.title)}
           rightIcon="share"
           onRightIconClick={() => Share.open(share)}
           />
