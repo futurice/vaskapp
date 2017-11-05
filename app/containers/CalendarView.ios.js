@@ -4,11 +4,14 @@ import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { Navigator } from 'react-native-deprecated-custom-components';
 import autobind from 'autobind-decorator';
+import analytics from '../services/analytics';
 
 import sceneConfig from '../utils/sceneConfig';
 
 import EventsView from '../components/calendar/TimelineList';
 const theme = require('../style/theme');
+
+const VIEW_NAME = 'CalendarView';
 
 const styles = StyleSheet.create({
   navigator: {
@@ -26,6 +29,10 @@ const styles = StyleSheet.create({
 
 
 class TimelineListWrapper extends Component {
+  componentDidMount() {
+    analytics.viewOpened(VIEW_NAME);
+  }
+
   @autobind
   renderScene(route, navigator) {
     if (route.component) {
