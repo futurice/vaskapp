@@ -12,26 +12,29 @@ import {
   CameraRoll,
 } from 'react-native';
 import { connect } from 'react-redux';
-import theme from '../../style/theme';
-import Text from '../common/MyText';
-// import ModalBox from 'react-native-modalbox';
+import moment from 'moment';
+import PhotoView from 'react-native-photo-view';
+import ImageZoom from 'react-native-image-zoom';
+import Share from 'react-native-share';
 import autobind from 'autobind-decorator';
+import { isIphoneX } from 'react-native-iphone-x-helper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+// import ModalBox from 'react-native-modalbox';
 
+import { openComments } from '../../concepts/comments';
 import { openRegistrationView } from '../../concepts/registration';
 import { voteFeedItem, removeFeedItem } from '../../actions/feed';
 import { getLightboxItem, closeLightBox, isLightBoxOpen } from '../../concepts/lightbox';
 import abuse from '../../services/abuse';
-import { isIphoneX } from 'react-native-iphone-x-helper';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import PlatformTouchable from '../common/PlatformTouchable';
 import ModalBackgroundView from '../common/ModalBackgroundView';
-import VotePanel from '../feed/VotePanel';
+import Text from '../common/MyText';
 import Loader from '../common/Loader';
-import moment from 'moment';
-import Share from 'react-native-share';
-import PhotoView from 'react-native-photo-view';
-import ImageZoom from 'react-native-image-zoom';
+import CommentsView from '../comment/CommentsView';
+import CommentsLink from '../feed/CommentsLink';
+import VotePanel from '../feed/VotePanel';
+import theme from '../../style/theme';
 
 const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
@@ -62,6 +65,16 @@ class LightBox extends Component {
       // reset lightbox on start
       this.setState({ loading: true });
     }
+  }
+
+  @autobind
+  openPostComments() {
+    const { lightBoxItem } = this.props;
+    const postId = lightBoxItem.get('id');
+
+    this.onClose();
+    this.props.openComments(postId);
+    this.props.navigator.push({ component: CommentsView, name: 'Comments', showName: true });
   }
 
 
@@ -257,19 +270,27 @@ class LightBox extends Component {
                   openRegistrationView={this.props.openRegistrationView}
                 />
               </View>
-              <View style={styles.toolbar__buttons}>
+              <View>
+                <CommentsLink
+                  parentId={lightBoxItem.get('id')}
+                  commentCount={lightBoxItem.get('commentCount')}
+                  openComments={this.openPostComments}
+                  reverse
+                />
+              </View>
+              <View>
                 {!isSystemUser &&
                 <PlatformTouchable onPress={() => this.showRemoveDialog(lightBoxItem)}>
                   <View style={styles.toolbar__button}>
                     <Icon style={styles.toolbar__icon} name={this.itemIsCreatedByMe(lightBoxItem) ? 'delete' : 'flag'} />
-                    <Text style={styles.toolbar__button__text}>{this.itemIsCreatedByMe(lightBoxItem) ? 'Remove' : 'Report'}</Text>
                   </View>
                 </PlatformTouchable>
                 }
+              </View>
+              <View>
                 <PlatformTouchable onPress={this.onShare.bind(this, itemImage)}>
                   <View style={styles.toolbar__button}>
                     <Icon style={styles.toolbar__icon} name="share" />
-                    <Text style={styles.toolbar__button__text}>Share</Text>
                   </View>
                 </PlatformTouchable>
               </View>
@@ -335,7 +356,7 @@ const styles = StyleSheet.create({
     color: theme.black,
     padding: 20,
     paddingTop: 10,
-    paddingBottom: 0,
+    paddingBottom: IOS ? 10 : 0,
     fontSize: 16,
     lineHeight: 25,
   },
@@ -359,6 +380,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: 10,
     paddingLeft: 5,
+    backgroundColor: IOS ? 'rgba(255,255,255,.5)' : 'transparent',
   },
   toolbar__buttons: {
     justifyContent:'flex-end',
@@ -369,7 +391,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     width: 50,
     height: 50,
-    marginTop: IOS ? 5 : 1,
     marginLeft: 15,
     alignItems: 'center',
     justifyContent: 'center',
@@ -377,15 +398,8 @@ const styles = StyleSheet.create({
   },
   toolbar__icon: {
     backgroundColor: 'transparent',
-    fontSize: 24,
-    color: theme.dark,
-  },
-  toolbar__button__text: {
-    textAlign: 'center',
-    backgroundColor: 'transparent',
-    fontSize: 10,
-    marginTop: 2,
-    color: theme.dark
+    fontSize: 20,
+    color: theme.grey4,
   }
 });
 
@@ -396,6 +410,12 @@ const select = store => {
   };
 };
 
-const mapDispatch = { removeFeedItem, closeLightBox, voteFeedItem, openRegistrationView };
+const mapDispatch = {
+  removeFeedItem,
+  closeLightBox,
+  voteFeedItem,
+  openRegistrationView,
+  openComments,
+};
 
 export default connect(select, mapDispatch)(LightBox);
