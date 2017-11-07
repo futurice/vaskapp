@@ -26,6 +26,10 @@ import { isIphoneX } from 'react-native-iphone-x-helper';
 const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
 
+const baseWidth = 375;
+const sizeRatio = width / baseWidth;
+const vw = size => sizeRatio * size;
+
 class InstructionView extends Component {
   constructor(props) {
      super(props);
@@ -55,74 +59,76 @@ class InstructionView extends Component {
 
           <View style={styles.topArea}>
             <View style={styles.iconWrap}>
-
               <AnimateMe style={{ flex: 0 }} animationType="fade-from-bottom" duration={300} delay={1500}>
-                <AnimateMe style={{ flex: 0 }} animationType="shake3" duration={4000} delay={1500} infinite>
-                  <View style={{ left: 35, top: -23, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '5deg' }] }}>
-                    <Text style={{fontSize: 40, backgroundColor: 'transparent'}}>🦄</Text>
-                  </View>
+                <AnimateMe
+                  style={[{ flex: 1, left: vw(35), top: vw(-19), transform: [{ rotate: '5deg' }] }, styles.emoji]}
+                  animationType="shake3" duration={2100} delay={1500} infinite>
+                  <Text style={{fontSize: vw(44)}}>🦄</Text>
                 </AnimateMe>
               </AnimateMe>
 
               <AnimateMe style={{ flex: 0 }} animationType="fade-from-right" duration={400} delay={2000}>
                 <AnimateMe style={{ flex: 0 }} animationType="shake3" duration={3000} delay={1500} infinite>
-                  <View style={{ top: 45, left: -5, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '5deg' }] }}>
-                    <Text style={{fontSize: 45, backgroundColor: 'transparent'}}>🚴</Text>
+                  <View style={[{ top: vw(45), left: vw(-5), transform: [{ rotate: '5deg' }] }, styles.emoji]}>
+                    <Text style={{fontSize: vw(45)}}>🚴</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
 
               <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-from-bottom" duration={400} delay={1200}>
                 <Image
-                  style={{ right: 10, top: -5, width: 180, height: 180, position: 'absolute' }}
+                  style={[{ position: 'absolute' }, styles.mainImage]}
                   resizeMode="contain"
                   source={require('../../../assets/illustrations/planet-purple.png')} />
               </AnimateMe>
 
               <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-in" duration={400} delay={2200}>
                 <AnimateMe style={{ flex: 0 }} animationType="shake2" duration={2000} delay={1500} infinite>
-                  <View style={{ right: 20,  top: 5, justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '-5deg' }] }}>
-                    <Text style={{fontSize: 40, backgroundColor: 'transparent'}}>🕹️</Text>
+                  <View style={[{ right: vw(20),  top: vw(5)}, styles.emoji]}>
+                    <Text style={{fontSize: vw(40), transform: [{ rotate: '6deg' }] }}>🕹️</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
 
               <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-from-bottom" duration={400} delay={2900}>
                 <AnimateMe style={{ flex: 0 }} animationType="shake2" duration={2000} delay={1500} infinite>
-                  <View style={{ right: 36,  top: 65, justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '-5deg' }] }}>
-                    <Text style={{fontSize: 15, backgroundColor: 'transparent', color: theme.gold, fontWeight: 'bold'}} bold>#thank️</Text>
+                  <View style={[{ right: vw(39), top: vw(91), transform: [{ rotate: '-5deg' }] }, styles.emoji]}>
+                    <Text style={[{fontSize: vw(15)}, styles.floatText]} bold>#thank️</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
 
               <AnimateMe style={{ flex: 0 }} animationType="fade-in" duration={400} delay={2500}>
-                <AnimateMe style={{ flex: 1 }} animationType="shake2" duration={2000} delay={1500} infinite>
-                  <View style={{ right: 35, top: 76, justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '-5deg' }] }}>
-                    <Text style={{fontSize: 45, backgroundColor: 'transparent'}}>🙏</Text>
-                  </View>
+                <AnimateMe
+                  style={[{ flex: 1, right: vw(35), top: vw(110) }, styles.emoji]}
+                  animationType="shake2" duration={2000} delay={1500} infinite
+                >
+                  <Text style={{fontSize: vw(50), transform: [{ rotate: '-5deg' }] }}>🙏</Text>
                 </AnimateMe>
               </AnimateMe>
 
               <AnimateMe style={{ flex: 1 }} animationType="fade-in" duration={400} delay={2600}>
                 <AnimateMe style={{ flex: 1 }} animationType="shake" duration={1500} delay={500} infinite>
-                  <View style={{ bottom: 10, left: 15, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '5deg' }] }}>
-                    <Text style={{fontSize: 70, backgroundColor: 'transparent'}}>🍕</Text>
+                  <View style={[{ bottom: vw(10), left: vw(15), transform: [{ rotate: '5deg' }] }, styles.emoji]}>
+                    <Text style={{fontSize: vw(70)}}>🍕</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
 
 
 
-              <AnimateMe style={{ flex: 0 }} animationType="fade-in" duration={400} delay={1600}>
-                <View style={{ bottom: 190, right: 50, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '10deg' }] }}>
-                  <Text stylestyle={{ fontSize: 25, backgroundColor: 'transparent'}}>✨✨</Text>
-                </View>
+              <AnimateMe
+                style={[{ flex: 1, top: vw(10), right: vw(50), transform: [{ rotate: '10deg' }] }, styles.emoji]}
+                animationType="fade-in" duration={400} delay={1600}
+              >
+                <Text stylestyle={{ fontSize: vw(25)}}>✨✨</Text>
               </AnimateMe>
 
-            <AnimateMe style={{ flex: 0 }} animationType="fade-in" duration={400} delay={1800}>
-              <View style={{ bottom: 40, right: 70, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute', transform: [{ rotate: '-20deg' }]}}>
-                <Text style={{fontSize: 12, backgroundColor: 'transparent'}}>✨✨</Text>
-              </View>
+            <AnimateMe
+              style={[{ flex: 1, bottom: 40, right: 70, transform: [{ rotate: '-20deg' }] }, styles.emoji]}
+              animationType="fade-in" duration={400} delay={1800}
+            >
+              <Text style={{fontSize: vw(12)}}>✨✨</Text>
             </AnimateMe>
 
 
@@ -161,7 +167,7 @@ class InstructionView extends Component {
                           onPress={onPressMainAction}
                           background={PlatformTouchable.SelectableBackgroundBorderless()}
                         >
-                            <Text style={styles.loginButtonText}>LOG IN</Text>
+                            <Text style={styles.loginButtonText}>GET STARTED</Text>
                         </PlatformTouchable>
                       </View>
                     </View>
@@ -171,7 +177,7 @@ class InstructionView extends Component {
                         activeOpacity={0.8}
                       >
                         <View style={styles.loginButton}>
-                          <Text style={styles.loginButtonText}>LOG IN</Text>
+                          <Text style={styles.loginButtonText}>GET STARTED</Text>
                         </View>
                       </PlatformTouchable>
                   }
@@ -196,8 +202,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch'
   },
   topArea: {
-    backgroundColor: theme.transparent,
-    minHeight: height / 2.3,
+    minHeight: height / 2,
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginBottom: 30,
@@ -206,68 +211,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconWrap: {
-    /*
-    width,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    flex: 1,
-    */
     position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 0,
-    backgroundColor: 'rgba(255,255,255,0)',
-    left: width / 2 - 100,
-    top: IOS ? 100 : 50,
+    width: height / 2.5,
+    height: height / 2.5,
+    backgroundColor: 'transparent',
+    left: (width / 2) - (height / 5),
+    top: IOS ? vw(50) : 50,
     overflow: 'visible'
   },
-  icon: {
-    // width: 210,
-    // left: width / 2 - 100,
-    // top: 50,
-    // position: 'absolute',
-    textAlign: 'center',
-    opacity: 1,
-    backgroundColor: theme.transparent,
-    width: 150,
-    height: 150,
-    // tintColor: theme.white,
-    color: theme.white,
+  mainImage: {
+    width: height / 2.5,
+    height: height / 2.5,
   },
-  subIcon: {
-    backgroundColor: theme.transparent,
-    color: theme.accentLight,
-    fontSize: 60,
-    right: 40,
-    top: 10,
-    position: 'absolute'
-  },
-  subImage: {
-    width: 150,
-    height: 150,
-    left: 0,
-    bottom: 0,
-    position: 'relative',
-    zIndex: 2,
-  },
-  accentImage: {
-    width: 40,
-    height: 25,
-    left: 5,
-    top: 55,
+  emoji: {
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
     position: 'absolute',
-    zIndex: 1,
   },
-  bgImage: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    width: 180,
-    height: 180,
-    borderRadius: 95,
-    bottom: 0,
-    opacity: 0.01
+  floatText: {
+    backgroundColor: 'transparent',
+    color: theme.gold,
+    fontWeight: 'bold',
   },
   content: {
     margin: 20,
@@ -283,15 +248,15 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     color: theme.secondaryClear,
-    fontSize: 22,
+    fontSize: vw(22),
     margin: 15,
     marginTop: 30,
-    marginBottom: 15,
+    marginBottom: vw(15),
     fontWeight: IOS ? 'bold' : 'normal',
   },
   text: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: vw(14),
+    lineHeight: vw(20),
     marginTop: 0  ,
     color: theme.secondaryClear,
     opacity: 0.8,
@@ -310,22 +275,23 @@ const styles = StyleSheet.create({
     marginTop: -8,
     marginBottom: -9,
     top: 10,
+    textAlign: 'center',
+    fontSize: vw(14),
   },
   loginButton: {
     marginTop: 40,
     marginBottom: 10,
     padding: 5,
-    paddingTop: IOS ? 14 : 12,
-    paddingBottom: 12,
+    paddingVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 25,
+    borderRadius: vw(25),
     elevation: 6,
-    backgroundColor: theme.secondaryClear,
-    width: 250,
+    backgroundColor: theme.stable,
+    width: vw(250),
     shadowColor: '#000000',
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
     shadowOffset: {
       height: 10,
       width: 0
@@ -333,9 +299,10 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     fontSize: 16,
+    lineHeight: 20,
+    paddingTop: IOS ? 5: 0,
     fontWeight: IOS ? 'bold' : 'normal',
-    color: theme.white,
-    fontFamily: IOS ? 'Futurice' : 'Futurice_bold'
+    color: theme.secondaryClear
   }
 });
 
