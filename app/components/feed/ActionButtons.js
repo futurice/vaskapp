@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
       height: 2,
       width: 0
     },
-    backgroundColor: '#FFF'
+    backgroundColor: theme.stable,
   },
   scrollTopButtonContent: {
     color: '#888'
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   mainButtonContent: {
     backgroundColor: 'transparent',
-    color: theme.secondary
+    color: theme.white,
   },
   cooldown: {
     top: IOS ? 3 : 0
@@ -370,10 +370,9 @@ class ActionButtons extends Component {
 
     return (
       <ActionButton
-        linearGradient={IOS}
         onPress={this.onToggleActionButtons}
         extraStyle={styles.mainButton}
-        underLayColor={theme.goldDark}
+        underLayColor={theme.secondaryClear}
       >
         <Animated.View style={{ transform: [{ rotate: rotation }] }}>
           <Icon name={'add'} size={24} style={[styles.actionButtonContent, styles.mainButtonContent]}></Icon>
