@@ -11,7 +11,7 @@ const IOS = Platform.OS === 'ios';
 
 class CommentsLinks extends Component {
   render() {
-    const { commentCount, openComments, compact } = this.props;
+    const { commentCount, openComments, reverse, compact } = this.props;
     const hasComments = commentCount > 0;
 
 
@@ -24,9 +24,9 @@ class CommentsLinks extends Component {
 
     return (
       <TouchableOpacity activeOpacity={0.8} style={styles.commentLink} {...calloutProps}>
-        <View style={styles.comment}>
+        <View style={[styles.comment, reverse && { flexDirection: 'row-reverse' }]}>
           {(hasComments || !compact) &&
-            <Text style={[styles.commentText, compact && styles.compactText]}>
+            <Text style={[styles.commentText, compact && styles.compactText, reverse && { marginLeft: 10 }]}>
               {hasComments ? commentCount : ''}
             </Text>
           }
