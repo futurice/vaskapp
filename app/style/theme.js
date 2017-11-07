@@ -9,7 +9,7 @@ const theme = {
   primaryLight:   '#210F00',
 
   secondary:      '#664cb5',
-  secondaryLight: '#ad9ddb',
+  secondaryLight: '#7a63c6',
   secondaryDark:  '#281956',
   secondaryClear: '#42308E',
   secondaryLayer: 'rgba(102, 76, 181, .3)',
@@ -41,8 +41,8 @@ const theme = {
   grey1:          '#eeeeee',
   grey2:          '#aaaaaa',
   grey3:          '#ccc',
-  grey4:          '#93909b',
-  grey5:          '#93909b',
+  grey4:          '#939199',
+  grey5:          '#939199',
 
   gold:           '#FDF5E5',
   goldDark:       '#DCCBBE',

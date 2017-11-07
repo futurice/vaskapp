@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import Text from '../common/MyText';
+import ModalBackgroundView from '../common/ModalBackgroundView';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TouchableNativeFeedback from './PlatformTouchable';
 import { isIphoneX } from 'react-native-iphone-x-helper';
@@ -133,11 +134,9 @@ var MdIconTabBar = React.createClass({
     const { tabs, backgroundColor, style } = this.props;
 
     return (
-      <View>
         <View style={[styles.tabs, { backgroundColor: backgroundColor || null }, style]}>
           {tabs.map((tab, i) => this.renderTabOption(tab, i))}
         </View>
-      </View>
       );
   },
 });
