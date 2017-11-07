@@ -62,7 +62,6 @@ class MainView extends Component {
         />
 
         { /* Modals */}
-        <LightBox />
         <ProfileEditor />
         <TextActionView />
         <TeamSelector />

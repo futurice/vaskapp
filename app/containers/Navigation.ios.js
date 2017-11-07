@@ -21,6 +21,7 @@ import MDIcon from 'react-native-vector-icons/MaterialIcons';
 import ICONS from '../constants/Icons';
 import ScrollableTabs  from 'react-native-scrollable-tab-view';
 import IconTabBar from '../components/common/MdIconTabBar';
+import LightBox from '../components/lightbox/Lightbox';
 
 const theme = require('../style/theme');
 
@@ -44,6 +45,7 @@ class Navigation extends Component {
   render() {
     const { navigator, currentTab, events } = this.props;
     return (
+      <View style={{ flex: 1 }}>
       <ScrollableTabs
         onChangeTab={this.onChangeTab}
         initialPage={initialTabIndex}
@@ -57,10 +59,14 @@ class Navigation extends Component {
         renderTabBar={() => <IconTabBar />}
       >
         <FeedView navigator={navigator} id={Tabs.FEED} tabLabel={{ title: 'Feed', icon:'looks' }} />
-        {false && !!events.size && <CalendarView id={Tabs.CALENDAR} navigator={navigator} tabLabel={{ title: 'Event', icon: 'event' }} />}
+        {false && <CalendarView id={Tabs.CALENDAR} navigator={navigator} tabLabel={{ title: 'Events', icon: 'event' }} />}
         <EventMapView navigator={navigator} id={Tabs.MAP} tabLabel={{ title: 'Map', icon: 'public' }} />
         <ProfileView navigator={navigator} id={Tabs.SETTINGS} tabLabel={{ title: 'Personal', icon:'account-circle' }} />
       </ScrollableTabs>
+
+      <LightBox navigator={this.props.navigator} />
+
+      </View>
     )
   }
 }
