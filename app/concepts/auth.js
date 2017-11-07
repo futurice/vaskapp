@@ -100,7 +100,8 @@ export const openLoginView = () => (dispatch, getState) => {
         .catch(() => dispatch(onLoginError()))
       });
     });
-  });
+  })
+  .catch((err) => dispatch(onLoginError()));
 }
 
 // Need to keep flags of login completion in order to make sure user is cretated
@@ -147,7 +148,6 @@ const updateAuthToken = (idToken) => dispatch => {
 
 
 export const refreshAuthToken = () => (dispatch, getState) => {
-  console.log('refreshAuthToken');
   return;
   //
   const state = getState();
