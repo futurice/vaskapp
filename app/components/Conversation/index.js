@@ -25,6 +25,8 @@ const textMaxLength = 40;
 const Conversation = ({ item, last, showDelay, onPress }) => {
   const profilePicture = item.getIn(['author', 'profilePicture']);
 
+  const isCommentImage = item.get('commentImage');
+
   return (
     <AnimateMe delay={showDelay} animationType={'fade-from-bottom'}>
     <PlatformTouchable activeOpacity={0.7} delayPressIn={1} onPress={() => onPress(item.get('id'))}>
@@ -38,14 +40,13 @@ const Conversation = ({ item, last, showDelay, onPress }) => {
 
         <View style={[styles.contentCol, last ? styles.last : {}]}>
           <View style={styles.content}>
-            <Text style={styles.author} bold>
-              {item.getIn(['author', 'name'])}
-            </Text>
             <Text numberOfLines={1} ellipsizeMode={'tail'} style={styles.textMessage}>
+              <Text style={styles.author} bold>{item.getIn(['author', 'name'])} </Text>
               {item.get('type') === 'IMAGE' && '📷 '}{item.get('text')}
             </Text>
-            <Text numberOfLines={1} ellipsizeMode={'tail'} style={styles.textMessage}>
-              {item.get('commentText')}
+            <Text numberOfLines={1} ellipsizeMode={'tail'} style={[styles.textMessage, styles.commentMessage]}>
+              <Icon name="format-quote" style={styles.commentIcon} />
+              {isCommentImage ? '  📷' : item.get('commentText')}
             </Text>
           </View>
         </View>
@@ -116,16 +117,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   author: {
-    fontSize: 14,
+    fontSize: 13,
     marginTop: IOS ? 3 : 0,
     marginBottom: IOS ? 0 : 3,
-    color: theme.primary,
+    color: theme.black,
   },
   textMessage: {
     color: theme.grey4,
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 1,
     minHeight: 20,
+  },
+  commentMessage: {
+    paddingLeft: 0,
+  },
+  commentIcon: {
+    color: '#ccc',
+    fontSize: 16,
   }
 
 });
