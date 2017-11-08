@@ -35,16 +35,6 @@ class Terms extends Component {
           </View>
 
           <View style={styles.section}>
-          <Text style={styles.title}>Contest rules</Text>
-          <Text style={styles.paragraph}>Futurice Oy (collectively, the “Company”), will conduct its contests substantially as described in these general contesting rules, and by participating, each participant agrees as follows:</Text>
-          <Text style={styles.paragraph}>Apple is not a sponsor or involved in the contest in any manner.</Text>
-          <Text style={styles.paragraph}>Eligibility and Limitations. Participants and winner(s) must be equal or over 18 years old.</Text>
-          <Text style={styles.paragraph}>Prize. The prize that may be awarded to the eligible winner are not transferable, redeemable for cash or exchangeable for any other prize. All prizes must be redeemed from the Company within thirty (30) days of the contest end date unless otherwise stated in the contest’s official rules. If a winner cannot be contacted or is disqualified for any reason, the Company reserves the right to determine an alternate winner or not to award that winner’s prize, in its sole discretion. </Text>
-          <Text style={styles.paragraph}>Consumer Created Content. If the entry for the contest includes any creative material from the participant, including but not limited to, consumer created content, by submitting your entry: (1) you agree that your disclosure is gratuitous, unsolicited and without restriction and will not place the company or contest sponsors under any fiduciary or other obligation, that the company is free to disclose the ideas on a non-confidential basis to anyone or otherwise use the ideas without any additional compensation to you;  (2) you acknowledge that, by acceptance of your submission, the company and contest sponsors do not waive any rights to use similar or related ideas previously known to sponsor, or developed by their employees, or obtained from sources other than you; (3) you are verifying that you are the owner and producer of the submitted material and that no third party ownership rights exist to any material submitted, and (4) you are hereby granting the Company a perpetual, worldwide, non-exclusive, royalty-free, sub-licensable (through multiple tiers) right and license to use, publish, reproduce, display, perform, adapt, modify, distribute, have distributed and promote such content in any form, in all media now known or hereinafter created, anywhere in the world, for any purpose.</Text>
-          <Text style={styles.paragraph}>Miscellaneous. Void where prohibited. Each winner must submit proof of eligibility to claim the prize.</Text>
-          </View>
-
-          <View style={styles.section}>
           <Text style={styles.title}>Accounts</Text>
           <Text style={styles.paragraph}>When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.</Text>
           <Text style={styles.paragraph}>You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password, whether your password is with our Service or a third-party service.</Text>
