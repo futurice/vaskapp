@@ -1,6 +1,6 @@
 import TermsView from '../components/terms/Terms';
 
-const ROOT_URL = 'https://futurice.github.io/vaskapp-web';
+const ROOT_URL = 'https://futurice.github.io/vaskapp';
 
 const terms = [
   {title: 'Terms of Service', icon: 'info-outline', component: TermsView},
