@@ -16,12 +16,14 @@ h1, h2, h3, p > strong {
   color: #210F00;
 }
 
-h1 {
-  font-size: 25px;
-  font-weight: bold;
+h1, h2, p > strong {
+  font-size: 21px;
+  font-weight: normal;
+  font-weight: normal;
+  font-size: 21px;
 }
 
-h2, p > strong {
-  font-weight: normal;
-  font-size: 20px;
+a {
+  color: #210F00;
+  text-decoration: underline;
 }
