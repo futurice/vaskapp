@@ -51,7 +51,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Vask requires access to the camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Vask requires access to the photo library</string>
 	<key>UIAppFonts</key>
@@ -72,6 +72,7 @@
 		<string>Feather.ttf</string>
 		<string>Futurice-Regular.otf</string>
 		<string>Futurice-Bold.otf</string>
+		<string>Monospaced-Regular.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
