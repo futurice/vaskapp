@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
   customButton: {
     height: 40,
     width: 200,
+    paddingTop: IOS ? 5 : 0,
   }
 });
 

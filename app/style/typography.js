@@ -12,7 +12,7 @@ const h1 = {
   lineHeight: IOS ? 25 : 32,
   fontWeight: 'normal',
   marginBottom: 5,
-  color:theme.primary,
+  color:theme.black,
 };
 
 const h2 = {
@@ -21,7 +21,7 @@ const h2 = {
   marginBottom: 25,
   fontWeight: 'normal',
   letterSpacing: 2,
-  color: theme.dark,
+  color: theme.primary,
 }
 
 const paragraph = {

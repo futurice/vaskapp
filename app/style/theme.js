@@ -21,7 +21,7 @@ const theme = {
   stable:         '#f6f6f6',
 
   light:          '#fff',
-  dark:           '#474d4f',
+  dark:           '#333',
   darkgrey:       '#474747',
   midgrey:        '#7e878b',
   subtlegrey:     '#999',
