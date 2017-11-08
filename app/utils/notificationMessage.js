@@ -21,15 +21,15 @@ const getMessage = (payload) => {
 };
 
 const getErrorMessage = (payload) => {
-  return 'Oh no, an error occurred! :-(';
+  return 'Oh no, an error occurred! 😓';
 };
 
 const getRateLimitMessage = (payload) => {
-  return 'Hold your horses!'
+  return 'Hold your horses! 🐎'
 };
 
 const getInvalidEventMessage = (payload) => {
-  return 'Hold your horses! No double check-ins!'
+  return 'Oh no, an error occurred! 😓!'
 };
 
 export {
