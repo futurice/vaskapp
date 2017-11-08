@@ -1,11 +1,21 @@
 import api from '../services/api';
+import { createSelector } from 'reselect';
 import { List, fromJS } from 'immutable';
-import {createRequestActionTypes} from '../actions';
+import { has } from 'lodash';
+import { createRequestActionTypes } from '../actions';
 import LoadingStates from '../constants/LoadingStates';
+import AppTypes from '../constants/AppTypes';
 
 
-export const getApps = state => state.apps.get('apps', List());
+export const getAppsData = state => state.apps.get('apps', List());
 export const isLoadingApps = state => state.apps.get('listState') === LoadingStates.LOADING;
+
+// Filter supported AppTypes
+export const getApps = createSelector(
+  getAppsData, (apps) =>
+    apps.filter((app) => has(AppTypes, [app.get('type')]))
+);
+
 
 // # Action creators & types
 const SET_APPS = 'SET_APPS';
