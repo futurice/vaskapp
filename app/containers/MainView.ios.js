@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { Navigator } from 'react-native-deprecated-custom-components';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
-import { isIphoneX } from 'react-native-iphone-x-helper';
 
 import sceneConfig from '../utils/sceneConfig';
 import NavRouteMapper from '../components/common/navbarRouteMapper';
@@ -11,6 +10,7 @@ import errorAlert from '../utils/error-alert';
 
 import { isUserLoggedIn } from '../concepts/registration';
 import { isLoadingAppAuth } from '../concepts/auth';
+import { isIphoneX } from '../services/device-info';
 
 import IOSTabNavigation from './Navigation';
 import AppIntroView from '../components/registration/AppIntroView';
@@ -72,13 +72,13 @@ class MainView extends Component {
 
 const styles = StyleSheet.create({
   navigator: {
-    paddingTop: isIphoneX() ? 52 : 42,
+    paddingTop: isIphoneX ? 57 : 42,
     paddingBottom:0,
   },
   navbar: {
     backgroundColor: theme.white,
     height: 62,
-    top: isIphoneX() ? 10 : 0,
+    top: isIphoneX ? 15 : 0,
     paddingBottom: 5,
     flexDirection: 'row',
     alignItems: 'center',
