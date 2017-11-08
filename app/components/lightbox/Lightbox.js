@@ -17,7 +17,6 @@ import PhotoView from 'react-native-photo-view';
 import ImageZoom from 'react-native-image-zoom';
 import Share from 'react-native-share';
 import autobind from 'autobind-decorator';
-import { isIphoneX } from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import ModalBox from 'react-native-modalbox';
 
@@ -26,6 +25,7 @@ import { openRegistrationView } from '../../concepts/registration';
 import { voteFeedItem, removeFeedItem } from '../../actions/feed';
 import { getLightboxItem, closeLightBox, isLightBoxOpen } from '../../concepts/lightbox';
 import abuse from '../../services/abuse';
+import { isIphoneX } from '../../services/device-info';
 
 import PlatformTouchable from '../common/PlatformTouchable';
 import ModalBackgroundView from '../common/ModalBackgroundView';
@@ -316,8 +316,8 @@ const styles = StyleSheet.create({
     backgroundColor: IOS ? 'transparent' : theme.white,
   },
   header: {
-    height: isIphoneX() ? 66 : 56,
-    marginTop: IOS ? (isIphoneX() ? 18 : 8) : 0,
+    height: isIphoneX ? 66 : 56,
+    marginTop: IOS ? (isIphoneX ? 18 : 8) : 0,
     justifyContent: 'center',
     position: 'absolute',
     left: 0,
@@ -357,6 +357,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 10,
     paddingBottom: IOS ? 10 : 0,
+    paddingLeft: isIphoneX ? 30 : 20,
     fontSize: 16,
     lineHeight: 25,
   },
@@ -364,12 +365,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     padding: 0,
-    paddingBottom: isIphoneX() ? 10 : 0,
+    paddingBottom: isIphoneX ? 10 : 0,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    minHeight: isIphoneX() ? 68 : 58,
+    minHeight: isIphoneX ? 68 : 58,
     zIndex: 3,
     backgroundColor: IOS ? 'transparent' : 'rgba(255,255,255,.3)',
   },
@@ -378,8 +379,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     minHeight: 58,
     alignItems: 'center',
-    paddingRight: 10,
-    paddingLeft: 5,
+    paddingHorizontal: isIphoneX ? 20 : 10,
     backgroundColor: IOS ? 'rgba(255,255,255,.5)' : 'transparent',
   },
   toolbar__buttons: {

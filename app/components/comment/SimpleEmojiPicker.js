@@ -11,6 +11,8 @@ import {
 
 import theme from '../../style/theme';
 import AnimateMe from '../AnimateMe';
+import { isIphoneX } from '../../services/device-info';
+
 
 const IOS = Platform.OS === 'ios';
 const styles = StyleSheet.create({
@@ -18,7 +20,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 5,
     width: IOS ? 44 : 48,
-    bottom: 10,
+    bottom: isIphoneX ? 20 : 10,
     minHeight: 200,
 
     borderWidth: 0,

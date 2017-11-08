@@ -44,7 +44,7 @@ const CommentText = ({ text, style }) => (
 
 
 
-const Comment = ({ item, openUserView }) => {
+const Comment = ({ item, openUserView, onImagePress }) => {
   const ago = time.getTimeAgo(item.get('createdAt'));
   const profilePicture = item.get('profilePicture');
 
@@ -77,7 +77,9 @@ const Comment = ({ item, openUserView }) => {
             ?
               <View>
                 <CommentAuthor {...authorProps} />
-                <Image style={styles.commentImage} source={{ uri: item.get('imagePath') }} />
+                <TouchableOpacity onPress={() => onImagePress(item.get('imagePath'))}>
+                  <Image style={styles.commentImage} source={{ uri: item.get('imagePath') }} />
+                </TouchableOpacity>
               </View>
             :
               <View>
@@ -93,7 +95,7 @@ const Comment = ({ item, openUserView }) => {
   );
 };
 
-const CommentPost = ({ item, openUserView }) => {
+const CommentPost = ({ item, openUserView, onImagePress }) => {
 
   if (!item) {
     return null;
@@ -131,7 +133,9 @@ const CommentPost = ({ item, openUserView }) => {
             {hasImage &&
               <View>
                 <CommentAuthor {...authorProps} />
-                <Image style={styles.commentImage} source={{ uri: item.get('url') }} />
+                <TouchableOpacity onPress={() => onImagePress(item.get('url'))}>
+                  <Image style={styles.commentImage} source={{ uri: item.get('url') }} />
+                </TouchableOpacity>
               </View>
             }
             {hasText &&
@@ -221,6 +225,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   commentAuthor: {
+    marginTop: IOS ? 3 : 0,
     color: theme.primary,
     fontWeight: IOS ? 'bold' : 'normal',
     fontFamily: IOS ? 'Futurice' : 'Futurice_bold',
@@ -232,7 +237,7 @@ const styles = StyleSheet.create({
     color: '#aaa',
     fontSize: 12,
     fontWeight: 'normal'
-  },
+  }
 });
 
 

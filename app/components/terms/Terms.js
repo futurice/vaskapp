@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.yellow
   },
   content: {
-    padding: isIOS ? 10 : 20,
+    padding: 20,
     paddingTop: isIOS ? 40 : 20,
     paddingBottom: 50,
   },

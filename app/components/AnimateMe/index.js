@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import { Animated, Platform, View } from 'react-native';
+import { Animated, Platform, View, Dimensions } from 'react-native';
 import autobind from 'autobind-decorator';
 import { noop } from 'lodash';
 
 const IOS = Platform.OS === 'ios';
+const { width, height } = Dimensions.get('window');
 
 const getAnimationStyles = (type, animation) => {
   switch(type) {
@@ -73,6 +74,15 @@ const getAnimationStyles = (type, animation) => {
       return {
         opacity: animation,
         transform: [{ translateX: animation.interpolate({ inputRange: [0, 1], outputRange: [5, 0] }) }],
+      };
+    }
+    case 'comment-image': {
+      return {
+        opacity: animation,
+        transform: [
+          { scale: animation.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }) },
+          { translateX: animation.interpolate({ inputRange: [0, 1], outputRange: [-10, 0] }) }
+        ]
       };
     }
   }

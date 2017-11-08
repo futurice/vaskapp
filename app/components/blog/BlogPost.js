@@ -94,13 +94,14 @@ var BlogPost = React.createClass({
 
     const fontFamilySerif = IOS ? 'Palatino' : 'serif';
     const fontFamily = IOS ? 'Futurice' : 'Futurice-Regular';
+    const fontFamilyCode = fontFamily;
 
     const html = `
     <!DOCTYPE html>
     <html>
       <style>
         html,body {margin:0;padding:0, min-height: 100%; max-width: ${width - 50}px; overflow-x:hidden; }
-        h1, h2, h3 {color: ${theme.dark}; font-weight: 100; }
+        h1, h2, h3 {color: ${theme.black}; font-weight: 100; }
         h1, h2 {
           margin: 0 0 15px;
           padding: 0;
@@ -109,7 +110,7 @@ var BlogPost = React.createClass({
           margin: 0 0 10px;
           padding: 0;
         }
-        a { text-transform: underline; color: ${theme.dark} }
+        a { text-transform: underline; color: ${theme.black} }
         html, body, p { font-family: '${fontFamily}', serif; font-weight: 100, font-size: 14px; line-Height: 23px; color: ${theme.dark} }
         p { margin-bottom: 25px; }
         ul, ol { padding-left: 30px; margin-left: 0; }
@@ -131,7 +132,7 @@ var BlogPost = React.createClass({
           border-radius: 3px;
           white-space: wrap;
           overflow-x: auto;
-          font-family: '${fontFamily}';
+          font-family: '${fontFamilyCode}', sans-serif;
         }
         code {
           margin: 0;

@@ -12,16 +12,18 @@ import {
   Dimensions,
   Platform
 } from 'react-native';
-
 import LinearGradient from 'react-native-linear-gradient';
+import autobind from 'autobind-decorator';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MdIcon from 'react-native-vector-icons/MaterialIcons';
+
 import Text from '../common/MyText';
 import AnimateMe from '../AnimateMe';
 import theme from '../../style/theme';
 
-import Icon from 'react-native-vector-icons/Ionicons';
-import MdIcon from 'react-native-vector-icons/MaterialIcons';
 import PlatformTouchable from '../../components/common/PlatformTouchable';
-import { isIphoneX } from 'react-native-iphone-x-helper';
+import RegistrationFailedGuide from './RegistrationFailedGuide';
+import { isIphoneX } from '../../services/device-info';
 
 const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
@@ -32,15 +34,22 @@ const vw = size => sizeRatio * size;
 
 class InstructionView extends Component {
   constructor(props) {
-     super(props);
-     this.state = {
-       springAnim: new Animated.Value(0),
-     };
-   }
+    super(props);
+    this.state = {
+      springAnim: new Animated.Value(0),
+      showGuide: false,
+    };
+  }
+
+  @autobind
+  toggleGuide() {
+    this.setState({ showGuide: !this.state.showGuide });
+  }
 
   render() {
     const { loginFailed, onPressMainAction } = this.props;
-    const containerStyles = [styles.container, isIphoneX() && { paddingTop: 30, }];
+    const { showGuide } = this.state;
+    const containerStyles = [styles.container, isIphoneX && { paddingTop: 30, }];
 
     // TODO image animation
     const { springAnim } = this.state;
@@ -57,13 +66,15 @@ class InstructionView extends Component {
       >
        <View style={containerStyles}>
 
+         {showGuide && <RegistrationFailedGuide onPress={this.toggleGuide}/>}
+
           <View style={styles.topArea}>
             <View style={styles.iconWrap}>
               <AnimateMe style={{ flex: 0 }} animationType="fade-from-bottom" duration={300} delay={1500}>
                 <AnimateMe
-                  style={[{ flex: 1, left: vw(35), top: vw(-19), transform: [{ rotate: '5deg' }] }, styles.emoji]}
+                  style={[{ flex: 1, left: vw(35), top: vw(-18), transform: [{ rotate: '5deg' }] }, styles.emoji]}
                   animationType="shake3" duration={2100} delay={1500} infinite>
-                  <Text style={{fontSize: vw(44)}}>🦄</Text>
+                  <Text style={{fontSize: vw(45)}}>🦄</Text>
                 </AnimateMe>
               </AnimateMe>
 
@@ -85,7 +96,7 @@ class InstructionView extends Component {
               <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-in" duration={400} delay={2200}>
                 <AnimateMe style={{ flex: 0 }} animationType="shake2" duration={2000} delay={1500} infinite>
                   <View style={[{ right: vw(20),  top: vw(5)}, styles.emoji]}>
-                    <Text style={{fontSize: vw(40), transform: [{ rotate: '6deg' }] }}>🕹️</Text>
+                    <Text style={{fontSize: vw(42), transform: [{ rotate: '6deg' }] }}>🕹️</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
@@ -118,7 +129,7 @@ class InstructionView extends Component {
 
 
               <AnimateMe
-                style={[{ flex: 1, top: vw(10), right: vw(50), transform: [{ rotate: '10deg' }] }, styles.emoji]}
+                style={[{ flex: 1, top: vw(10), right: vw(60), transform: [{ rotate: '10deg' }] }, styles.emoji]}
                 animationType="fade-in" duration={400} delay={1600}
               >
                 <Text stylestyle={{ fontSize: vw(25)}}>✨✨</Text>
@@ -141,23 +152,20 @@ class InstructionView extends Component {
 
                   <View style={styles.content}>
                     <View style={styles.textContainer}>
-                    {/*
-                      <Image
-                        resizeMode="contain"
-                        style={{ width: 120, height: 70, tintColor: theme.secondaryDark }}
-                        source={require('../../../assets/logo/new.png')}
-                      />
-                    */}
                       <Text style={styles.subTitle} bold>Praise the Culture</Text>
                       <Text style={styles.text}>Login with your company Google account.</Text>
                     </View>
 
-                   {loginFailed &&
-                      <AnimateMe animationType="fade-from-bottom" duration={150}>
-                        <Text style={styles.loginError}>Unfortunately there was a problem with login.</Text>
+                    {loginFailed &&
+                      <AnimateMe style={styles.loginError} animationType="fade-from-bottom" duration={150}>
+                        <View>
+                          <Text style={styles.loginErrorText}>Unfortunately there was a problem with login.</Text>
+                          <TouchableOpacity onPress={this.toggleGuide}>
+                            <Text style={[styles.loginErrorLink, styles.loginErrorText]}>Why did it happen?</Text>
+                          </TouchableOpacity>
+                        </View>
                       </AnimateMe>
                     }
-
 
                     {!IOS
                     ?
@@ -181,7 +189,6 @@ class InstructionView extends Component {
                         </View>
                       </PlatformTouchable>
                   }
-
                   </View>
                 </View>
               </View>
@@ -271,10 +278,15 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   loginError: {
+    marginTop: 10,
+    marginBottom: -10,
+  },
+  loginErrorLink: {
+    textDecorationLine: 'underline',
+    marginTop: 10,
+  },
+  loginErrorText: {
     color: theme.red,
-    marginTop: -8,
-    marginBottom: -9,
-    top: 10,
     textAlign: 'center',
     fontSize: vw(14),
   },

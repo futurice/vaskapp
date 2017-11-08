@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 20,
     maxWidth: width - 130 - 0,
+    minHeight: 110,
   },
   postAuthorName: {
     fontWeight: '500',
@@ -41,15 +42,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 12,
     color: '#888',
-    backgroundColor: theme.transparent
+    backgroundColor: theme.transparent,
+    position: 'absolute',
+    bottom: 0,
   },
 });
 
-const MAX_TEXT_LENGTH = 101; // *Tweet*
-
 const CalloutPost = ({ item, openComments, onImagePress }) => {
-
-    const text = item.get('text');
     return (
       <Callout
         onImagePress={onImagePress}
@@ -66,9 +65,11 @@ const CalloutPost = ({ item, openComments, onImagePress }) => {
             />
           </CalloutButton>
 
-          <Text style={styles.postAuthorName}>{item.getIn(['author','name'])}!</Text>
-          <Text style={styles.postTextMessage}>
-            {text && text.length > MAX_TEXT_LENGTH ? `${text.slice(0, MAX_TEXT_LENGTH)}...` : text}
+          <Text style={styles.postAuthorName}>
+            {item.getIn(['author','name'])}
+          </Text>
+          <Text style={styles.postTextMessage}  numberOfLines={2} ellipsizeMode={'tail'}>
+            {item.get('text')}
           </Text>
           <Text style={styles.postDate}>{time.getTimeAgo(item.getIn(['createdAt']))}</Text>
 

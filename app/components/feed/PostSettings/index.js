@@ -21,14 +21,14 @@ const styles = StyleSheet.create({
   postSettings: {
     backgroundColor: '#FFF',
 
-    height: 140,
+    height: 150,
     padding: 20,
     paddingBottom: 10,
-    paddingTop: 20,
+    paddingTop: 30,
     marginBottom: 0,
   },
   settingsRow: {
-    minHeight: 50,
+    minHeight: 45,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   settingsRowTitleText: {
     fontWeight: 'normal',
-    color: theme.blue1,
+    color: theme.black,
     marginTop: 5,
   },
   smaller: {
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     color: '#bbb'
   },
   settingsRowIcon: {
-    color: theme.blue1,
+    color: theme.grey4,
     fontSize: 25,
     marginRight: 13,
     marginLeft: -5,

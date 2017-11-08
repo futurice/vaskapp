@@ -14,8 +14,7 @@ import Text from '../common/MyText';
 import ModalBackgroundView from '../common/ModalBackgroundView';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TouchableNativeFeedback from './PlatformTouchable';
-import { isIphoneX } from 'react-native-iphone-x-helper';
-import { isIpad } from '../../services/device-info';
+import { isIpad, isIphoneX } from '../../services/device-info';
 
 const styles = StyleSheet.create({
   tab: {
@@ -32,8 +31,8 @@ const styles = StyleSheet.create({
       height: -2,
       width: 0
     },
-    height: isIphoneX() ? 62 : 54,
-    paddingBottom: isIphoneX() ? 15 : 0,
+    height: isIphoneX ? 62 : 54,
+    paddingBottom: isIphoneX ? 15 : 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: isIpad ? 100 : 0,
@@ -50,7 +49,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     left:0,
     right:0,
-    bottom: isIphoneX() ? 4 : 7
+    bottom: isIphoneX ? 4 : 7
   }
 });
 

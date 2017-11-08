@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   sectionTitleText: typography.h1(),
   seeMoreLink: {
-    color: theme.secondary,
+    color: theme.secondaryClear,
     top: IOS ? 0 : 2,
     fontSize: 15,
     // fontFamily: IOS ? 'Futurice' : 'Futurice_bold',

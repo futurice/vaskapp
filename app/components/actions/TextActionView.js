@@ -109,9 +109,9 @@ class TextActionView extends Component {
         <LinearGradient
           style={styles.container}
           locations={[0, 1]}
-          start={{x: 0.35, y: 0}}
+          start={{x: 0.5, y: 0}}
           end={{x: 1, y: 1}}
-          colors={[theme.white, theme.secondarySubtle]}
+          colors={[theme.gold, theme.goldDark]}
         >
 
           <TouchableHighlight underlayColor="#f4f4f4" onPress={this.onClose} style={styles.closeButton}>
@@ -155,7 +155,7 @@ class TextActionView extends Component {
               <Button
                 onPress={this.onSendText}
                 style={[styles.button, styles.mainButton]}
-                textStyle={{ color: theme.primary }}
+                textStyle={{ color: theme.secondaryClear }}
                 isDisabled={!this.state.text}>
                 POST
               </Button>
@@ -213,7 +213,6 @@ const styles = StyleSheet.create({
   },
   mainButton: {
     flex: 1,
-    marginLeft: 15,
     backgroundColor: theme.white,
   },
   closeButton: {
@@ -241,7 +240,6 @@ const styles = StyleSheet.create({
   inputField: {
     fontSize: 18,
     margin: 0,
-    marginLeft: 20,
     marginTop: IOS ? 110 : 0,
     color: theme.primary,
     textAlign: 'center',

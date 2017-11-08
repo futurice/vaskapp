@@ -42,14 +42,14 @@ const styles = StyleSheet.create({
   mainButton: {
     zIndex: 3,
     elevation: 6,
-    shadowColor: theme.black,
+    shadowColor: theme.primary,
     shadowOpacity: 0.15,
     shadowRadius: 1,
     shadowOffset: {
       height: 2,
       width: 0
     },
-    backgroundColor: theme.secondary,
+    backgroundColor: theme.black,
   },
   scrollTopButton: {
     elevation: 6,
@@ -372,7 +372,7 @@ class ActionButtons extends Component {
       <ActionButton
         onPress={this.onToggleActionButtons}
         extraStyle={styles.mainButton}
-        underLayColor={theme.secondaryClear}
+        underLayColor={theme.black}
       >
         <Animated.View style={{ transform: [{ rotate: rotation }] }}>
           <Icon name={'add'} size={24} style={[styles.actionButtonContent, styles.mainButtonContent]}></Icon>

@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     elevation: 2,
     shadowColor: theme.secondaryDark,
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: {
       height: 4,
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   }),
   listItemDescription: typography.paragraph({
-    marginBottom: 0, fontSize: 12, lineHeight: 15,
+    marginBottom: 0, fontSize: 12, lineHeight: 14,
   })
 });
 

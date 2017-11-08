@@ -25,7 +25,7 @@ import SimpleEmojiPicker from './SimpleEmojiPicker';
 import permissions from '../../services/android-permissions';
 import ImagePickerManager from 'react-native-image-picker';
 import ImageCaptureOptions from '../../constants/ImageCaptureOptions';
-import { isIphoneX } from 'react-native-iphone-x-helper';
+import { isIphoneX } from '../../services/device-info';
 
 const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
@@ -78,7 +78,7 @@ class CommentForm extends Component {
       if (!response.didCancel && !response.error) {
         const imageData = 'data:image/jpeg;base64,' + response.data;
         // text as '...'' because API does not yet approve comments without text
-        this.props.postComment({ imageData, text: '...' });
+        this.props.postComment({ imageData });
       }
     });
   }
@@ -180,8 +180,8 @@ CommentForm.defaultProps = {
 const styles = StyleSheet.create({
   itemWrapper: {
     width,
-    height: isIphoneX() ? 62 : 52,
-    paddingBottom: isIphoneX() ? 10 : 0,
+    height: isIphoneX ? 67 : 52,
+    paddingBottom: isIphoneX ? 15 : 0,
     position: 'absolute',
     bottom: 0,
     left: 0,

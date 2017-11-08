@@ -5,6 +5,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -22,6 +23,7 @@ import theme from '../../style/theme';
 import time from '../../utils/time';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Comment, CommentPost } from './CommentPost';
+import CommentImageZoom from './CommentImageZoom';
 import CommentForm from './CommentForm';
 import SimpleEmojiPicker from './SimpleEmojiPicker';
 
@@ -39,6 +41,7 @@ class CommentList extends Component {
       showEmojiPicker: false,
       cursorPositionStart: 0,
       cursorPositionEnd: 0,
+      zoomedImage: null,
     }
   }
 
@@ -88,6 +91,16 @@ class CommentList extends Component {
     this.scrollBottom(true);
   }
 
+  @autobind
+  zoomImage(zoomedImage) {
+    this.setState({ zoomedImage })
+  }
+
+  @autobind
+  resetZoomImage() {
+    this.setState({ zoomedImage: null })
+  }
+
   renderLoader() {
     return <ActivityIndicator size="large" color={theme.primary} />;
   }
@@ -124,8 +137,10 @@ class CommentList extends Component {
                 }}
                 keyboardShouldPersistTaps="always"
               >
-                <CommentPost item={postItem} openUserView={openUserView} />
-                {comments.map((comment, index) => <Comment key={index} item={comment} openUserView={openUserView} />)}
+                <CommentPost item={postItem} openUserView={openUserView} onImagePress={this.zoomImage} />
+                {comments.map((comment, index) =>
+                  <Comment onImagePress={this.zoomImage} key={index} item={comment} openUserView={openUserView} />
+                )}
               </ScrollView>
             }
           </View>
@@ -151,6 +166,12 @@ class CommentList extends Component {
           </View>
         </View>
         </KeyboardAvoidingView>
+
+        <CommentImageZoom
+          imageUrl={this.state.zoomedImage}
+          onClose={this.resetZoomImage}
+        />
+
       </View>
     )
   }

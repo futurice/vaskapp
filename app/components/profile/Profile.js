@@ -283,7 +283,7 @@ class Profile extends Component {
       id: 'images',
     },
     {
-      link: 'https://futurice.github.io/vaskapp-web/apps/Initiative/',
+      link: 'https://futurice.github.io/vaskapp-futu/apps/Initiative/',
       title: 'Initiate',
       subtitle: 'Do you have an idea? Or maybe too complex 3x2 decision? Let us know!',
       id: 'feedback',

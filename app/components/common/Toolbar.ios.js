@@ -10,15 +10,24 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../../style/theme';
+import { isIphoneX } from '../../services/device-info';
 
 const styles = StyleSheet.create({
   toolbar: {
     backgroundColor: theme.yellow,
-    height: 60,
+    height: isIphoneX ? 80 : 60,
     flexDirection: 'row',
-    paddingTop: 20,
+    paddingTop: isIphoneX ? 40 : 20,
     alignItems: 'center',
     justifyContent: 'space-between',
+    zIndex: 10,
+    shadowColor: theme.secondaryDark,
+    shadowOpacity: 0.09,
+    shadowRadius: 7,
+    shadowOffset: {
+      height: 5,
+      width: 0
+    },
   },
   button: {
     backgroundColor: theme.transparent,
@@ -41,12 +50,13 @@ const styles = StyleSheet.create({
   icon: {
     fontSize: 24,
     padding: 5,
-    paddingLeft: 10,
+    paddingLeft: 15,
     paddingRight: 5,
-    color: theme.blue1
+    color: theme.primary
   },
   rightIcon: {
     padding: 0,
+    paddingLeft: 0,
     paddingRight: 0,
     color: theme.blue2
   },
@@ -63,7 +73,8 @@ const styles = StyleSheet.create({
   },
   title:{
     textAlign: 'center',
-    paddingRight:15,
+    paddingRight: 5,
+    fontSize: 17,
     color: theme.primary,
     fontWeight: 'normal'
   }
@@ -115,10 +126,10 @@ class Toolbar extends Component {
         </View>
 
         <TouchableOpacity style={[styles.button, styles.rightButton]} {...rightTouchableProps}>
+
           {
             !!rightIcon && <Icon style={[styles.icon, styles.rightIcon]} name={rightIcon} />
           }
-
           {
             !!rightText && <Text style={styles.text}>{rightText}</Text>
           }

@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   itemAuthorName: {
     fontSize: 14,
     fontWeight: 'normal',
-    color: theme.primary,
+    color: theme.black,
     paddingRight: 10,
     paddingTop: IOS ? 4 : 0,
   },

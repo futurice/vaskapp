@@ -23,7 +23,7 @@ const LoginLoader = () => (
     end={{x: 1, y: 1}}
     colors={[theme.white, theme.white]}
   >
-    <Loader size="large" color={theme.primary} />
+    <Loader size="large" color={theme.secondaryClear} />
   </LinearGradient>
 );
 

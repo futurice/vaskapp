@@ -24,33 +24,31 @@ class SkipView extends Component {
   render() {
     const { loginFailed, onPressMainAction } = this.props;
     return (
-       <View style={styles.container}>
-          <ScrollView style={{flex:1, width: null, height: null}}>
-              <View style={styles.content}>
-                <View style={styles.textContainer}>
-                  <Image
-                    resizeMode="contain"
-                    style={{ width: 120, height: 70, tintColor: theme.primary }}
-                    source={require('../../../assets/logo/new.png')}
-                  />
-                  <Text style={styles.text}>Login with your company email address
-                  </Text>
-                </View>
-
-                {loginFailed &&
-                  <AnimateMe animationType="fade-from-bottom" duration={150}>
-                    <Text style={styles.loginError}>Unfortunately there was a problem with login.</Text>
-                  </AnimateMe>
-                }
-
-                <PlatformTouchable onPress={onPressMainAction} activeOpacity={0.8}>
-                  <View style={styles.loginButton}>
-                    <Text style={styles.loginButtonText}>LOG IN</Text>
-                  </View>
-                </PlatformTouchable>
+      <View style={styles.container}>
+        <ScrollView style={{flex:1, width: null, height: null}}>
+          <View style={styles.content}>
+            <View style={styles.textContainer}>
+              <Image
+                resizeMode="contain"
+                style={{ width: 120, height: 70, tintColor: theme.primary }}
+                source={require('../../../assets/logo/new.png')}
+              />
+              <Text style={styles.text}>Login with your company email address
+              </Text>
+            </View>
+            {loginFailed &&
+              <AnimateMe animationType="fade-from-bottom" duration={150}>
+                <Text style={styles.loginError}>Unfortunately there was a problem with login.</Text>
+              </AnimateMe>
+            }
+            <PlatformTouchable onPress={onPressMainAction} activeOpacity={0.8}>
+              <View style={styles.loginButton}>
+                <Text style={styles.loginButtonText}>LOG IN</Text>
               </View>
-            </ScrollView>
-        </View>
+            </PlatformTouchable>
+          </View>
+        </ScrollView>
+      </View>
     );
   }
 }

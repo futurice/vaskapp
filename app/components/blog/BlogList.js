@@ -246,7 +246,7 @@ var styles = StyleSheet.create({
     padding: 25,
   },
   cardTitle: typography.h1(),
-  cardSubTitle: typography.h2(),
+  cardSubTitle: typography.h2({ marginBottom: 10 }),
   cardText: typography.paragraph(),
 });
 

@@ -27,7 +27,7 @@ import EIcon from 'react-native-vector-icons/EvilIcons';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 import Tabs from '../../constants/Tabs';
 import { openSettings, openConversations } from '../../services/router';
-import { isIphoneX } from 'react-native-iphone-x-helper';
+import { isIphoneX } from '../../services/device-info';
 
 
 let NavigationBarRouteMapper = props => ({
@@ -120,7 +120,7 @@ var styles = StyleSheet.create({
     alignItems:'center',
   },
   leftButtonWrap: {
-    marginLeft: isIphoneX() ? 10 : 0,
+    marginLeft: isIphoneX ? 10 : 0,
   },
   navBarButton:{
     color: theme.primary,
@@ -131,7 +131,7 @@ var styles = StyleSheet.create({
   navBarIcon:{
     color: theme.primary,
     padding: 8,
-    paddingHorizontal: isIphoneX() ? 20 : 10,
+    paddingHorizontal: isIphoneX ? 20 : 10,
     fontSize: 25,
     textAlign: 'center',
   },

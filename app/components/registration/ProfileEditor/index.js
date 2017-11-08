@@ -24,6 +24,7 @@ import ImagePickerManager from 'react-native-image-picker';
 
 import Text from '../../common/MyText';
 import Button from '../../common/Button';
+import AnimateMe from '../../AnimateMe';
 import ScrollHeader from '../../common/ScrollHeader';
 import theme from '../../../style/theme';
 import typography from '../../../style/typography';
@@ -209,14 +210,18 @@ class ProfileEditorView extends Component {
           </View>
         </ScrollView>
 
-        <View style={styles.bottomButtons}>
+        <AnimateMe
+          style={styles.bottomButtons}
+          animationType={'fade-from-bottom'}
+          duration={300}
+        >
           <Button
             onPress={this.onRegister}
             style={styles.modalButton}
             isDisabled={!this.props.isRegistrationInfoValid}>
             SAVE
           </Button>
-        </View>
+        </AnimateMe>
       </View>
     );
   }
@@ -310,7 +315,7 @@ class ProfileEditorView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 50,
+    paddingBottom: 54,
     backgroundColor: theme.stable,
   },
   innerContainer: {
@@ -321,23 +326,24 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   bottomButtons:{
-    flex:1,
-    flexDirection:'row',
-    margin:0,
-    marginBottom:0,
-    marginLeft:0,
-    marginRight:0,
-    height:50,
-    alignItems:'stretch',
-    position:'absolute',
-    bottom:0,
-    left:0,
-    right:0,
+    flex: 1,
+    flexDirection: 'row',
+    margin: 0,
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    height: 54,
+    alignItems: 'stretch',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   modalButton: {
     borderRadius:0,
     flex:1,
     marginLeft:0,
+    height: 54,
     backgroundColor: theme.black,
   },
   inputGroup:{
