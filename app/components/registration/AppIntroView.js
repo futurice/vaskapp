@@ -133,7 +133,7 @@ class AppIntroView extends Component {
         // visible={showUserLoginView}
         swipeToClose={false}
         backdropPressToClose={false}
-        animationDuration={300}
+        animationDuration={0}
       >
         {isLoginLoading ? <LoginLoader /> : this.renderAppIntro()}
       </ModalBox>
