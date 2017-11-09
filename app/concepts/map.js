@@ -29,8 +29,9 @@ import StorageKeys from '../constants/StorageKeys';
 
 // # Constants
 // radius how far from center (office) data should be fetched
-const CITY_RADIUS = 20 * 1000; // meters
-const CITY_POST_LIMIT = 5;
+const MAP_QUERY_RADIUS = 20 * 1000; // meters
+const MAP_QUERY_LIMIT = 5;
+const ALL_CATEGORY = 'ALL';
 
 // # Action types
 const SET_POSTS = 'SET_POSTS';
@@ -71,11 +72,12 @@ const getMarkers = createSelector(
   (markers, posts, selectedCategory) => {
     const postMarkers = posts.filter(post => post.has('location'));
 
-    const categoryMarkers = getSelectedCategory
+    // categoryMarkers === "cities"
+    const categoryMarkers = selectedCategory && selectedCategory !== ALL_CATEGORY
       ? markers.filter(m => m.get('type') === selectedCategory)
       : markers;
 
-    return postMarkers.concat(categoryMarkers);
+    return categoryMarkers.concat(postMarkers);
   }
 )
 
@@ -98,8 +100,8 @@ const getMarkerCategories = createSelector(
       .map(marker => marker.get('type', '').toUpperCase())
       .toSet().toList(); // Immutable uniq
 
-    return validMarkers;
-    // return validMarkers.unshift('ALL');
+    // return validMarkers;
+    return validMarkers.push(ALL_CATEGORY);
   }
 );
 
@@ -154,7 +156,11 @@ export const selectMarker = (markerId, markerType) => ({ type: SELECT_MARKER, ma
 export const selectCategory = payload => (dispatch) => {
   trackEvent('map', 'select-city', payload);
 
-  AsyncStorage.setItem(StorageKeys.mapCategory, payload);
+  // Not saving *ALL*-selection as default
+  // since fetching data on start is not working
+  if (payload !== ALL_CATEGORY) {
+    AsyncStorage.setItem(StorageKeys.mapCategory, payload);
+  }
 
   return Promise.resolve(dispatch({ type: SELECT_CATEGORY, payload }))
     .then(() => dispatch(fetchPostsForCity()));
@@ -175,24 +181,30 @@ export const initializeUsersCitySelection = () => (dispatch, getState) =>
 export const fetchPostsForCity = () => (dispatch, getState) => {
   const state = getState();
 
+  // We are using 'markers' as 'city'
+  // in current data model
   const cities = m.getMarkers(state);
   const cityId = getSelectedCategory(state);
 
   const selectedCity = cities.find(city => city.get('type', '').toUpperCase() === cityId);
 
+  let queryParams = {};
+  // request ALL_CATEGORY
   if (!selectedCity || !selectedCity.has('location')) {
-    return false;
+    queryParams = {};
+  } else {
+    const cityLocation = selectedCity.get('location').toJS(); // center for geo-querying posts
+    queryParams = { radius: MAP_QUERY_RADIUS, ...cityLocation };
   }
 
-  const cityLocation = selectedCity.get('location').toJS(); // center for geo-querying posts
   const sort = SortTypes.SORT_NEW; // sort choronologically
   const since = moment().subtract(1, 'week').toISOString(); // week ago
 
-  const cityFeedParams = { sort, ...cityLocation, radius: CITY_RADIUS, limit: CITY_POST_LIMIT, since  }
+  const mapQueryParams = { sort, ...queryParams, limit: MAP_QUERY_LIMIT, since  }
 
   dispatch({ type: GET_POSTS_REQUEST });
 
-  return api.fetchModels('feed', cityFeedParams)
+  return api.fetchModels('feed', mapQueryParams)
   .then(items => {
     dispatch({
       type: SET_POSTS,
