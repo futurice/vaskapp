@@ -92,30 +92,81 @@ var BlogPost = React.createClass({
       window.onload = waitForBridge;
     </script>`;
 
-    const fontFamilySerif = IOS ? 'Palatino' : 'serif';
+    const fontFamilySerif = IOS ? 'NotoSerif' : 'NotoSerif';
     const fontFamily = IOS ? 'Futurice' : 'Futurice-Regular';
     const fontFamilyCode = fontFamily;
+    const textColor = 'rgba(0,0,0,0.8)';
 
     const html = `
     <!DOCTYPE html>
     <html>
       <style>
-        html,body {margin:0;padding:0, min-height: 100%; max-width: ${width - 50}px; overflow-x:hidden; }
-        h1, h2, h3 {color: ${theme.black}; font-weight: 100; }
+        html,body {
+          margin: 0;
+          padding: 0;
+          min-height: 100%;
+          max-width: ${width}px;
+          overflow-x: hidden;
+          text-rendering: optimizeLegibility;
+          -webkit-font-smoothing: antialiased;
+          font-weight: 400;
+        }
+
+        body {
+          padding: 0 25px;
+        }
+
+        h1, h2, h3, h4, h5 {
+          color: ${textColor};
+          font-family: '${fontFamily}', sans-serif;
+          font-weight: bold;
+          letter-spacing: -.015em;
+          line-height: 1.3;
+          margin: 0;
+          padding: 0;
+        }
         h1, h2 {
-          margin: 0 0 15px;
-          padding: 0;
+          margin-top: 7px;
+          font-size: 25px;
         }
-        h3 {
-          margin: 0 0 10px;
-          padding: 0;
+        h3, h4, h5 {
+          margin-bottom: 7px;
+          font-size: 22px;
         }
-        a { text-transform: underline; color: ${theme.black} }
-        html, body, p { font-family: '${fontFamily}', serif; font-weight: 100, font-size: 14px; line-Height: 23px; color: ${theme.dark} }
+        p {
+          margin: 0 0 22px;
+        }
+
+        a {
+          text-transform: underline;
+          color: ${textColor};
+          font-weight: bold;
+        }
+        html, body, p {
+          font-family: '${fontFamilySerif}', serif;
+          font-weight: normal;
+          color: ${textColor};
+          font-size: 17px;
+          letter-spacing: -.003em;
+          line-height: 1.52;
+        }
         p { margin-bottom: 25px; }
         ul, ol { padding-left: 30px; margin-left: 0; }
-        img, iframe {max-width:100%;}
 
+        img, iframe {
+          max-width:100%;
+        }
+
+        img {
+          min-width: 100%;
+          min-width: ${width}px;
+          margin: 0 -25px;
+        }
+
+        figure {
+          margin: 0;
+          padding: 0;
+        }
 
         ol pre {
           margin-left: -30px;
@@ -145,7 +196,7 @@ var BlogPost = React.createClass({
     </html>`;
 
     return (
-      <View style={{ flex: 1}}>
+      <View style={{ flex: 1 }}>
         {!IOS &&
         <ScrollHeader
           icon="arrow-back"
@@ -188,7 +239,7 @@ var BlogPost = React.createClass({
                 onNavigationStateChange={this.updateWebview}
                 onMessage={this.onMessage}
                 automaticallyAdjustContentInsets={true}
-                style={{width: Dimensions.get('window').width - 40, height: webViewHeight }}
+                style={{width: width, height: webViewHeight }}
               ></WebView>
             </AnimateMe>
           </View>
@@ -211,9 +262,10 @@ var styles = StyleSheet.create({
   },
   content:{
     padding: 25,
+    paddingHorizontal: 0,
   },
-  detailTitle: typography.h1(),
-  detailPersonTitle: typography.h2(),
+  detailTitle: typography.h1({ paddingHorizontal: 25 }),
+  detailPersonTitle: typography.h2({ paddingHorizontal: 25, color: theme.midgrey }),
 });
 
 export default BlogPost;
