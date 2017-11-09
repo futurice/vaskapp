@@ -35,7 +35,7 @@ const store = createStoreWithMiddleware(reducer);
 class RootView extends Component {
   componentDidMount() {
     // Location watcher
-    store.dispatch(startLocationWatcher());
+    // store.dispatch(startLocationWatcher());
 
     // Get login info
     Promise.resolve(store.dispatch(checkUserLogin()))
@@ -48,9 +48,9 @@ class RootView extends Component {
     }
   }
 
-  componentWillUnmount() {
-    store.dispatch(stopLocationWatcher());
-  }
+  // componentWillUnmount() {
+  //   store.dispatch(stopLocationWatcher());
+  // }
 
   render() {
     return (

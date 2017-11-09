@@ -15,6 +15,12 @@ const locationOpts = {
   maximumAge: 1000 * 60 * 5 // 5 min
 };
 
+
+//
+// Selectors
+//
+export const getLocation = state => state.location.get('currentLocation');
+
 //
 // Action types
 //
@@ -52,13 +58,38 @@ export const updateLocation = (position) => ({
 });
 
 
-export const startLocationWatcher = () => (dispatch) => {
 
-	if (IOS) {
-		dispatch(initLocationWatcher());
-	} else {
-		permissions.requestLocationPermission(initLocationWatcher);
-	}
+// # Get location once
+export const fetchUserLocation = () => (dispatch) => {
+  if (IOS) {
+    return dispatch(getLocationFromDevice());
+  } else {
+    // Check that this works on Android
+    permissions.requestLocationPermission(() => dispatch(getLocationFromDevice()));
+  }
+}
+
+export const getLocationFromDevice = () => (dispatch) => {
+  var locationPromise = new Promise(function(resolve, reject) {
+    navigator.geolocation.getCurrentPosition(
+      position => resolve(dispatch(updateLocation(position))),
+      error => reject(error.message),
+      locationOpts
+    );
+  });
+
+  return locationPromise;
+}
+
+
+// # Location Watcher
+export const startLocationWatcher = () => (dispatch) => {
+  if (IOS) {
+    dispatch(initLocationWatcher());
+  } else {
+    // This does not work
+    permissions.requestLocationPermission(initLocationWatcher);
+  }
 }
 
 export const initLocationWatcher = () => (dispatch) => {
