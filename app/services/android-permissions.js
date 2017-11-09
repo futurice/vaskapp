@@ -1,7 +1,7 @@
 import { PermissionsAndroid } from 'react-native';
 import { get } from 'lodash';
 
-async function requestLocationPermission(cb) {
+async function requestLocationPermission(callback) {
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -13,7 +13,7 @@ async function requestLocationPermission(cb) {
     )
     if (granted) {
       console.log("You can use the Location")
-      cb();
+      callback();
     } else {
       console.log("Location permission denied")
     }
@@ -22,7 +22,7 @@ async function requestLocationPermission(cb) {
   }
 }
 
-async function requestCameraPermission(cb) {
+async function requestCameraPermission(callback) {
   try {
     /*
     const grantCamera = await PermissionsAndroid.request(
@@ -56,7 +56,7 @@ async function requestCameraPermission(cb) {
 
     if (grantCamera) {
       console.log("You can use the Camera and storage")
-      cb();
+      callback();
     } else {
       console.log("Camera permission denied")
     }
