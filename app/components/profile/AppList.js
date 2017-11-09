@@ -112,10 +112,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     elevation: 2,
     shadowColor: theme.secondaryDark,
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
     shadowOffset: {
-      height: 4,
+      height: 3,
       width: 0
     },
   },

@@ -237,7 +237,6 @@ class FeedList extends Component {
         };
 
         this.openImageEditor(editableImage);
-        // this.props.postImage(image);
       }
     });
   }

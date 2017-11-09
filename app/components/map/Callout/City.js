@@ -39,7 +39,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.transparent
   },
   calloutButton: {
+    top: 12,
     maxHeight: 36,
+    maxWidth: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 
@@ -60,7 +64,7 @@ const CalloutPost = ({ item }) => {
           <Text style={styles.postAuthorName}>{item.get('title')}</Text>
           <Text style={styles.postTextMessage}>{item.get('subtitle')}</Text>
           <Button style={styles.calloutButton} onPress={() => onDirectionsPress(item)}>
-            <MDIcon name="directions" /> Directions
+            Directions
           </Button>
         </View>
       </Callout>

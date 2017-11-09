@@ -33,8 +33,9 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
   },
   postTextMessage: {
-    marginTop: 10,
+    marginTop: 5,
     fontSize: 12,
+    lineHeight: 15,
     color: theme.dark,
     backgroundColor: theme.transparent
   },

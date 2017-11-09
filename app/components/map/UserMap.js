@@ -22,7 +22,7 @@ import { fromJS } from 'immutable';
 
 
 import Text from '../common/MyText';
-import { get, random} from 'lodash';
+import { get, random, isEmpty } from 'lodash';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 import analytics from '../../services/analytics';
@@ -88,7 +88,9 @@ class UserMap extends Component {
     // Animate map when city is changed
     if (selectedCategory && selectedCategory !== nextProps.selectedCategory) {
       const cityCoords = this.getCityCoords(nextProps.selectedCategory);
-      this.map.animateToCoordinate(cityCoords, 1);
+      if (cityCoords && !isEmpty(cityCoords)) {
+        this.map.animateToCoordinate(cityCoords, 1);
+      }
     }
 
     // Custom callout animation

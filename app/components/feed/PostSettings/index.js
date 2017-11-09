@@ -50,8 +50,9 @@ const styles = StyleSheet.create({
     color: '#bbb'
   },
   settingsRowIcon: {
-    color: theme.grey4,
-    fontSize: 25,
+    color: theme.midgrey,
+    fontSize: 22,
+    top: 1,
     marginRight: 13,
     marginLeft: -5,
   },
