@@ -45,7 +45,7 @@ import {
   getUserName,
   postProfilePicture,
 } from '../../../concepts/registration';
-import { setCity, getCityIdByTeam, getCityId } from '../../../concepts/city';
+import { getCityIdByTeam } from '../../../concepts/city';
 import { getTeams } from '../../../reducers/team';
 
 import * as keyboard from '../../../utils/keyboard';
@@ -454,7 +454,6 @@ const mapDispatchToProps = {
   updateName,
   updateUserInfo,
   reset,
-  setCity,
   selectTeam,
   closeRegistrationView,
   postProfilePicture,
@@ -465,7 +464,6 @@ const select = store => ({
   userData: getUser(store),
 
   selectedCityId: getCityIdByTeam(store),
-  viewCityId: getCityId(store),
   teams: getTeams(store),
   cities: store.city.get('list'),
   isRegistrationInfoValid: !!getUserName(store),

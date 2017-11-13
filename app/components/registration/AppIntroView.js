@@ -89,7 +89,7 @@ class AppIntroView extends Component {
         leftTextColor={theme.primary}
         rightTextColor={theme.primary}
         activeDotColor={theme.primary}
-        nextBtnLabel={<Icon name="chevron-right" style={{ lineHeight: 40 }} size={32} />}
+        nextBtnLabel={<Icon name="chevron-right" size={32} />}
         style={{ backgroundColor: theme.white, flex: 1 }}
         dotColor={'rgba(0, 0, 0, .3)'}>
         {/* Slide 1 */}
