@@ -34,6 +34,7 @@ import { openUserView } from '../../concepts/user';
 import { openRegistrationView, getUserTeam, getUserName } from '../../concepts/registration';
 import permissions from '../../services/android-permissions';
 
+import EmptyState from './EmptyState';
 import ImageEditor from './ImageEditor';
 import FeedListItem from './FeedListItem';
 import Notification from '../common/Notification';
@@ -296,6 +297,7 @@ class FeedList extends Component {
       progressBackgroundColor={theme.light} />;
 
     const isLoading = isLoadingActionTypes || isLoadingUserData;
+    const { dataSource } = this.state;
 
     switch (feedListState) {
       case LoadingStates.LOADING:
@@ -304,8 +306,8 @@ class FeedList extends Component {
         return (
           <ScrollView style={{ flex: 1 }} refreshControl={refreshControl}>
             <View style={styles.problemWrap}>
-                <Icon style={styles.problemIcon} name="hot-tub" />
-                <Text style={styles.problemText}>Could not get feed, just vask it...</Text>
+              <Icon style={styles.problemIcon} name="hot-tub" />
+              <Text style={styles.problemText}>Could not get feed, pull to refresh...</Text>
             </View>
           </ScrollView>
         );
@@ -314,7 +316,7 @@ class FeedList extends Component {
           <View style={styles.feedContainer}>
             <ListView
               ref='_scrollView'
-              dataSource={this.state.dataSource}
+              dataSource={dataSource}
               showsVerticalScrollIndicator={false}
               renderRow={item => <FeedListItem
                 item={item}
@@ -331,6 +333,7 @@ class FeedList extends Component {
               onScroll={this._onScroll}
               onEndReached={this.onLoadMoreItems}
               refreshControl={refreshControl} />
+            {!dataSource.length && <EmptyState />}
             <ActionButtons
               visibilityAnimation={this.state.actionButtonsAnimation}
               isRegistrationInfoValid={this.props.isRegistrationInfoValid}
