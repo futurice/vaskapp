@@ -3,36 +3,27 @@ import {
   View,
   TouchableOpacity,
   Text,
-  Animated,
   Easing,
-  StyleSheet
+  StyleSheet,
+  Platform,
 } from 'react-native';
 
+import AnimateMe from '../../AnimateMe';
 import PlatformTouchable from '../../common/PlatformTouchable';
 import theme from '../../../style/theme';
-
+const IOS = Platform.OS === 'ios';
 
 class CalloutButton extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { anim: new Animated.Value(0) };
-  }
-
-  componentDidMount() {
-    setTimeout(() => {
-      Animated
-        .timing(this.state.anim, { duration: 400, easing: Easing.elastic(1), toValue: 1 })
-        .start();
-    }, 750)
-  }
-
   render() {
     const { children, onPress } = this.props;
-    const buttonAnimation = { transform: [{ scale: this.state.anim }]};
 
     return (
-      <Animated.View style={[styles.buttonWrap, buttonAnimation]}>
+      <AnimateMe
+        style={styles.buttonWrap}
+        animationType={'fade-from-bottom'}
+        duration={250}
+        delay={500}
+      >
         <PlatformTouchable
           activeOpacity={1}
           style={styles.button}
@@ -40,7 +31,7 @@ class CalloutButton extends Component {
         >
           {children}
         </PlatformTouchable>
-      </Animated.View>
+      </AnimateMe>
     );
   }
 }
@@ -52,12 +43,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     right: 0,
-    top: -45,
+    top: IOS ? -45 : 50,
     width: 56,
     height: 56,
     borderRadius: 28,
-    elevation: 6,
-    backgroundColor: theme.white,
+    flex: 1,
+    elevation: 2,
+    backgroundColor: theme.lightgreen,
   },
   button: {
     alignItems: 'center',

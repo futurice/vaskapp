@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   Linking,
+  Platform,
 } from 'react-native';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
 
@@ -12,6 +13,7 @@ import Button from '../../common/Button';
 import Callout from '.';
 import theme from '../../../style/theme';
 import locationService from '../../../services/location';
+const IOS = Platform.OS === 'ios';
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -63,9 +65,11 @@ const CalloutPost = ({ item }) => {
         <View style={styles.postInfo}>
           <Text style={styles.postAuthorName}>{item.get('title')}</Text>
           <Text style={styles.postTextMessage}>{item.get('subtitle')}</Text>
+          {IOS &&
           <Button style={styles.calloutButton} onPress={() => onDirectionsPress(item)}>
             Directions
           </Button>
+          }
         </View>
       </Callout>
   );

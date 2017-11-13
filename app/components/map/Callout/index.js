@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     elevation: 3,
     overflow: 'visible',
+    backgroundColor: theme.white,
   },
   calloutImage: {
     width: 120,
