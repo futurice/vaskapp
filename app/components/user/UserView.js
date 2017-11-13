@@ -110,7 +110,7 @@ class UserView extends Component {
               </View>
             </View>
 
-            <AnimateMe delay={1500} animationType="fade-in">
+            <AnimateMe style={{ flex: 1 }} delay={1500} animationType="fade-in">
               <ImageGrid
                 navigator={navigator}
                 isLoading={isLoading}
