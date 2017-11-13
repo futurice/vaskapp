@@ -47,7 +47,7 @@ class TeamSelector extends Component {
               <Text style={styles.inputLabelText}>Welcome {firstName}!</Text>
             </AnimateMe>
             <AnimateMe animationType={'fade-from-bottom'} delay={800} duration={300}>
-              <Text style={styles.inputLabelSubtitle}>Choose your Tribe</Text>
+              <Text style={styles.inputLabelSubtitle}>Choose your team</Text>
             </AnimateMe>
           </View>
 

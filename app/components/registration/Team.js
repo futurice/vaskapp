@@ -29,7 +29,7 @@ class Team extends Component {
           <View style={[styles.teamLogo, { borderColor: isSelected ? theme.secondary : '#f2f2f2' }]}>
             {logo
             ? <Image
-                source={{ uri: logo}}
+                source={{ uri: logo }}
                 style={styles.teamLogoImage} />
             : <Text style={[styles.teamInitials, { color: isSelected ? theme.secondary : theme.dark }]}>
                 {getNameInitials(name, 1)}
@@ -81,9 +81,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     backgroundColor: 'transparent',
     color: theme.dark,
-    top: IOS ? 4 : 0,
+    top: IOS ? 3 : 0,
   },
-  text: typography.h2({ marginBottom: 0, top: IOS ? 2 : 0, }),
+  text: typography.h2({ marginBottom: 0, top: IOS ? 2 : 0, backgroundColor: 'transparent' }),
   button: {
     paddingVertical: 12,
     flex:1,
