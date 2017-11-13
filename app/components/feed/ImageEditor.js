@@ -23,6 +23,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../../style/theme';
 import Fab from '../common/Fab';
 import Toolbar from '../common/Toolbar';
+import ScrollHeader from '../common/ScrollHeader';
 import PostSettings from './PostSettings';
 import * as features from '../../constants/Features';
 
@@ -314,7 +315,9 @@ class ImageEditor extends Component {
       >
       {image &&
       <View style={{ flex: 1 }}>
-        <Toolbar
+
+        {IOS
+        ? <Toolbar
           leftIcon={'close'}
           rightText={'Post'}
           rightIcon={'done'}
@@ -323,6 +326,12 @@ class ImageEditor extends Component {
           title='Photo'
           styles={{ elevation: 0 }}
         />
+        : <ScrollHeader
+            icon="close"
+            onIconClick={this.onImageEditCancel}
+            title="Photo"
+          />
+      }
         <View style={styles.container}>
 
           <PostSettings
