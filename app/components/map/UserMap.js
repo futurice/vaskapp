@@ -58,9 +58,11 @@ import { openLightBox } from '../../concepts/lightbox';
 
 const { width, height } = Dimensions.get('window');
 
-const calloutHeight = 140;
+// helsinki
+const defaultStartLocation = CITY_CATEGORIES[HELSINKI];
 
 const IOS = Platform.OS === 'ios';
+const calloutHeight = IOS ? 140 : 140;
 const VIEW_NAME = 'UserMap';
 
 class UserMap extends Component {
@@ -79,7 +81,13 @@ class UserMap extends Component {
 
   componentDidMount() {
     analytics.viewOpened(VIEW_NAME);
-    this.props.fetchPostsForCity();
+
+    // load for selected city and fit markers
+    this.props.fetchPostsForCity()
+      // Need to setTimeout for initial fitMarkerToMap for Android issue
+      //
+      // https://github.com/airbnb/react-native-maps/issues/1003
+      .then(() => setTimeout(this.fitMarkersToMap, IOS ? 0 : 500));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -112,12 +120,21 @@ class UserMap extends Component {
   }
 
   getCityRegion(city) {
+    let cityCoords = this.getCityCoords(city);
+    let zoomLevel = 0.025;
+
+    if (!cityCoords || isEmpty(cityCoords)) {
+      cityCoords = defaultStartLocation;
+      zoomLevel = 3;
+    }
+
     const deltaSettings = {
-      latitudeDelta: 0.025,
-      longitudeDelta: 0.025
+      latitudeDelta: zoomLevel,
+      longitudeDelta: zoomLevel,
     };
-   const cityCoords = this.getCityCoords(city);
-   return Object.assign(deltaSettings, cityCoords);
+
+
+    return Object.assign(deltaSettings, cityCoords);
   }
 
   @autobind
@@ -223,7 +240,6 @@ class UserMap extends Component {
 
   onCheckInPress() {
     location.getLocation((position) => {
-      console.log(position);
       alert(`Latitude: ${position.coords.latitude} Longitude: ${position.coords.longitude}`)
     });
   }
@@ -268,16 +284,17 @@ class UserMap extends Component {
       this.categoryScroll.scrollToEnd();
     }
 
-    // Action for category
+    // Action for category selec
     this.props.selectCategory(category)
-      .then(this.fitMarkersToMap);
+    .then(this.fitMarkersToMap);
   }
 
   @autobind
   fitMarkersToMap() {
     const { visiblemarkerCoords } = this.props;
-    if (this.map && visiblemarkerCoords && visiblemarkerCoords.length > 1) {
-      const padding = visiblemarkerCoords.length <= 2 ? 100 : 30;
+
+    if (this.map && visiblemarkerCoords && visiblemarkerCoords.length >= 1) {
+      const padding = visiblemarkerCoords.length <= 2 ? 100 : 80;
       const edgePadding = { top: padding, bottom: padding, left: padding, right: padding };
       this.map.fitToCoordinates(visiblemarkerCoords, { edgePadding }, false)
     }
@@ -339,7 +356,7 @@ class UserMap extends Component {
       return <MapView.Marker
         centerOffset={{ x: 0, y: 0 }}
         anchor={{ x: 0.5, y: 0.5 }}
-        key={index}
+        key={location.id}
         coordinate={location.location}
         onPress={() => this.onSelectMarker(location)}
         style={isSelectedMarker ? { zIndex: markersJS.length + 1, transform: [{ scale: 1.2 }] } : { zIndex: parseInt(location.id) }}
@@ -359,7 +376,7 @@ class UserMap extends Component {
     });
 
     const initialRegion = this.getCityRegion(selectedCategory);
-    const areCategoriesReady = !markerLocations || !markerLocations.size <= 0;
+    const areCategoriesReady = true;
 
     return (
       <View style={{ flex:1 }}>
@@ -464,12 +481,13 @@ const styles = StyleSheet.create({
   },
   customCallout: {
     zIndex: 10,
+    overflow: 'visible',
     width: width,
     position: 'relative',
     left: 0,
     bottom: 0,
     height: calloutHeight,
-    backgroundColor: theme.white,
+    backgroundColor: theme.transparent,
   },
   callout: {
     flexGrow: 1,
