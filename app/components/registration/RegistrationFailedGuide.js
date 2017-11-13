@@ -18,22 +18,20 @@ import feedback from '../../services/feedback';
 const { width, height } = Dimensions.get('window');
 const IOS = Platform.OS === 'ios';
 
-export default RegistrationFailedGuide = ({ onPress }) => (
+export default RegistrationFailedGuide = ({ onClose }) => (
   <AnimateMe style={styles.container} animationType="drop-in" duration={400}>
-
-
     <View style={styles.closeIcon} >
-      <TouchableOpacity onPress={onPress}>
-          <Icon name="close" style={styles.closeIconText} />
+      <TouchableOpacity onPress={onClose}>
+        <Icon name="close" style={styles.closeIconText} />
       </TouchableOpacity>
     </View>
     <View style={styles.content}>
-      <Text style={styles.h1}>Why did my login fail?</Text>
-      <Text style={styles.paragraph}>App is currently in beta and only limited companies have access.</Text>
-      <Text style={styles.paragraph}>Do you wanna try Vask? Contact us!</Text>
+      <Text style={styles.h1}>Why did the Login fail?</Text>
+      <Text style={styles.paragraph}>App is currently in beta and login is limited to companies. Did you use your company email address?</Text>
+      <Text style={styles.paragraph}>You did and still not working? Contact us!</Text>
 
-      <Button style={styles.button} onPress={() => feedback.sendEmail(null)}>
-        Request access
+      <Button style={styles.button} onPress={() => feedback.sendEmail(null, 'Vask Help Request')}>
+        Request for Help
       </Button>
     </View>
   </AnimateMe>
@@ -42,16 +40,17 @@ export default RegistrationFailedGuide = ({ onPress }) => (
 
 const styles = StyleSheet.create({
   container: {
-    width: width - 40,
-    minHeight: height - 60,
-    top: 30,
-    padding: 20,
+    width: width - 0,
+    minHeight: height,
+    top: 0,
+    padding: 25,
+    paddingTop: 70,
     backgroundColor: '#FFF',
     borderRadius: 3,
     position: 'absolute',
-    left: 20,
+    left: 0,
     zIndex: 99,
-    elevation: 10,
+    elevation: 3,
     shadowColor: theme.secondaryDark,
     shadowOpacity: 0.15,
     shadowRadius: 20,
@@ -61,21 +60,22 @@ const styles = StyleSheet.create({
     },
   },
   content: {
-    flex: 1,
+    flex: IOS ? 1 : 0,
     justifyContent: 'center',
+    paddingTop: IOS ? 0 : 50,
   },
   closeIcon: {
     position: 'absolute',
     right: 15,
-    top: 15,
+    top: 50,
     zIndex: 99,
   },
   closeIconText: {
     fontSize: 30,
     color: theme.midgrey,
   },
-  h1: typography.h1({ textAlign: 'center' }),
-  paragraph: typography.paragraph({ marginVertical: 12, textAlign: 'center'  }),
+  h1: typography.h1({ textAlign: 'center', marginBottom: 20, }),
+  paragraph: typography.paragraph({ marginBottom: 10, textAlign: 'center' }),
   button: {
     marginTop: 20,
   }

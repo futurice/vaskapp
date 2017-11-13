@@ -10,7 +10,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  Platform
+  Platform,
+  StatusBar
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import autobind from 'autobind-decorator';
@@ -29,10 +30,10 @@ const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
 
 const baseWidth = 375;
-const sizeRatio = isIphoneX ? 1.15 : width / baseWidth;
+const sizeRatio = width / baseWidth;
 const vw = size => sizeRatio * size;
 
-const heroLeft = (width / 2) - (height / 5);
+const mainImageSize = height / 2.5;
 
 class InstructionView extends Component {
   constructor(props) {
@@ -43,6 +44,14 @@ class InstructionView extends Component {
     };
   }
 
+  componentDidMount() {
+    StatusBar.setBackgroundColor(theme.gold);
+  }
+
+  componentWillUnmount() {
+    StatusBar.setBackgroundColor(theme.grey1);
+  }
+
   @autobind
   toggleGuide() {
     this.setState({ showGuide: !this.state.showGuide });
@@ -51,7 +60,7 @@ class InstructionView extends Component {
   render() {
     const { loginFailed, onPressMainAction } = this.props;
     const { showGuide } = this.state;
-    const containerStyles = [styles.container, { paddingTop: isIphoneX ? 30 : 20 }];
+    const containerStyles = [styles.container, isIphoneX && { paddingTop: 30, }];
 
     // TODO image animation
     const { springAnim } = this.state;
@@ -67,61 +76,74 @@ class InstructionView extends Component {
         colors={[theme.gold, theme.goldDark]}
       >
       {showGuide
-        ? <RegistrationFailedGuide onClose={this.toggleGuide} />
-        : <View style={containerStyles}>
+       ? <RegistrationFailedGuide onClose={this.toggleGuide} />
+       : <View style={containerStyles}>
+
+
           <View style={styles.topArea}>
             <View style={styles.iconWrap}>
-              <AnimateMe style={{ flex: 0 }} animationType="fade-from-bottom" duration={300} delay={1500}>
+
+
+              <AnimateMe style={{ flex: 1, left: mainImageSize/2 - 30, top: 10, position: 'absolute', width: 70, height: 60 }} animationType="fade-from-bottom" duration={300} delay={1500}>
                 <AnimateMe
-                  style={[{ flex: 1, left: heroLeft + vw(35), top: vw(-30), transform: [{ rotate: '5deg' }] }, styles.emoji]}
+                  style={[{ flex: 1, left: 0, top: 0, transform: [{ rotate: '5deg' }] }, styles.emoji]}
                   animationType="shake3" duration={2100} delay={1500} infinite>
                   <Text style={{fontSize: vw(45)}}>🦄</Text>
                 </AnimateMe>
               </AnimateMe>
 
-              <AnimateMe style={{ flex: 0 }} animationType="fade-from-right" duration={400} delay={2000}>
-                <AnimateMe style={{ flex: 0 }} animationType="shake3" duration={3000} delay={1500} infinite>
-                  <View style={[{ top: vw(45), left: vw(-3), transform: [{ rotate: '5deg' }] }, styles.emoji]}>
+              <AnimateMe style={{ flex: 1, left: (mainImageSize/4 - 50), top: mainImageSize/2 - 10, width: 80, height: 80, position: 'absolute' }} animationType="fade-from-right" duration={400} delay={2000}>
+                <AnimateMe style={{ flex: 1 }} animationType="shake3" duration={3000} delay={1500} infinite>
+                  <View style={[{ left: 10, top: 5, transform: [{ rotate: '12deg' }] }, styles.emoji]}>
                     <Text style={{fontSize: vw(45)}}>🚴</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
 
-              <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-from-bottom" duration={400} delay={1200}>
+              <AnimateMe style={styles.mainImageWrap} animationType="fade-from-bottom" duration={300} delay={1200}>
                 <Image
-                  style={[{ position: 'absolute' }, styles.mainImage]}
+                  style={styles.mainImage}
                   resizeMode="contain"
                   source={require('../../../assets/illustrations/planet-purple.png')} />
               </AnimateMe>
-
-              <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-in" duration={400} delay={2200}>
-                <AnimateMe style={{ flex: 0 }} animationType="shake2" duration={2000} delay={1500} infinite>
-                  <View style={[{ right: heroLeft + vw(2),  top: vw(5)}, styles.emoji]}>
-                    <Text style={{fontSize: vw(42), transform: [{ rotate: '6deg' }] }}>🕹️</Text>
+   
+              <AnimateMe style={{ flex: 1, right: mainImageSize/4, top: 70, width: 66, height: 66, position: 'absolute' }} animationType="fade-in" duration={400} delay={2200}>
+                <AnimateMe style={{ flex: 1 }} animationType="shake2" duration={2000} delay={1500} infinite>
+                  <View style={styles.emoji}>
+                    <Text style={{fontSize: vw(42), transform: [{ rotate: '20deg' }] }}>🕹️</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
 
-              <AnimateMe style={{ flex: IOS ? 0 : 1 }} animationType="fade-from-bottom" duration={400} delay={2900}>
-                <AnimateMe style={{ flex: 0 }} animationType="shake2" duration={2000} delay={1500} infinite>
-                  <View style={[{ right: vw(39), top: vw(91), transform: [{ rotate: '-5deg' }] }, styles.emoji]}>
+              <AnimateMe style={{ flex: 1, right: mainImageSize/4, top: mainImageSize/2, width: 100, height: 40, position: 'absolute' }} animationType="fade-from-bottom" duration={400} delay={2900}>
+                <AnimateMe style={{ flex: 1 }} animationType="shake2" duration={2000} delay={1500} infinite>
+                  <View style={[{ transform: [{ rotate: '-8deg' }] }, styles.emoji]}>
                     <Text style={[{fontSize: vw(15)}, styles.floatText]} bold>#thank️</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
 
-              <AnimateMe style={{ flex: 0 }} animationType="fade-in" duration={400} delay={2500}>
+              <AnimateMe
+                style={{ flex: 1, right: mainImageSize/4 - 5, top: mainImageSize/2 + 30, width: 100, height: 100, position: 'absolute'}}
+                animationType="fade-in"
+                duration={400}
+                delay={2500}
+              >
                 <AnimateMe
-                  style={[{ flex: 1, right: vw(35), top: vw(110) }, styles.emoji]}
+                  style={[{ flex: 1 }, styles.emoji]}
                   animationType="shake2" duration={2000} delay={1500} infinite
                 >
-                  <Text style={{fontSize: vw(50), transform: [{ rotate: '-5deg' }] }}>🙏</Text>
+                  <Text style={{fontSize: vw(50), transform: [{ rotate: '-12deg' }] }}>🙏</Text>
                 </AnimateMe>
               </AnimateMe>
 
-              <AnimateMe style={{ flex: 1 }} animationType="fade-in" duration={400} delay={2600}>
+              <AnimateMe
+                style={{ flex: 1, left: mainImageSize/4 - 5, bottom: mainImageSize/4 - 20, width: 100, height: 100, position: 'absolute' }}
+                animationType="fade-in"
+                duration={400}
+                delay={2600}>
                 <AnimateMe style={{ flex: 1 }} animationType="shake" duration={1500} delay={500} infinite>
-                  <View style={[{ bottom: vw(10), left: vw(15), transform: [{ rotate: '5deg' }] }, styles.emoji]}>
+                  <View style={[{ transform: [{ rotate: '-10deg' }] }, styles.emoji]}>
                     <Text style={{fontSize: vw(70)}}>🍕</Text>
                   </View>
                 </AnimateMe>
@@ -130,18 +152,18 @@ class InstructionView extends Component {
 
 
               <AnimateMe
-                style={[{ flex: 1, top: vw(12), right: heroLeft + vw(60), transform: [{ rotate: '10deg' }] }, styles.emoji]}
+                style={[{ flex: 1, right: mainImageSize/2-10, top: 20, width: 50, height: 50, position: 'absolute', transform: [{ rotate: '10deg' }] }, styles.emoji]}
                 animationType="fade-in" duration={400} delay={1600}
               >
                 <Text stylestyle={{ fontSize: vw(25)}}>✨✨</Text>
               </AnimateMe>
 
-            <AnimateMe
-              style={[{ flex: 1, bottom: 40, right: heroLeft + vw(40), transform: [{ rotate: '-20deg' }] }, styles.emoji]}
-              animationType="fade-in" duration={400} delay={1800}
-            >
-              <Text style={{fontSize: vw(12)}}>✨✨</Text>
-            </AnimateMe>
+              <AnimateMe
+                style={[{ flex: 1, right: mainImageSize/2 + 30, bottom: 30, width: 50, height: 50, position: 'absolute', transform: [{ rotate: '-20deg' }] }, styles.emoji]}
+                animationType="fade-in" duration={400} delay={1800}
+              >
+                <Text style={{fontSize: vw(12)}}>✨✨</Text>
+              </AnimateMe>
 
 
             </View>
@@ -158,42 +180,30 @@ class InstructionView extends Component {
                   {loginFailed &&
                     <AnimateMe style={styles.loginError} animationType="fade-from-bottom" duration={150}>
                       <View>
+                        <Text style={styles.loginErrorText}>Unfortunately there was a problem with login.</Text>
                         <TouchableOpacity onPress={this.toggleGuide}>
-                          <Text style={[styles.loginErrorLink, styles.loginErrorText]}>
-                            Unfortunately there was a problem with login...
-                          </Text>
+                          <Text style={[styles.loginErrorLink, styles.loginErrorText]}>Why did it happen?</Text>
                         </TouchableOpacity>
                       </View>
                     </AnimateMe>
                   }
-                  {!IOS
-                  ?
                   <View style={styles.loginButton}>
-                    <View style={{ flex: 1 }}>
-                      <PlatformTouchable
-                        onPress={onPressMainAction}
-                        background={PlatformTouchable.SelectableBackgroundBorderless()}
-                      >
-                          <Text style={styles.loginButtonText} bold>GET STARTED</Text>
-                      </PlatformTouchable>
-                    </View>
-                  </View>
-                  :
                     <PlatformTouchable
                       onPress={onPressMainAction}
-                      activeOpacity={0.8}
+                      background={PlatformTouchable.SelectableBackgroundBorderless()}
                     >
-                      <View style={styles.loginButton}>
-                        <Text style={styles.loginButtonText}>GET STARTED</Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.loginButtonText} bold>GET STARTED</Text>
                       </View>
                     </PlatformTouchable>
-                }
+                  </View>
+
                 </View>
               </View>
             </View>
           </ScrollView>
         </View>
-        }
+      }
       </LinearGradient>
     );
   }
@@ -212,23 +222,32 @@ const styles = StyleSheet.create({
     minHeight: height / 2,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginBottom: 15,
+    marginBottom: 30,
   },
   bottomArea: {
     flex: 1,
   },
   iconWrap: {
+    position: 'relative',
+    width: width,
+    height: height / 2,
+    // left: (width / 2) - (height / 5),
+    top: 0,
+    overflow: 'visible',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // backgroundColor: 'transparent',
+    // backgroundColor: 'lightgreen'
+  },
+  mainImageWrap: {
+    flex: 1,
+    width: mainImageSize,
+    height: mainImageSize,
     position: 'absolute',
-    width: height / 2.5,
-    height: height / 2.5,
-    backgroundColor: 'transparent',
-    left: (width / 2) - (height / 5),
-    top: IOS ? vw(50) : 50,
-    overflow: 'visible'
   },
   mainImage: {
-    width: height / 2.5,
-    height: height / 2.5,
+    width: mainImageSize,
+    height: mainImageSize,
   },
   emoji: {
     backgroundColor: 'transparent',
@@ -254,10 +273,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   subTitle: {
-    color: theme.secondaryClear,
+    color: theme.secondary,
     fontSize: vw(22),
     margin: 15,
-    marginTop: 30,
+    marginTop: 10,
     marginBottom: vw(15),
     fontWeight: IOS ? 'bold' : 'normal',
   },
@@ -265,7 +284,7 @@ const styles = StyleSheet.create({
     fontSize: IOS ? vw(14) : 15,
     lineHeight: IOS ? vw(20) : 20,
     marginTop: 0  ,
-    color: theme.secondaryClear,
+    color: theme.secondary,
     opacity: 0.8,
     textAlign: 'center',
   },
@@ -289,16 +308,12 @@ const styles = StyleSheet.create({
     color: theme.red,
     textAlign: 'center',
     fontSize: vw(14),
-    lineHeight: vw(17),
   },
   loginButton: {
     marginTop: 40,
     marginBottom: 10,
     padding: 5,
     paddingVertical: 10,
-    paddingTop: IOS ? 11 : 10,
-    justifyContent: 'center',
-    alignItems: 'center',
     borderRadius: vw(25),
     elevation: 2,
     backgroundColor: theme.stable,
@@ -316,7 +331,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingTop: IOS ? 5: 0,
     fontWeight: IOS ? 'bold' : 'normal',
-    color: theme.secondaryClear
+    color: theme.secondaryClear,
+    textAlign: 'center',
   }
 });
 
