@@ -16,23 +16,27 @@ import Text from '../../common/MyText';
 import theme from '../../../style/theme';
 
 const { width, height } = Dimensions.get('window');
+const IOS = Platform.OS === 'ios';
 
 const styles = StyleSheet.create({
   postSettings: {
     backgroundColor: '#FFF',
 
-    height: 150,
+    height: IOS ? 150 : 140,
     padding: 20,
     paddingBottom: 10,
-    paddingTop: 30,
+    paddingTop: IOS ? 30 : 20,
     marginBottom: 0,
   },
   settingsRow: {
     minHeight: 45,
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: IOS ? null : 'center',
     justifyContent: 'space-between'
+  },
+  settingsRowComplex: {
+    alignItems: 'center',
   },
   settingsRowTitle: {
     flexDirection: 'row',
@@ -80,6 +84,7 @@ class PostSettings extends Component {
 
           <View style={styles.settingsRowTitle}>
             <Icon style={styles.settingsRowIcon} name="text-fields" />
+          </View>
             <TextInput
               multiline={true}
               autoCorrect={false}
@@ -93,9 +98,8 @@ class PostSettings extends Component {
               placeholderTextColor={'#aaa'}
               underlineColorAndroid={'transparent'}
             />
-          </View>
         </View>
-        <View style={styles.settingsRow}>
+        <View style={[styles.settingsRow, styles.settingsRowComplex ]}>
           <View style={styles.settingsRowTitle}>
             <Icon style={styles.settingsRowIcon} name="location-on" />
             <View style={styles.settingsRowTitleTextWrap}>
