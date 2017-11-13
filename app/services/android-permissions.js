@@ -1,7 +1,7 @@
 import { PermissionsAndroid } from 'react-native';
 import { get } from 'lodash';
 
-async function requestLocationPermission(callback) {
+async function requestLocationPermission(callback, error) {
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -16,9 +16,11 @@ async function requestLocationPermission(callback) {
       callback();
     } else {
       console.log("Location permission denied")
+      error();
     }
   } catch (err) {
     console.warn(err)
+    error();
   }
 }
 
