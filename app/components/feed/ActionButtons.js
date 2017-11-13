@@ -365,7 +365,7 @@ class ActionButtons extends Component {
     }
 
     const rotation = this.state.plusButton.interpolate({
-      inputRange: [0, 1], outputRange: ['0deg', '225deg']
+      inputRange: [0, 1], outputRange: ['0deg', '135deg']
     });
 
     return (
