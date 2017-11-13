@@ -115,9 +115,8 @@ export const putUser = () => {
   };
 };
 
-export const selectTeam = teamId => (dispatch) => {
+export const selectTeam = teamId => (dispatch) =>
   dispatch({ type: SELECT_TEAM, payload: teamId });
-};
 
 export const updateName = name => ({ type: UPDATE_NAME, payload: name });
 export const updateUserInfo = info => ({ type: UPDATE_USER_INFO, payload: info });

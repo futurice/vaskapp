@@ -24,13 +24,14 @@ import api from '../services/api';
 import LoadingStates from '../constants/LoadingStates';
 import MarkerImages from '../constants/MarkerImages';
 import time from '../utils/time';
-import { TAMPERE, CITY_CATEGORIES, CITY_MAX_DISTANCE } from '../constants/Cities';
+import { HELSINKI, CITY_CATEGORIES, CITY_MAX_DISTANCE } from '../constants/Cities';
 import StorageKeys from '../constants/StorageKeys';
 
 // # Constants
 // radius how far from center (office) data should be fetched
 const MAP_QUERY_RADIUS = 20 * 1000; // meters
-const MAP_QUERY_LIMIT = 5;
+const MAP_QUERY_LIMIT = 10;
+const ALL_QUERY_LIMIT = 20;
 const ALL_CATEGORY = 'ALL';
 
 // # Action types
@@ -191,27 +192,26 @@ export const fetchPostsForCity = () => (dispatch, getState) => {
   let queryParams = {};
   // request ALL_CATEGORY
   if (!selectedCity || !selectedCity.has('location')) {
-    queryParams = {};
+    queryParams = { limit: ALL_QUERY_LIMIT };
   } else {
     const cityLocation = selectedCity.get('location').toJS(); // center for geo-querying posts
-    queryParams = { radius: MAP_QUERY_RADIUS, ...cityLocation };
+    queryParams = { radius: MAP_QUERY_RADIUS, ...cityLocation, limit: MAP_QUERY_LIMIT };
   }
 
   const sort = SortTypes.SORT_NEW; // sort choronologically
   const since = moment().subtract(1, 'week').toISOString(); // week ago
 
-  const mapQueryParams = { sort, ...queryParams, limit: MAP_QUERY_LIMIT, since  }
+  const mapQueryParams = { sort, ...queryParams, since }
 
   dispatch({ type: GET_POSTS_REQUEST });
 
   return api.fetchModels('feed', mapQueryParams)
   .then(items => {
-    dispatch({
+    dispatch({ type: GET_POSTS_SUCCESS });
+    return dispatch({
       type: SET_POSTS,
       payload: items
     });
-
-    dispatch({ type: GET_POSTS_SUCCESS });
   })
   .catch(error => dispatch({ type: GET_POSTS_FAILURE, error: true, payload: error }));
 };
@@ -219,7 +219,7 @@ export const fetchPostsForCity = () => (dispatch, getState) => {
 
 // # Reducer
 const initialState = fromJS({
-  selectedCategory: TAMPERE,
+  selectedCategory: HELSINKI,
   selectedMarkerId: null,
   selectedMarkerType: null,
   posts: [],

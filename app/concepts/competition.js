@@ -74,6 +74,7 @@ const _postAction = (payload, addLocation) => {
     return maybeFetchLocation.then((res) => {
         const state = getState();
         const maybeLocationToPost = addLocation ? getLocation(state) : null;
+
         return api.postAction(payload, maybeLocationToPost)
       })
       .then(response => {
@@ -139,9 +140,10 @@ export const postText = text => (dispatch) =>
     }))
   )
   .then(() => {
-    setTimeout(() => {
-      dispatch(closeTextActionView())
-    }, 2000);
+    return dispatch(closeTextActionView())
+    // setTimeout(() => {
+    //   dispatch(closeTextActionView())
+    // }, 2000);
   });
 
 export const postImage = ({ image, text, imageText, imageTextPosition, addLocation }) => {

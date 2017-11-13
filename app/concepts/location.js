@@ -65,7 +65,12 @@ export const fetchUserLocation = () => (dispatch) => {
     return dispatch(getLocationFromDevice());
   } else {
     // Check that this works on Android
-    permissions.requestLocationPermission(() => dispatch(getLocationFromDevice()));
+    return new Promise(function(resolve, reject) {
+      permissions.requestLocationPermission(
+        () => resolve(dispatch(getLocationFromDevice())),
+        () => reject()
+      );
+    });
   }
 }
 
