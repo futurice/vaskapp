@@ -6,7 +6,8 @@ import {
   Image,
   TouchableOpacity,
   Platform,
-  Dimensions
+  Dimensions,
+  Linking,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 

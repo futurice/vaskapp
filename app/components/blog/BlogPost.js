@@ -96,6 +96,7 @@ var BlogPost = React.createClass({
     const fontFamily = IOS ? 'Futurice' : 'Futurice-Regular';
     const fontFamilyCode = fontFamily;
     const textColor = 'rgba(0,0,0,0.8)';
+    const subTextColor = 'rgba(0,0,0,0.6)';
 
     const html = `
     <!DOCTYPE html>
@@ -140,8 +141,9 @@ var BlogPost = React.createClass({
         a {
           text-transform: underline;
           color: ${textColor};
-          font-weight: bold;
+          font-weight: normal;
         }
+
         html, body, p {
           font-family: '${fontFamilySerif}', serif;
           font-weight: normal;
@@ -164,9 +166,16 @@ var BlogPost = React.createClass({
         }
 
         figure {
-          margin: 0;
+          margin: 0 0 25px;
           padding: 0;
+          font-family: '${fontFamily}', sans-serif;
         }
+        figcaption {
+          font-size: 0.9em;
+          color: ${subTextColor};
+          text-align: center;
+        }
+
 
         ol pre {
           margin-left: -30px;
@@ -194,6 +203,8 @@ var BlogPost = React.createClass({
         ${post.content}
       </body>
     </html>`;
+
+    console.log(post.content);
 
     return (
       <View style={{ flex: 1 }}>

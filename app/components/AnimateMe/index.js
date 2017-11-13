@@ -57,6 +57,12 @@ const getAnimationStyles = (type, animation) => {
       };
     }
 
+    case 'slide-from-bottom': {
+      return {
+        transform: [{ translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [5, 0] }) }],
+      };
+    }
+
     case 'fade-from-top': {
       return {
         opacity: animation,
@@ -128,15 +134,16 @@ class AnimatedComponent extends Component {
   }
 
   render() {
-    const { animationType, style, children } = this.props;
+    const { animationType, style, children, showText } = this.props;
     const { animation } = this.state;
 
-    const animationStyles = getAnimationStyles(animationType, animation)
+    const animationStyles = getAnimationStyles(animationType, animation);
+    const AnimationComponent = showText ? Animated.Text : Animated.View;
 
     return (
-      <Animated.View style={[{ flex: IOS ? 0 : 1 }, style, animationStyles]}>
+      <AnimationComponent style={[{ flex: IOS ? 0 : 1 }, style, animationStyles]}>
         {children}
-      </Animated.View>
+      </AnimationComponent>
     );
   }
 }
@@ -157,6 +164,7 @@ AnimatedComponent.defaultProps = {
   children: null,
   delay: 0,
   duration: 500,
+  showText: false,
   animationType: 'fade-in',
 }
 

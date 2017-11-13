@@ -44,6 +44,10 @@ const styles = StyleSheet.create({
     color: theme.primary,
     fontSize: 25,
   },
+  rightIcon: {
+    fontSize: 20,
+    color: theme.primary
+  },
   titleWrap: {
     flex: 1,
     justifyContent: 'center',
@@ -102,7 +106,7 @@ class ScrollHeader extends Component {
             background={PlatformTouchable.SelectableBackgroundBorderless()}
           >
             <View style={styles.icon}>
-              <Icon name={rightIcon} style={[styles.iconText, { color: theme.grey4 }]} />
+              <Icon name={rightIcon} style={[styles.iconText, styles.rightIcon]} />
             </View>
           </PlatformTouchable>
         </View>

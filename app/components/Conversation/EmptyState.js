@@ -30,8 +30,8 @@ const EmptyState = () => {
           </AnimateMe>
         </View>
       </AnimateMe>
-      <Text style={styles.title}>No comments yet</Text>
-      <Text style={styles.explanation}>Here you will find conversations where you have commented.</Text>
+      <Text style={styles.title}>No Conversations</Text>
+      <Text style={styles.explanation}>When you add a comment to post or image, they'll show up here.</Text>
     </View>
   )
 };

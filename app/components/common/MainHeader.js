@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
   }
 });
 
+const logo = require('../../../assets/logo/vaskapp.png');
 const iconColor = theme.primary;
-
-const selectedActionIcon = '• '; //‣ • ● ♥
+const selectedActionIcon = '‣'; //‣ • ● ♥
 
 const getElevation = (tab) => {
   switch (tab) {
@@ -40,11 +40,11 @@ const getActions = (tab, sortType) => {
       return [
         { title: `${sortType === SortTypes.SORT_NEW ? selectedActionIcon : '  '} NEW`, id: SortTypes.SORT_NEW, show: 'never' },
         { title: `${sortType === SortTypes.SORT_HOT ? selectedActionIcon : '  '} HOT`, id: SortTypes.SORT_HOT, show: 'never' },
-        { title: 'Conversations', id: 'conversations', show: 'always', iconName: 'chat' },
+        { title: 'Conversations', id: 'conversations', show: 'always', iconName: 'chat', icon: require('../../../assets/icons/conversation.png') },
       ];
     }
     case Tabs.SETTINGS: {
-      return [{ title: 'Settings', id: 'gear', show: 'always', iconName: 'settings' }]
+      return [{ title: 'Settings', id: 'gear', show: 'always', iconName: 'settings', icon: require('../../../assets/icons/gear.png') }]
     }
     default: {
       return [];
@@ -103,12 +103,12 @@ class MainHeader extends Component {
     }
 
     return (
-      <Icon.ToolbarAndroid
+      <ToolbarAndroid
         actions={getActions(currentTab, selectedSortType)}
-        // logo={require('../../../assets/logo/vaskapp.png')}
-        overflowIconName={'sort'}
-        // overflowIcon={require('../../../assets/icons/sort.png')}
-        title={'vask'}
+        logo={logo}
+        // overflowIconName={'sort'}
+        // title={''}
+        overflowIcon={require('../../../assets/icons/sort.png')}
         onActionSelected={this.onActionSelected}
         iconColor={theme.grey4}
         titleColor={titleColor || theme.primary}

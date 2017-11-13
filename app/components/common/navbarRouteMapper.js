@@ -73,10 +73,12 @@ let NavigationBarRouteMapper = props => ({
       return (
         <View style={{ flexDirection: 'row'}}>
           <TouchableOpacity activeOpacity={0.6} onPress={() => openConversations(navigator)}>
-            <MDIcon
-              name='chat-bubble-outline'
-              style={[styles.navBarIcon, styles.mdIcon, styles.light, { fontSize: 17, top: 5 }]}
-            />
+            <View style={styles.navBarIconImageWrap}>
+              <Image
+                resizeMode={'contain'}
+                source={require('../../../assets/icons/conversation.png')}
+                style={styles.navBarIconImage} />
+            </View>
           </TouchableOpacity>
         </View>
         );
@@ -146,11 +148,19 @@ var styles = StyleSheet.create({
     top: 2,
     fontSize: 20,
   },
+  navBarIconImageWrap: {
+    padding: 10,
+  },
+  navBarIconImage: {
+    width: 22,
+    height: 22,
+    tintColor: theme.grey4,
+  },
   navBarLogo:{
-    width: 60,
-    height: 32,
+    width: 50,
+    height: 28,
     tintColor: theme.primary,
-    top: 3,
+    top: 5,
   },
   navBarTitle:{
     padding: 10,

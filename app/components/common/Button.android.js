@@ -5,7 +5,8 @@ import {
   View,
   TouchableNativeFeedback,
   Text,
-  StyleSheet
+  StyleSheet,
+  ActivityIndicator
 } from 'react-native';
 
 import theme from '../../style/theme';
@@ -32,9 +33,10 @@ class Button extends Component {
   }
 
   render() {
-    if (this.props.isDisabled === true) {
+    const { isBusy, isDisabled, style, disabledStyle } = this.props;
+    if (isDisabled === true) {
       return (
-        <View style={[styles.button, this.props.style, (this.props.disabledStyle || styles.opacity)]}>
+        <View style={[styles.button, style, (disabledStyle || styles.opacity)]}>
           <Text style={{textAlign:'center'}}>{this._renderInnerText()}</Text>
         </View>
       );
@@ -45,15 +47,18 @@ class Button extends Component {
         onPressOut: this.props.onPressOut,
       };
       return (
-        <View style={[styles.button, this.props.style]}>
-        <TouchableNativeFeedback {...touchableProps}
-          delayPressIn={0}
-          background={TouchableNativeFeedback.SelectableBackground()}
-        >
-          <View style={{flex:1, justifyContent:'center', height:40}}>
-            {this._renderInnerText()}
-          </View>
-        </TouchableNativeFeedback>
+        <View style={[styles.button, style]}>
+          <TouchableNativeFeedback {...touchableProps}
+            delayPressIn={0}
+            background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
+          >
+            <View style={{ flex:1, justifyContent:'center', height: 40 }}>
+              {isBusy
+                ? <ActivityIndicator size="small" color={theme.secondary} />
+                : this._renderInnerText()
+              }
+            </View>
+          </TouchableNativeFeedback>
         </View>
       );
     }
@@ -66,7 +71,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     backgroundColor: theme.primary,
-    borderRadius: 2,
+    borderRadius: 30,
     paddingLeft: 0,
     paddingRight: 0,
     elevation: 2,

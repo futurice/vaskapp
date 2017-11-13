@@ -21,7 +21,6 @@ import Text from '../common/MyText';
 import theme from '../../style/theme';
 import { getProfileLinks } from '../../concepts/settings';
 import { getApps } from '../../concepts/apps';
-import { getCurrentCityName } from '../../concepts/city';
 import {
   openRegistrationView,
   getUserName,
@@ -246,6 +245,10 @@ class Profile extends Component {
 
   @autobind
   renderItem(item) {
+    if (!item) {
+      return null;
+    }
+
     const key = item.id || item.title;
 
     if (item.component) {
@@ -264,32 +267,39 @@ class Profile extends Component {
   }
 
   render() {
-    const { name, picture, cityName, apps } = this.props;
+    const { name, picture, apps } = this.props;
+
+    // Show extended domain content only if domain has apps
+    const extendedDomain = apps && apps.size > 0;
+    const extendedDomainSections = {
+      apps: {
+        title: 'My Apps',
+        id: 'apps',
+        apps,
+      },
+      feedbackLink: {
+        link: 'https://futurice.github.io/vaskapp-futu/apps/Initiative/',
+        title: 'Initiate',
+        subtitle: 'Do you have an idea? Or maybe too complex 3x2 decision? Let us know!',
+        id: 'feedback',
+        icon: 'lightbulb-outline',
+        showInWebview: true,
+      }
+    }
 
     const sections = [
-    {
-      title: name,
-      icon: 'face',
-      id: 'profile',
-      picture
-    },
-    {
-      title: 'My Apps',
-      id: 'apps',
-      apps,
-    },
-    {
-      title: 'My Images',
-      id: 'images',
-    },
-    {
-      link: 'https://futurice.github.io/vaskapp-futu/apps/Initiative/',
-      title: 'Initiate',
-      subtitle: 'Do you have an idea? Or maybe too complex 3x2 decision? Let us know!',
-      id: 'feedback',
-      icon: 'lightbulb-outline',
-      showInWebview: true,
-    }
+      {
+        title: name,
+        icon: 'face',
+        id: 'profile',
+        picture
+      },
+      extendedDomain ? extendedDomainSections.apps : {},
+      {
+        title: 'My Images',
+        id: 'images',
+      },
+      extendedDomain ? extendedDomainSections.feedbackLink : {},
     ]
 
     const listData = sections; //.concat(links);
@@ -315,7 +325,6 @@ const select = state => ({
   picture: getUserImage(state),
 
   apps: getApps(state),
-  cityName: getCurrentCityName(state),
 });
 
 const mapDispatchToProps = { openRegistrationView };

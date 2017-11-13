@@ -16,11 +16,12 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import autobind from 'autobind-decorator';
-
-import Button from '../../components/common/Button';
-import theme from '../../style/theme';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
+
+import theme from '../../style/theme';
+import Button from '../common/Button';
+import SubmitButton from './SubmitButton';
 
 import {
   postText,
@@ -37,7 +38,8 @@ class TextActionView extends Component {
     this.state = {
       text: '',
       formAnimation: new Animated.Value(1),
-      okAnimation: new Animated.Value(0)
+      okAnimation: new Animated.Value(0),
+      sendDone: false,
     }
   }
 
@@ -50,13 +52,15 @@ class TextActionView extends Component {
   }
 
   showOK() {
-    Animated.spring(this.state.okAnimation, { toValue: 1, duration: 250 }).start();
-    Animated.timing(this.state.formAnimation, { toValue: 0, duration: 100 }).start();
+    this.setState({ sendDone: true });
+    // Animated.spring(this.state.okAnimation, { toValue: 1, duration: 250 }).start();
+    // Animated.timing(this.state.formAnimation, { toValue: 0, duration: 100 }).start();
   }
 
   hideOK() {
-    this.state.formAnimation.setValue(1);
-    this.state.okAnimation.setValue(0);
+    this.setState({ sendDone: false });
+    // this.state.formAnimation.setValue(1);
+    // this.state.okAnimation.setValue(0);
   }
 
   @autobind
@@ -152,13 +156,13 @@ class TextActionView extends Component {
               value={this.state.text} />
 
             <View style={styles.bottomButtons}>
-              <Button
+              <SubmitButton
                 onPress={this.onSendText}
-                style={[styles.button, styles.mainButton]}
-                textStyle={{ color: theme.secondaryClear }}
-                isDisabled={!this.state.text}>
+                isDisabled={!this.state.text}
+                isLoading={this.state.sendDone && !!this.state.text}
+              >
                 POST
-              </Button>
+              </SubmitButton>
             </View>
             </KeyboardAvoidingView>
           </Animated.View>
@@ -192,17 +196,17 @@ const styles = StyleSheet.create({
     alignItems: IOS ? 'stretch' : 'flex-end',
     justifyContent: IOS ? 'center' : 'flex-end',
     position: 'absolute',
-    bottom: IOS ? 0 : 10,
+    bottom: 0,
     right: 0,
     left: 0,
     padding: 0,
     paddingBottom: 0,
-    paddingLeft: IOS ? 15 : 30,
-    paddingRight: IOS ? 15 : 30,
-    borderTopWidth: IOS ? 0 : 1,
-    borderTopColor:'rgba(0,0,0,.1)',
+    paddingHorizontal: IOS ? 15 : 30,
   },
   button: {
+    borderRadius: 30,
+    elevation: 2,
+    marginBottom: IOS ? 0 : 20,
     shadowColor: '#000000',
     shadowOpacity: 0.15,
     shadowRadius: 10,
@@ -239,13 +243,15 @@ const styles = StyleSheet.create({
   },
   inputField: {
     fontSize: 18,
+    lineHeight: 25,
     margin: 0,
     marginTop: IOS ? 110 : 0,
     color: theme.primary,
     textAlign: 'center',
     fontFamily: IOS ? 'Futurice' : 'Futurice_regular',
     height: 220,
-    width: width - 40,
+    width: width - 60,
+    left: 30,
   },
   okView: {
     position: 'absolute',
