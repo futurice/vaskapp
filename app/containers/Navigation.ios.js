@@ -46,26 +46,25 @@ class Navigation extends Component {
     const { navigator, currentTab, events } = this.props;
     return (
       <View style={{ flex: 1 }}>
-      <ScrollableTabs
-        onChangeTab={this.onChangeTab}
-        initialPage={initialTabIndex}
-        tabBarPosition={'bottom'}
-        tabBarBackgroundColor={theme.white}
-        tabBarActiveTextColor={theme.secondary}
-        tabBarInactiveTextColor={theme.grey4}
-        locked={true}
-        scrollWithoutAnimation={true}
-        prerenderingSiblingsNumber={0}
-        renderTabBar={() => <IconTabBar />}
-      >
-        <FeedView navigator={navigator} id={Tabs.FEED} tabLabel={{ title: 'Feed', icon:'looks' }} />
-        {false && <CalendarView id={Tabs.CALENDAR} navigator={navigator} tabLabel={{ title: 'Events', icon: 'event' }} />}
-        <EventMapView navigator={navigator} id={Tabs.MAP} tabLabel={{ title: 'Map', icon: 'public' }} />
-        <ProfileView navigator={navigator} id={Tabs.SETTINGS} tabLabel={{ title: 'Personal', icon:'account-circle' }} />
-      </ScrollableTabs>
+        <ScrollableTabs
+          onChangeTab={this.onChangeTab}
+          initialPage={initialTabIndex}
+          tabBarPosition={'bottom'}
+          tabBarBackgroundColor={theme.white}
+          tabBarActiveTextColor={theme.secondary}
+          tabBarInactiveTextColor={theme.grey4}
+          locked={true}
+          scrollWithoutAnimation={true}
+          prerenderingSiblingsNumber={0}
+          renderTabBar={() => <IconTabBar />}
+        >
+          <FeedView navigator={navigator} id={Tabs.FEED} tabLabel={{ title: 'Feed', icon: 'looks' }} />
+          {false && <CalendarView id={Tabs.CALENDAR} navigator={navigator} tabLabel={{ title: 'Events', icon: 'event' }} />}
+          <EventMapView navigator={navigator} id={Tabs.MAP} tabLabel={{ title: 'Map', icon: 'public' }} />
+          <ProfileView navigator={navigator} id={Tabs.SETTINGS} tabLabel={{ title: 'Personal', icon:'account-circle' }} />
+        </ScrollableTabs>
 
-      <LightBox navigator={this.props.navigator} />
-
+        <LightBox navigator={this.props.navigator} />
       </View>
     )
   }
