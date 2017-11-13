@@ -20,6 +20,7 @@ import Header from '../components/common/MainHeader';
 import ScrollableTabs  from 'react-native-scrollable-tab-view';
 import Tabs from '../constants/Tabs';
 import IconTabBar from '../components/common/MdIconTabBar';
+import LightBox from '../components/lightbox/Lightbox';
 
 const HEADER_HIDDEN_ON_TABS = [Tabs.MAP];
 
@@ -114,6 +115,7 @@ class AndroidTabNavigation extends Component {
           <EventMapView navigator={navigator} id={Tabs.MAP} tabLabel={{ title: 'Geo', icon: 'public' }} />
           <ProfileView navigator={navigator} id={Tabs.SETTINGS} tabLabel={{ title: 'You', icon: 'account-circle' }} />
         </ScrollableTabs>
+        <LightBox navigator={this.props.navigator} />
       </View>
     )
   }

@@ -19,7 +19,7 @@ import AppIntroView from '../components/registration/AppIntroView';
 import TeamSelector from '../components/registration/TeamSelector';
 import ProfileEditor from '../components/registration/ProfileEditor';
 import TextActionView from '../components/actions/TextActionView';
-import LightBox from '../components/lightbox/Lightbox';
+
 import errorAlert from '../utils/error-alert';
 
 const theme = require('../style/theme');
@@ -70,7 +70,6 @@ class MainView extends Component {
             ...Navigator.SceneConfigs.FloatFromBottomAndroid
           })}
         />
-        <LightBox />
         <ProfileEditor />
         <TextActionView />
         <TeamSelector />
