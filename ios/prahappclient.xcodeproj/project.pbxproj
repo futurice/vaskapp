@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -40,9 +41,9 @@
 		2DCD954D1E0B4F2C00145EB5 /* prahappclientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* prahappclientTests.m */; };
 		381A037C40374C5C90CA17F8 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C34064A0B4344C368FBB2A03 /* SimpleLineIcons.ttf */; };
 		442C4C999DD3460AAF1E0622 /* libA0Auth0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 094064E27DEA4FD184528B26 /* libA0Auth0.a */; };
-		531E8543590F4BFB9E4E2F1C /* Futurice-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BAC060CCE7D0446888B64AC5 /* Futurice-Regular.otf */; };
 		5A41B8F84B7845B99EDD1735 /* Futurice-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4849119A12C04E23BB7CC0B0 /* Futurice-Bold.otf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		6840A5BB1FBC76EF00C271DB /* Futurice-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BAC060CCE7D0446888B64AC5 /* Futurice-Regular.otf */; };
 		689AC2791FACDC6F0037B397 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 689AC27A1FACDC6F0037B397 /* libRCTCameraRoll.a */; };
 		68F912301F8501AE007FF747 /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68D6A7581EC5BE5900BED06D /* libRNBlur.a */; };
 		68F912311F8501B6007FF747 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68D6A74E1EC5BE5900BED06D /* libRNDeviceInfo.a */; };
@@ -406,11 +407,13 @@
 		9AA1D12C4C46468A8C0AA5CB /* Futurice Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Futurice Regular.ttf"; path = "../assets/fonts/Futurice Regular.ttf"; sourceTree = "<group>"; };
 		9BA62ACB4FF24D76A5171CEF /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		A9D8F64EC9EA488AB3CC9D72 /* Futurice-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Futurice-Bold.ttf"; path = "../assets/fonts/Futurice-Bold.ttf"; sourceTree = "<group>"; };
+		AFA82E5834BA4776B4A3AB82 /* FuturiceIOS-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "FuturiceIOS-Bold.otf"; path = "../assets/fonts/FuturiceIOS-Bold.otf"; sourceTree = "<group>"; };
 		B29CA50BDA8A94FAB709F3B2 /* Pods-prahappclient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-prahappclient.release.xcconfig"; path = "Pods/Target Support Files/Pods-prahappclient/Pods-prahappclient.release.xcconfig"; sourceTree = "<group>"; };
 		B4650D4D131445DD83868DF9 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		BAC060CCE7D0446888B64AC5 /* Futurice-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Futurice-Regular.otf"; path = "../assets/fonts/Futurice-Regular.otf"; sourceTree = "<group>"; };
 		C1CA7CBFFF7D4AF180FE35A3 /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		C34064A0B4344C368FBB2A03 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		CAE2D0384CF04B54AD57E63F /* FuturiceIOS-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "FuturiceIOS-Regular.otf"; path = "../assets/fonts/FuturiceIOS-Regular.otf"; sourceTree = "<group>"; };
 		CC9E153DB99D3F1CE4144F4A /* libPods-prahappclient.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-prahappclient.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB3A7177516048DBBE25F040 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		DCD732051D834833B3208870 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -814,6 +817,8 @@
 				4849119A12C04E23BB7CC0B0 /* Futurice-Bold.otf */,
 				120302B5820348F18D030F8B /* Monospaced-Regular.otf */,
 				35BDCFE047574A058A4C4B9B /* NotoSerif.ttf */,
+				AFA82E5834BA4776B4A3AB82 /* FuturiceIOS-Bold.otf */,
+				CAE2D0384CF04B54AD57E63F /* FuturiceIOS-Regular.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1335,6 +1340,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6840A5BB1FBC76EF00C271DB /* Futurice-Regular.otf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				AACE68ADBB1E4B57B1FF4B6A /* Entypo.ttf in Resources */,
@@ -1348,7 +1354,6 @@
 				381A037C40374C5C90CA17F8 /* SimpleLineIcons.ttf in Resources */,
 				B5FAD45061C1400E9DE52389 /* Zocial.ttf in Resources */,
 				0C46D35297A84654997CBE39 /* Feather.ttf in Resources */,
-				531E8543590F4BFB9E4E2F1C /* Futurice-Regular.otf in Resources */,
 				5A41B8F84B7845B99EDD1735 /* Futurice-Bold.otf in Resources */,
 				0770AD53F3D84BF7BC4BF882 /* Monospaced-Regular.otf in Resources */,
 				28455AEB5EF343FB92DAA7B8 /* NotoSerif.ttf in Resources */,
