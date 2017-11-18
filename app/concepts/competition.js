@@ -9,6 +9,7 @@ import { sortFeedChronological } from '../concepts/sortType';
 import { getCityId } from '../concepts/city';
 import { fetchUserLocation, getLocation } from '../concepts/location';
 import { fetchUserProfile } from '../concepts/user';
+import { fetchPostsForCity } from '../concepts/map';
 import { createRequestActionTypes } from '../actions';
 
 // # Selectors
@@ -85,9 +86,10 @@ const _postAction = (payload, addLocation) => {
           dispatch(refreshFeed());
         }
 
-        // Get user images if new image is posted
+        // Update user and map images if new image is posted
         if (payload.type === ActionTypes.IMAGE) {
           dispatch(fetchUserProfile());
+          dispatch(fetchPostsForCity());
         }
 
         dispatch({ type: POST_ACTION_SUCCESS, payload: { type: payload.type } });
@@ -101,12 +103,12 @@ const _postAction = (payload, addLocation) => {
       .catch(e => {
         console.log('Error catched on competition action post!', e);
 
-        if (e.response.status === 429) {
+        if (e.response && e.response.status === 429) {
           dispatch({
             type: SHOW_NOTIFICATION,
             payload: NotificationMessages.getRateLimitMessage(payload)
           });
-        } else if (e.response.status === 403) {
+        } else if (e.response && e.response.status === 403) {
           dispatch({
             type: SHOW_NOTIFICATION,
             payload: NotificationMessages.getInvalidEventMessage(payload)
