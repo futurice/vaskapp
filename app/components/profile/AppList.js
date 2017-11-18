@@ -21,6 +21,7 @@ import AppTypes from '../../constants/AppTypes';
 import BlogList from '../blog/BlogList';
 import WebViewer from '../webview/WebViewer';
 import Section from './Section';
+import AppListLink from './AppListLink';
 import { trackEvent } from '../../services/analytics';
 
 const IOS = Platform.OS === 'ios';
@@ -63,25 +64,6 @@ const appLinkPress = (app, navigator) => {
   }
 }
 
-const AppsListLink = ({ app, navigator }) => (
-  <View style={styles.listItem} key={app.get('id')}>
-    <PlatformTouchable
-      underlayColor={'#eee'}
-      activeOpacity={0.95}
-      delayPressIn={0}
-      onPress={() => appLinkPress(app, navigator)}
-    >
-      <View style={styles.appIcon}>
-        <Image style={styles.appIconImage} source={{ uri: app.get('imageUrl') }} />
-      </View>
-    </PlatformTouchable>
-    <View style={styles.listItemTitles}>
-      <Text style={styles.listItemText}>{app.get('name')}</Text>
-      {app.get('description') && <Text style={styles.listItemDescription}>{app.get('description')}</Text>}
-    </View>
-  </View>
-);
-
 class AppList extends Component {
   render() {
     const { title, apps, key, navigator } = this.props;
@@ -89,7 +71,7 @@ class AppList extends Component {
       <Section title={title} key={key}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} >
           <View style={styles.appGroupList}>
-            {apps.map((app) => <AppsListLink app={app} navigator={navigator} /> )}
+            {apps.map((app) => <AppListLink app={app} appLinkPress={appLinkPress} navigator={navigator} /> )}
           </View>
         </ScrollView>
       </Section>
@@ -139,11 +121,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   listItemText: typography.h2({
-    marginBottom: 3,
+    marginBottom: IOS ? 3 : 1,
     letterSpacing: 0.5,
   }),
   listItemDescription: typography.paragraph({
-    marginBottom: 0, fontSize: 12, lineHeight: 14,
+    marginBottom: 0,
+    fontSize: 12,
+    lineHeight: IOS ? 13 : 17,
   })
 });
 
