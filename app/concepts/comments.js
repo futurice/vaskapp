@@ -8,6 +8,8 @@ import { createRequestActionTypes } from '../actions';;
 import { getAllPostsInStore } from '../reducers/feed';
 import { getAllMapPostsInStore } from './map';
 import { getUserImages } from './user';
+import { fetchConversations } from './conversations';
+
 import ActionTypes from '../constants/ActionTypes';
 
 // # Selectors
@@ -98,9 +100,10 @@ export const postComment = ({ text, imageData }) => (dispatch, getState) => {
     .then(response => {
       // Fetch all comments to get latest comments
       // This is also good because we don't have any refersh mechanism
-      Promise.resolve(
-        dispatch(refreshPostComments(feedItemId))
-      ).then(() => {
+      Promise.all([
+        dispatch(refreshPostComments(feedItemId)),
+        dispatch(fetchConversations()),
+      ]).then(() => {
         dispatch({ type: POST_COMMENT_SUCCESS });
       });
     })
