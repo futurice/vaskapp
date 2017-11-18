@@ -38,8 +38,8 @@ const getActions = (tab, sortType) => {
   switch (tab) {
     case Tabs.FEED: {
       return [
-        { title: `${sortType === SortTypes.SORT_NEW ? selectedActionIcon : '  '} NEW`, id: SortTypes.SORT_NEW, show: 'never' },
-        { title: `${sortType === SortTypes.SORT_HOT ? selectedActionIcon : '  '} HOT`, id: SortTypes.SORT_HOT, show: 'never' },
+        { title: `${sortType === SortTypes.SORT_NEW ? selectedActionIcon : '  '} 🌟 NEW`, id: SortTypes.SORT_NEW, show: 'never' },
+        { title: `${sortType === SortTypes.SORT_HOT ? selectedActionIcon : '  '} 🔥 HOT`, id: SortTypes.SORT_HOT, show: 'never' },
         { title: 'Conversations', id: 'conversations', show: 'always', iconName: 'chat', icon: require('../../../assets/icons/conversation.png') },
       ];
     }
