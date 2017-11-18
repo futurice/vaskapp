@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   listItemText:{
     color: '#000',
     fontSize: 16,
-    marginTop: IOS ? 5 : 0,
+    marginTop: 0,
   },
   listItemText__highlight: {
     color: theme.primary,

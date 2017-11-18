@@ -10,8 +10,8 @@ import {
   Easing
 } from 'react-native';
 
-import Text from '../common/MyText';
-import ModalBackgroundView from '../common/ModalBackgroundView';
+import Text from './MyText';
+import ModalBackgroundView from './ModalBackgroundView';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TouchableNativeFeedback from './PlatformTouchable';
 import { isIpad, isIphoneX } from '../../services/device-info';
@@ -43,12 +43,13 @@ const styles = StyleSheet.create({
   textLabel: {
     fontSize: 10,
     fontWeight: 'normal',
-    textAlign:'center',
     fontFamily: 'Futurice',
+    textAlign:'center',
     position:'absolute',
     marginTop: 2,
     left:0,
     right:0,
+    backgroundColor: 'transparent',
     bottom: isIphoneX ? 4 : 7
   }
 });

@@ -143,6 +143,7 @@ var styles = StyleSheet.create({
   evilIcon: {
     fontSize: 27,
     padding: 12,
+    paddingVertical: 10,
   },
   mdIcon: {
     top: 2,
@@ -160,11 +161,11 @@ var styles = StyleSheet.create({
     width: 50,
     height: 28,
     tintColor: theme.primary,
-    top: 5,
+    top: 6,
   },
   navBarTitle:{
     padding: 10,
-    paddingTop: 14,
+    paddingTop: 9,
     paddingHorizontal: 30,
     fontSize: 17,
     color: theme.primary,

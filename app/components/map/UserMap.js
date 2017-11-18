@@ -293,7 +293,7 @@ class UserMap extends Component {
   fitMarkersToMap() {
     const { visiblemarkerCoords } = this.props;
 
-    if (this.map && visiblemarkerCoords && visiblemarkerCoords.length >= 1) {
+    if (this.map && visiblemarkerCoords && visiblemarkerCoords.length > 1) {
       const padding = visiblemarkerCoords.length <= 2 ? 100 : 80;
       const edgePadding = { top: padding, bottom: padding, left: padding, right: padding };
       this.map.fitToCoordinates(visiblemarkerCoords, { edgePadding }, false)

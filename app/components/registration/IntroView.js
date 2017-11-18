@@ -152,7 +152,7 @@ class InstructionView extends Component {
               <View style={styles.bottomArea}>
                 <View style={styles.content}>
                   <View style={styles.textContainer}>
-                    <Text style={styles.subTitle} bold>Praise the Culture</Text>
+                    <Text style={styles.subTitle} bold>Praise Your Culture</Text>
                     <Text style={styles.text}>Login with your company Google account.</Text>
                   </View>
                   {loginFailed &&
@@ -258,13 +258,13 @@ const styles = StyleSheet.create({
     fontSize: vw(22),
     margin: 15,
     marginTop: 30,
-    marginBottom: vw(15),
+    marginBottom: vw(9),
     fontWeight: IOS ? 'bold' : 'normal',
   },
   text: {
     fontSize: IOS ? vw(14) : 15,
     lineHeight: IOS ? vw(20) : 20,
-    marginTop: 0  ,
+    marginTop: 0,
     color: theme.secondaryClear,
     opacity: 0.8,
     textAlign: 'center',

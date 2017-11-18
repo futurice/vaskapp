@@ -91,14 +91,15 @@ class SortSelector extends Component {
 var styles = StyleSheet.create({
   sortSelector: {
     top: 1,
-    paddingTop: 14,
+    paddingTop: 15,
     paddingRight: 25,
     paddingLeft: 25,
   },
   filterText: {
     color: theme.grey4,
     fontSize: 14,
-    top: 1,
+    fontWeight: 'normal',
+    top: -5,
   },
   indicators: {
     position: 'absolute',

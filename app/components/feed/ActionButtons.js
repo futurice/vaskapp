@@ -44,9 +44,9 @@ const styles = StyleSheet.create({
     elevation: 6,
     shadowColor: theme.primary,
     shadowOpacity: 0.15,
-    shadowRadius: 1,
+    shadowRadius: 6,
     shadowOffset: {
-      height: 2,
+      height: 5,
       width: 0
     },
     backgroundColor: theme.black,
@@ -55,9 +55,9 @@ const styles = StyleSheet.create({
     elevation: 6,
     shadowColor: theme.black,
     shadowOpacity: 0.15,
-    shadowRadius: 1,
+    shadowRadius: 6,
     shadowOffset: {
-      height: 2,
+      height: 5,
       width: 0
     },
     backgroundColor: theme.stable,

@@ -6,7 +6,6 @@ import {
   ListView,
   Animated,
   Easing,
-  Text,
   RefreshControl,
   View,
   Dimensions,
@@ -38,6 +37,7 @@ import EmptyState from './EmptyState';
 import ImageEditor from './ImageEditor';
 import FeedListItem from './FeedListItem';
 import Notification from '../common/Notification';
+import Text from '../common/MyText';
 import Loading from './Loading';
 import ActionButtons from './ActionButtons';
 import LoadingStates from '../../constants/LoadingStates';
@@ -298,6 +298,7 @@ class FeedList extends Component {
 
     const isLoading = isLoadingActionTypes || isLoadingUserData;
     const { dataSource } = this.state;
+    const isFeedEmpty = !this.props.feed || this.props.feed.size <= 0;
 
     switch (feedListState) {
       case LoadingStates.LOADING:
@@ -333,7 +334,7 @@ class FeedList extends Component {
               onScroll={this._onScroll}
               onEndReached={this.onLoadMoreItems}
               refreshControl={refreshControl} />
-            {!dataSource.length && <EmptyState />}
+            {isFeedEmpty && <EmptyState />}
             <ActionButtons
               visibilityAnimation={this.state.actionButtonsAnimation}
               isRegistrationInfoValid={this.props.isRegistrationInfoValid}

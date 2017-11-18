@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingVertical: 15,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   listItemIcon: {
     fontSize: 17,
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     letterSpacing: 0,
     color: theme.primary,
-    top: IOS ? 3 : 0,
+    top: IOS ? 1 : 0,
   }
 
 });

@@ -15,6 +15,7 @@ import Text from '../common/MyText';
 import AnimateMe from '../AnimateMe';
 import PlatformTouchable from '../common/PlatformTouchable';
 
+import time from '../../utils/time';
 import theme from '../../style/theme';
 import typography from '../../style/typography';
 
@@ -25,7 +26,7 @@ const textMaxLength = 40;
 const Conversation = ({ item, last, showDelay, onPress }) => {
   const profilePicture = item.getIn(['author', 'profilePicture']);
 
-  const isCommentImage = item.get('commentImage');
+  const isCommentImage = item.getIn(['comment', 'image']);
 
   return (
     <AnimateMe delay={showDelay} animationType={'fade-from-bottom'}>
@@ -44,10 +45,19 @@ const Conversation = ({ item, last, showDelay, onPress }) => {
               <Text style={styles.author} bold>{item.getIn(['author', 'name'])} </Text>
               {item.get('type') === 'IMAGE' && '📷 '}{item.get('text')}
             </Text>
-            <Text numberOfLines={1} ellipsizeMode={'tail'} style={[styles.textMessage, styles.commentMessage]}>
-              <Icon name="format-quote" style={styles.commentIcon} />
-              {isCommentImage ? '  📷' : item.get('commentText')}
-            </Text>
+
+            <View style={{ flex: 1, paddingRight: 50, }}>
+              <Text numberOfLines={1} ellipsizeMode={'tail'} style={[styles.textMessage, styles.commentMessage]}>
+                <Icon name="format-quote" style={styles.commentIcon} />
+                <Text style={styles.commentAuthor}>{item.getIn(['comment', 'name'])}: </Text>
+                {isCommentImage ? '  📷' : item.getIn(['comment', 'text'])}
+              </Text>
+              <View style={{ position: 'absolute', right: 0, top: 2 }}>
+                <Text style={[styles.textMessage, styles.commentMessage, { textAlign: 'right' }]}>
+                  {time.getDateAgo(item.getIn(['comment', 'createdAt']))}
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
       </View>
@@ -75,40 +85,40 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: theme.grey1,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 0,
   },
   avatarImage: {
-    width: 42,
-    height: 42,
-    borderRadius: 21
+    width: 36,
+    height: 36,
+    borderRadius: 18
   },
   avatarIcon: {
     top: 0,
     left: 0,
     textAlign: 'center',
-    width: 42,
-    height: 42,
+    width: 36,
+    height: 36,
     borderWidth: 0,
     borderColor: theme.grey1,
-    borderRadius: 21,
+    borderRadius: 18,
     color: theme.secondaryLight,
     fontSize: 30,
-    lineHeight: IOS ? 44 : 35,
+    lineHeight: IOS ? 40 : 33,
     backgroundColor: theme.transparent
   },
   contentCol: {
     borderBottomWidth: 1,
     borderBottomColor: theme.grey1,
-    marginLeft: 20,
+    marginLeft: 15,
     paddingVertical: 20,
     overflow: 'hidden',
-    width: width - 102,
+    width: width - 97,
   },
   content: {
     padding: 0,

@@ -20,9 +20,9 @@ const IOS = Platform.OS === 'ios';
 const EmptyState = () => {
   return (
     <View style={styles.container}>
-      <AnimateMe delay={300} animationType={'fade-from-bottom'}>
+      <AnimateMe style={{ flex: 0 }} delay={300} animationType={'fade-from-bottom'}>
         <View style={styles.circle}>
-          <AnimateMe delay={600} animationType={'drop-in'}>
+          <AnimateMe style={{ flex: 0 }} delay={600} animationType={'drop-in'}>
             <Icon
                 style={styles.commentIcon}
                 name={'md-chatbubbles'}
@@ -41,9 +41,11 @@ const EmptyState = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    flex: 1,
     alignItems: 'center',
     padding: 20,
     paddingTop: width / 4,
+
   },
   circle: {
     backgroundColor: theme.secondarySubtle,

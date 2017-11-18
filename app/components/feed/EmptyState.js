@@ -20,9 +20,9 @@ const IOS = Platform.OS === 'ios';
 const EmptyState = () => {
   return (
     <View style={styles.container}>
-      <AnimateMe delay={300} animationType={'fade-from-bottom'}>
+      <AnimateMe style={{ flex: 0 }} delay={300} animationType={'fade-from-bottom'}>
         <View style={styles.circle}>
-          <AnimateMe delay={600} animationType={'drop-in'}>
+          <AnimateMe style={{ flex: 0 }} delay={600} animationType={'drop-in'}>
             <Icon
               style={styles.feedIcon}
               name={'looks'}
@@ -30,8 +30,8 @@ const EmptyState = () => {
           </AnimateMe>
         </View>
       </AnimateMe>
-      <Text style={styles.title}>Get the feed flowing</Text>
-      <Text style={styles.explanation}>You have good chances to be the first one to post!</Text>
+      <Text style={styles.title}>Every journey begins with first post</Text>
+      <Text style={styles.explanation}>When someone adds a post, it'll show up here.</Text>
     </View>
   )
 };

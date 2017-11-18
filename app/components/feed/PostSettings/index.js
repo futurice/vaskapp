@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   settingsRowTitleText: {
     fontWeight: 'normal',
     color: theme.black,
-    marginTop: 5,
+    marginTop: IOS ? 0 : 5,
   },
   smaller: {
     fontSize: 11,

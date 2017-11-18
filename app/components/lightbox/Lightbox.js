@@ -91,7 +91,8 @@ class LightBox extends Component {
       return;
     }
 
-    //HOX Android CameraRoll cannot access to url directly
+    // HOX Android CameraRoll cannot access to url directly
+    // https://medium.com/react-native-training/mastering-the-camera-roll-in-react-native-13b3b1963a2d
     CameraRoll.saveToCameraRoll(imgUrl)
     .then(localImagePath => {
       const shareOptions = { title, url: localImagePath };
@@ -245,7 +246,7 @@ class LightBox extends Component {
 
               <View style={styles.headerTitle}>
               {itemAuthor &&
-                <Text style={styles.headerTitleText}>{!isSystemUser ? itemAuthor : 'Whappu'}</Text>
+                <Text style={styles.headerTitleText}>{!isSystemUser ? itemAuthor : 'Vask'}</Text>
               }
                 <View style={styles.date}>
                   <Text style={styles.dateText}>
@@ -337,7 +338,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     marginLeft: 15,
-    marginTop: IOS ? 6 : 0,
+    marginTop: IOS ? 5 : 0,
   },
   headerTitleText: {
     color: theme.primary,
@@ -345,7 +346,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   date: {
-    paddingTop: IOS ? 2 : 0
+    marginTop: IOS ? -3 : 0,
   },
   dateText: {
     color: theme.primary,

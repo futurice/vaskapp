@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   sectionTitleText: typography.h1(),
   seeMoreLink: {
     color: theme.secondaryClear,
-    top: IOS ? 0 : 2,
+    top: IOS ? -2 : 0,
     fontSize: 15,
     // fontFamily: IOS ? 'Futurice' : 'Futurice_bold',
   },

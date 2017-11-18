@@ -66,11 +66,11 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     color: theme.black,
     paddingRight: 10,
-    paddingTop: IOS ? 4 : 0,
+    paddingTop: IOS ? 0 : 0,
   },
   itemAuthorTeam:{
     fontSize: 12,
-    marginTop: 1,
+    marginTop: IOS ? -3 : 1,
     color: '#aaa'
   },
   itemAuthorTeam__my: {

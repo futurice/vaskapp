@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     width:40,
     height:40,
     marginRight:15,
+    marginLeft: IOS ? 0 : 16,
     borderWidth:3,
     backgroundColor: theme.white,
     alignItems: 'center',
@@ -81,11 +82,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     backgroundColor: 'transparent',
     color: theme.dark,
-    top: IOS ? 3 : 0,
+    top: IOS ? 0 : 0,
   },
   text: typography.h2({ marginBottom: 0, top: IOS ? 2 : 0, backgroundColor: 'transparent' }),
   button: {
-    paddingVertical: 12,
+    paddingVertical: IOS ? 12 : 16,
     flex:1,
     flexDirection:'row',
     alignItems:'center'

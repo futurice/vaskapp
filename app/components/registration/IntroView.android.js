@@ -24,7 +24,6 @@ import theme from '../../style/theme';
 
 import PlatformTouchable from '../../components/common/PlatformTouchable';
 import RegistrationFailedGuide from './RegistrationFailedGuide';
-import { isIphoneX } from '../../services/device-info';
 
 const IOS = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
@@ -60,7 +59,7 @@ class InstructionView extends Component {
   render() {
     const { loginFailed, onPressMainAction } = this.props;
     const { showGuide } = this.state;
-    const containerStyles = [styles.container, isIphoneX && { paddingTop: 30, }];
+    const containerStyles = [styles.container, { paddingTop: 30 }];
 
     // TODO image animation
     const { springAnim } = this.state;
@@ -100,17 +99,17 @@ class InstructionView extends Component {
                 </AnimateMe>
               </AnimateMe>
 
-              <AnimateMe style={styles.mainImageWrap} animationType="fade-from-bottom" duration={300} delay={1200}>
+              <AnimateMe style={styles.mainImageWrap} animationType="fade-from-bottom" duration={300} delay={300}>
                 <Image
                   style={styles.mainImage}
                   resizeMode="contain"
                   source={require('../../../assets/illustrations/planet-purple.png')} />
               </AnimateMe>
-   
-              <AnimateMe style={{ flex: 1, right: mainImageSize/4, top: 70, width: 66, height: 66, position: 'absolute' }} animationType="fade-in" duration={400} delay={2200}>
+
+              <AnimateMe style={{ flex: 1, right: mainImageSize/4, top: 66, width: 66, height: 66, position: 'absolute' }} animationType="fade-in" duration={400} delay={2200}>
                 <AnimateMe style={{ flex: 1 }} animationType="shake2" duration={2000} delay={1500} infinite>
                   <View style={styles.emoji}>
-                    <Text style={{fontSize: vw(42), transform: [{ rotate: '20deg' }] }}>🕹️</Text>
+                    <Text style={{fontSize: vw(46), transform: [{ rotate: '20deg' }] }}>🕹️</Text>
                   </View>
                 </AnimateMe>
               </AnimateMe>
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
     minHeight: height / 2,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginBottom: 30,
+    marginBottom: 20,
   },
   bottomArea: {
     flex: 1,
@@ -231,13 +230,10 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: width,
     height: height / 2,
-    // left: (width / 2) - (height / 5),
     top: 0,
     overflow: 'visible',
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: 'transparent',
-    // backgroundColor: 'lightgreen'
   },
   mainImageWrap: {
     flex: 1,
@@ -258,7 +254,6 @@ const styles = StyleSheet.create({
   floatText: {
     backgroundColor: 'transparent',
     color: theme.gold,
-    fontWeight: 'bold',
   },
   content: {
     margin: 20,
@@ -273,18 +268,18 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   subTitle: {
-    color: theme.secondary,
+    color: theme.secondaryClear,
     fontSize: vw(22),
     margin: 15,
     marginTop: 10,
     marginBottom: vw(15),
-    fontWeight: IOS ? 'bold' : 'normal',
+    fontWeight: 'normal',
   },
   text: {
-    fontSize: IOS ? vw(14) : 15,
-    lineHeight: IOS ? vw(20) : 20,
+    fontSize: 15,
+    lineHeight: 20,
     marginTop: 0  ,
-    color: theme.secondary,
+    color: theme.secondaryClear,
     opacity: 0.8,
     textAlign: 'center',
   },
@@ -329,8 +324,8 @@ const styles = StyleSheet.create({
   loginButtonText: {
     fontSize: 16,
     lineHeight: 20,
-    paddingTop: IOS ? 5: 0,
-    fontWeight: IOS ? 'bold' : 'normal',
+    paddingTop: 0,
+    fontWeight: 'normal',
     color: theme.secondaryClear,
     textAlign: 'center',
   }

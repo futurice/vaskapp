@@ -5,7 +5,8 @@ import {
   View,
   ScrollView,
   Modal,
-  StyleSheet
+  StyleSheet,
+  Platform
 } from 'react-native';
 
 import { isNil } from 'lodash';
@@ -29,12 +30,15 @@ import { saveInitialTeamSelection } from '../../concepts/auth';
 import { getTeams } from '../../reducers/team';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+const IOS = Platform.OS === 'ios';
 class TeamSelector extends Component {
   render() {
     const { teams, userData, isUserLogged, isTeamSelectorOpen } = this.props;
     const userTeamId = userData.get('teamId');
     const userName = userData.get('name', '') || '';
     const firstName = userName.split(' ')[0];
+
+    const MaybeAnimation = IOS ? AnimateMe : View;
 
     return (
       <Modal
@@ -43,12 +47,12 @@ class TeamSelector extends Component {
       >
         <View style={styles.inputGroup}>
           <View style={styles.inputLabel}>
-            <AnimateMe animationType={'fade-from-bottom'} delay={500} duration={300}>
+            <MaybeAnimation animationType={'fade-from-bottom'} delay={500} duration={300}>
               <Text style={styles.inputLabelText}>Welcome {firstName}!</Text>
-            </AnimateMe>
-            <AnimateMe animationType={'fade-from-bottom'} delay={800} duration={300}>
+            </MaybeAnimation>
+            <MaybeAnimation animationType={'fade-from-bottom'} delay={800} duration={300}>
               <Text style={styles.inputLabelSubtitle}>Choose your team</Text>
-            </AnimateMe>
+            </MaybeAnimation>
           </View>
 
           <AnimateMe animationType={'fade-from-left'} delay={1000} duration={600} style={{ flex: 1 }}>
@@ -66,7 +70,7 @@ class TeamSelector extends Component {
           </AnimateMe>
 
           {!isNil(userTeamId) &&
-            <AnimateMe style={{ flex: 0 }} animationType={'fade-from-bottom'} duration={200}>
+            <AnimateMe animationType={'fade-from-bottom'} duration={200}>
               <Fab
                 onPress={this.props.saveInitialTeamSelection}
                 styles={styles.button}
@@ -93,10 +97,10 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     padding: 20,
-    paddingTop: 60,
-    paddingBottom: 15,
+    paddingTop: IOS ? 60 : 25,
+    paddingBottom: IOS ? 15 : 25,
     backgroundColor: theme.white,
-    elevation: 2,
+    elevation: 4,
     shadowColor: theme.secondaryDark,
     shadowOpacity: 0.07,
     shadowRadius: 10,
@@ -108,8 +112,8 @@ const styles = StyleSheet.create({
   inputLabelText: typography.h1({ marginBottom: 0, color: theme.midgrey }),
   inputLabelSubtitle: typography.h1({ color: theme.primary, marginBottom: 0 }),
   scrollView: {
-    padding: 20,
-    paddingVertical: 15,
+    padding: IOS ? 20 : 0,
+    paddingVertical: IOS ? 15 : 0,
   },
   button: {
     backgroundColor: theme.primary,

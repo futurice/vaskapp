@@ -34,16 +34,16 @@ class CommentsLinks extends Component {
           }
           <Text style={[styles.commentText, styles.commentIconWrap, !compact && styles.commentTextRight]}>
 
+          {/*
           <Image
             source={chatsIcon}
             style={[styles.commentImage, { tintColor: hasComments ? theme.secondaryLight : theme.grey }]}
           />
-          {/*
+          */}
             <Icon
               style={[styles.commentIcon, hasComments ? styles.activeCommentIcon : {}]}
               name={'md-chatbubbles'}
             />
-          */}
           </Text>
         </View>
       </TouchableOpacity>
@@ -65,13 +65,13 @@ const styles = StyleSheet.create({
   commentText: {
     color: theme.grey,
     fontSize: 15,
-    top: IOS ? 3 : 0,
+    top: IOS ? 0 : 0,
   },
   commentTextRight: {
     marginLeft: 7,
   },
   commentIconWrap: {
-    top: 1,
+    top: IOS ? 2 : 1,
   },
   compactText: {
     marginRight: 3,
