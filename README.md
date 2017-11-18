@@ -17,7 +17,7 @@ Basically it means that you order two expensive bottles of champagne (or any oth
 * User profile
 
 ### Architecture
-* React Native + Redux
+* React Native (0.44) + Redux
 * iOS and Android support
 * Selectors with [reselect](https://github.com/reactjs/reselect/) to access store
 * Redux architecture using [ducks](https://github.com/erikras/ducks-modular-redux). See `/app/concepts`
@@ -62,7 +62,6 @@ The xcode-project is expecting that you have nvm installed. It can be reconfigur
 
 ### Android
 
-* Setup Android environment: https://facebook.github.io/react-native/docs/android-setup.html#content
 * Copy `whappu-release.keystore` under `android/app` if it's not there already.
 * Bump `versionCode` and `versionName` in `android/app/build.gradle`
 * `cd android && ./gradlew assembleRelease --no-daemon`
