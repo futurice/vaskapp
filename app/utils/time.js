@@ -85,6 +85,30 @@ function getTimeAgo(date) {
   }
 }
 
+function getDateAgo(date) {
+  if (!date) {
+    return '';
+  }
+
+  const now = moment();
+  const pastMoment = moment(date);
+  const sameDay = now.diff(pastMoment, 'hours') < 24;
+  const sameWeek = now.isSame(pastMoment, 'week');
+
+  let format;
+
+  if (sameDay) {
+    format = 'HH:mm';
+  } else if (sameWeek) {
+    format = 'dd';
+  } else {
+    format = 'DD.MM.'
+  }
+
+  return pastMoment.format(format);
+
+}
+
 export default {
   formatEventTime,
   eventIsOnGoing,
@@ -92,5 +116,6 @@ export default {
   isEventInFuture,
   getTimeStamp,
   eventsBetweenHours,
-  getTimeAgo
+  getTimeAgo,
+  getDateAgo
 };
