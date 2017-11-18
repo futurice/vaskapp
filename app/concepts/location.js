@@ -68,7 +68,7 @@ export const fetchUserLocation = () => (dispatch) => {
     return new Promise(function(resolve, reject) {
       permissions.requestLocationPermission(
         () => resolve(dispatch(getLocationFromDevice())),
-        () => reject()
+        () => resolve()
       );
     });
   }
@@ -78,7 +78,7 @@ export const getLocationFromDevice = () => (dispatch) => {
   var locationPromise = new Promise(function(resolve, reject) {
     navigator.geolocation.getCurrentPosition(
       position => resolve(dispatch(updateLocation(position))),
-      error => reject(error.message),
+      error => resolve(error.message),
       locationOpts
     );
   });
