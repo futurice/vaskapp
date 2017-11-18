@@ -134,16 +134,15 @@ class AnimatedComponent extends Component {
   }
 
   render() {
-    const { animationType, style, children, showText } = this.props;
+    const { animationType, style, children } = this.props;
     const { animation } = this.state;
 
     const animationStyles = getAnimationStyles(animationType, animation);
-    const AnimationComponent = showText ? Animated.Text : Animated.View;
 
     return (
-      <AnimationComponent style={[{ flex: IOS ? 0 : 1 }, style, animationStyles]}>
+      <Animated.View style={[{ flex: IOS ? 0 : 1 }, style, animationStyles]}>
         {children}
-      </AnimationComponent>
+      </Animated.View>
     );
   }
 }
@@ -164,7 +163,6 @@ AnimatedComponent.defaultProps = {
   children: null,
   delay: 0,
   duration: 500,
-  showText: false,
   animationType: 'fade-in',
 }
 
