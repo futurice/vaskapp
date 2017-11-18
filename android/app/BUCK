@@ -45,12 +45,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.futubohemia",
+    package = "com.vaskapp",
 )
 
 android_resource(
     name = "res",
-    package = "com.futubohemia",
+    package = "com.vaskapp",
     res = "src/main/res",
 )
 

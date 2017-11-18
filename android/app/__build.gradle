@@ -87,11 +87,12 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        applicationId "com.futubohemia"
+        applicationId "com.vaskapp"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 4
-        versionName "2.0"
+        versionCode 1
+        versionName "1.0"
+        manifestPlaceholders = [auth0Domain: "@string/auth0_domain", auth0Scheme: "https"]
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -104,22 +105,10 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
-    signingConfigs {
-        release {
-          def console = System.console()
-          if (console != null) {
-            storeFile file(System.console().readLine("\n\$ Enter keystore filename: "))
-            storePassword new String(System.console().readPassword("\n\$ Enter keystore password: "))
-            keyAlias System.console().readLine("\n\$ Enter key alias: ")
-            keyPassword new String(System.console().readPassword("\n\$ Enter alias password: "))
-          }
-       }
-    }
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -133,9 +122,6 @@ android {
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
-            output.outputFile = new File(
-              output.outputFile.parent,
-              output.outputFile.name.replace("app-release.apk", "futubohemia-${variant.versionName}.apk"))
         }
     }
 
@@ -145,6 +131,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-auth0')
+    compile project(':react-native-android-location-enabler')
     compile project(':react-native-vector-icons')
     compile project(':react-native-share')
     compile project(':react-native-photo-view')
@@ -157,8 +145,11 @@ dependencies {
       exclude group: 'com.google.android.gms', module: 'play-services-base'
       exclude group: 'com.google.android.gms', module: 'play-services-maps'
     }
-    compile 'com.google.android.gms:play-services-base:10.2.1'
-    compile 'com.google.android.gms:play-services-maps:10.2.1'
+    compile "com.google.android.gms:play-services-base:+"
+    compile 'com.google.android.gms:play-services-location:+'
+    compile 'com.google.android.gms:play-services-maps:+'
+    // compile 'com.google.android.gms:play-services-base:10.2.1'
+    // compile 'com.google.android.gms:play-services-maps:10.2.1'
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules

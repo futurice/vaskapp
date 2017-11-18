@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.futubohemia"
+    package="com.vaskapp"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <uses-sdk
-        android:minSdkVersion="16"
+        android:minSdkVersion="21"
         android:targetSdkVersion="23" />
 
     <application
@@ -44,35 +44,6 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-
-    <!--
-      <activity
-        android:name="com.auth0.lock.LockActivity"
-        android:theme="@style/MyLock.Theme"
-        android:screenOrientation="portrait"
-        android:launchMode="singleTask">
-        <intent-filter>
-          <action android:name="android.intent.action.VIEW"/>
-          <category android:name="android.intent.category.DEFAULT"/>
-          <category android:name="android.intent.category.BROWSABLE"/>
-          <data
-            android:scheme="a6ixvbuvgaxw7jim3E0pu6vt6066gdiu"
-            android:host="@string/auth0_domain"
-          />
-        </intent-filter>
-      </activity>
-      <activity
-          android:name="com.auth0.lock.passwordless.LockPasswordlessActivity"
-          android:theme="@style/Lock.Theme"
-          android:screenOrientation="portrait"
-          android:launchMode="singleTask">
-      </activity>
-      <activity
-          android:name="com.auth0.lock.passwordless.CountryCodeActivity"
-          android:theme="@style/Lock.Theme">
-      </activity>
-    -->
-
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.futubohemia;
+package com.vaskapp;
 
 import android.app.Application;
 
