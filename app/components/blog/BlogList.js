@@ -80,11 +80,11 @@ var BlogApp = React.createClass({
     const diff = (new Date().getTime() - moment(date).valueOf()) / 60000; // minutes
 
     if(diff < 60)
-      return Math.round(diff) + 'minutes';
+      return Math.round(diff) + ' minutes';
     else if(diff < 60 * 24)
-      return Math.round(diff/60) + 'hours';
+      return Math.round(diff/60) + ' hours';
     else (diff < 60 * 24)
-      return Math.round(diff/60/24) + 'days';
+      return Math.round(diff/60/24) + ' days';
 
   },
 
@@ -172,11 +172,10 @@ var BlogApp = React.createClass({
             <View style={styles.cardImgWrap}>
               <Image source={postCardImage} style={styles.cardImg} />
             </View>
-
             <View style={styles.cardContent}>
               <Text style={styles.cardTitle}>{unescapeHtml(post.title)}</Text>
               {post.author ? <Text style={styles.cardSubTitle}>by {post.author} {this.daysAgo(post.pubDate)} ago</Text> : <View /> }
-              <Text style={styles.cardText} numberOfLines={3} ellipsizeMode={'tail'}>{post.description}</Text>
+              {/*<Text style={styles.cardText} numberOfLines={2} ellipsizeMode={'tail'}>{post.description}</Text>*/}
             </View>
           </View>
         </PlatformTouchable>
@@ -246,8 +245,8 @@ var styles = StyleSheet.create({
     padding: 25,
   },
   cardTitle: typography.h1(),
-  cardSubTitle: typography.h2({ marginBottom: 10 }),
-  cardText: typography.paragraph(),
+  cardSubTitle: typography.h2({ marginBottom: 10, color: theme.midgrey }),
+  cardText: typography.paragraph({ lineHeight: IOS ? 20 : 22 }),
 });
 
 export default BlogApp;

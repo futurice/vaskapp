@@ -92,15 +92,22 @@ var BlogPost = React.createClass({
       window.onload = waitForBridge;
     </script>`;
 
-    const fontFamilySerif = IOS ? 'NotoSerif' : 'NotoSerif';
-    const fontFamily = IOS ? 'Futurice' : 'Futurice-Regular';
+    const androidStyles = `
+      <link href="https://futurice.github.io/vaskapp-futu/style/font/font.css" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css?family=Noto+Serif:400,700" rel="stylesheet">
+    `;
+
+    const fontFamilySerif = IOS ? 'NotoSerif' : 'Noto Serif';
+    const fontFamily = IOS ? 'Futurice' : 'Futurice Regular';
     const fontFamilyCode = fontFamily;
+    const titleColor = 'rgba(0,0,0,1)';
     const textColor = 'rgba(0,0,0,0.8)';
     const subTextColor = 'rgba(0,0,0,0.6)';
 
     const html = `
     <!DOCTYPE html>
     <html>
+      ${!IOS && androidStyles}
       <style>
         html,body {
           margin: 0;
@@ -117,10 +124,19 @@ var BlogPost = React.createClass({
           padding: 0 25px;
         }
 
-        h1, h2, h3, h4, h5 {
+        html, body, p {
+          font-family: '${fontFamilySerif}', serif;
+          font-weight: normal;
           color: ${textColor};
+          font-size: 17px;
+          letter-spacing: -.003em;
+          line-height: 1.52;
+        }
+
+        h1, h2, h3, h4, h5 {
+          color: ${titleColor};
           font-family: '${fontFamily}', sans-serif;
-          font-weight: bold;
+          font-weight: normal;
           letter-spacing: -.015em;
           line-height: 1.3;
           margin: 0;
@@ -134,6 +150,15 @@ var BlogPost = React.createClass({
           margin-bottom: 7px;
           font-size: 22px;
         }
+
+        h1 strong,
+        h2 strong,
+        h3 strong,
+        h4 strong {
+          font-family: '${fontFamily}', sans-serif;
+          font-weight: normal;
+        }
+
         p {
           margin: 0 0 22px;
         }
@@ -144,14 +169,6 @@ var BlogPost = React.createClass({
           font-weight: normal;
         }
 
-        html, body, p {
-          font-family: '${fontFamilySerif}', serif;
-          font-weight: normal;
-          color: ${textColor};
-          font-size: 17px;
-          letter-spacing: -.003em;
-          line-height: 1.52;
-        }
         p { margin-bottom: 25px; }
         ul, ol { padding-left: 30px; margin-left: 0; }
 
@@ -170,7 +187,9 @@ var BlogPost = React.createClass({
           padding: 0;
           font-family: '${fontFamily}', sans-serif;
         }
+
         figcaption {
+          margin: 0 0 0px;
           font-size: 0.9em;
           color: ${subTextColor};
           text-align: center;
@@ -197,6 +216,19 @@ var BlogPost = React.createClass({
         code {
           margin: 0;
         }
+
+        blockquote {
+          padding-left: 25px;
+          padding-right: 10px;
+          margin: 0;
+          border-left: 5px solid #EEE;
+        }
+
+        blockquote, blockquote p {
+          font-family: '${fontFamily}', sans-serif;
+        }
+
+
       </style>
       <body id="body">
         ${heightScript}
