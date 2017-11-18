@@ -11,7 +11,7 @@ export const isLoading = state => state.conversations.get('isLoading', false);
 export const getSortedConversations = createSelector(
   getConversations, conversations => {
     return conversations
-      .sortBy(c => c.get('commentCreatedAt'))
+      .sortBy(c => c.getIn(['comment', 'createdAt']))
       .reverse()
       .groupBy(x => x.get('id'))
       .map(x => x.first())
