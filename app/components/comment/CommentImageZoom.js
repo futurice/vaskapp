@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     width,
     height: height - 60,
     paddingBottom: 60,
-    backgroundColor: IOS ? 'transparent' : theme.secondaryLayer,
+    backgroundColor: IOS ? 'transparent' : 'rgba(255,255,255,.85)',
     zIndex: 10,
     position: 'absolute',
     left: 0,
