@@ -24,7 +24,7 @@ import api from '../services/api';
 import LoadingStates from '../constants/LoadingStates';
 import MarkerImages from '../constants/MarkerImages';
 import time from '../utils/time';
-import { HELSINKI, CITY_CATEGORIES, CITY_MAX_DISTANCE } from '../constants/Cities';
+import { TAMPERE, CITY_CATEGORIES, CITY_MAX_DISTANCE } from '../constants/Cities';
 import StorageKeys from '../constants/StorageKeys';
 
 // # Constants
@@ -219,7 +219,7 @@ export const fetchPostsForCity = () => (dispatch, getState) => {
 
 // # Reducer
 const initialState = fromJS({
-  selectedCategory: HELSINKI,
+  selectedCategory: TAMPERE,
   selectedMarkerId: null,
   selectedMarkerType: null,
   posts: [],
