@@ -8,6 +8,7 @@ import autobind from 'autobind-decorator';
 
 import { changeTab } from '../actions/navigation';
 import { getFeedSortType, setFeedSortType } from '../concepts/sortType';
+import { getUnreadConversationCount } from '../concepts/conversations';
 
 import MoodView from './MoodView';
 import HoursView from './HoursView';
@@ -58,8 +59,11 @@ class AndroidTabNavigation extends Component {
       navigator,
       currentTab,
       selectedSortType,
+      unreadConversationCount,
     } = this.props;
 
+
+    // # Header animation on feed page
     const headerHeight = this.state.headerVisibility.interpolate({
       inputRange: [0, 1],
       outputRange: [0, 56]
@@ -71,17 +75,36 @@ class AndroidTabNavigation extends Component {
     });
 
     const feedHeaderStyles = {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      zIndex: 2,
       height: headerHeight,
-      transform: [{ translateY: headerTranslateY }]
+      transform: [{ translateY: headerTranslateY }],
     };
 
-    const showHeader = HEADER_HIDDEN_ON_TABS.indexOf(currentTab) < 0;
+    const hiddenHeaderStyles = {
+      height: 0,
+      transform: [],
+    };
+
+    // # Header style processing
+    const hideHeader = HEADER_HIDDEN_ON_TABS.indexOf(currentTab) >= 0;
     const isFeedView = currentTab === Tabs.FEED;
+    const headerStyles = [];
+
+    if (isFeedView) {
+      headerStyles.push(feedHeaderStyles)
+    }
+
+    if (hideHeader) {
+      headerStyles.push(hiddenHeaderStyles);
+    }
 
     return (
       <View style={{ flexGrow: 1, flex: 1 }}>
-      {showHeader &&
-        <Animated.View style={isFeedView ? feedHeaderStyles : {}}>
+        <Animated.View style={headerStyles}>
           <Header
             title={null}
             backgroundColor={theme.white}
@@ -89,9 +112,9 @@ class AndroidTabNavigation extends Component {
             selectedSortType={selectedSortType}
             setFeedSortType={this.props.setFeedSortType}
             navigator={navigator}
+            unreadConversationCount={unreadConversationCount}
           />
         </Animated.View>
-      }
         <ScrollableTabs
           onChangeTab={this.onChangeTab}
           initialPage={initialTabIndex}
@@ -130,7 +153,8 @@ const mapDispatchToProps = {
 const select = state => {
   return {
     selectedSortType: getFeedSortType(state),
-    currentTab: state.navigation.get('currentTab')
+    currentTab: state.navigation.get('currentTab'),
+    unreadConversationCount: getUnreadConversationCount(state),
   }
 };
 
