@@ -22,15 +22,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   tabs: {
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 1,
-    shadowOffset: {
-      height: 1,
-      width: 0
-    },
-    height: 54,
+    elevation: 5,
+    height: 56,
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderWidth: 0,
