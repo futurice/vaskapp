@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import { fromJS } from 'immutable';
 import { get } from 'lodash';
 import permissions from '../services/android-permissions';
+import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 
 const IOS = Platform.OS === 'ios';
 let watchID;
@@ -10,9 +11,9 @@ let watchID;
 // Constants
 //
 const locationOpts = {
-	enableHighAccuracy: false,
+	enableHighAccuracy: !IOS,
   timeout: 20000, // 20 sec
-  maximumAge: 1000 * 60 * 5 // 5 min
+  maximumAge: 1000 * 5 // 5 sec
 };
 
 
@@ -74,18 +75,42 @@ export const fetchUserLocation = () => (dispatch) => {
   }
 }
 
+
+
 export const getLocationFromDevice = () => (dispatch) => {
+  if (IOS) {
+    return dispatch(getCurrentPosition());
+  }
+
+  return LocationServicesDialogBox.checkLocationServicesIsEnabled({
+      message: '<h3>Vask needs your location</h3>App needs to enable your location.',
+      ok: 'Enable Location',
+      cancel: 'No thanks',
+      enableHighAccuracy: true,
+      showDialog: true, // false => Opens the Location access page directly
+      openLocationServices: true // false => Directly catch method is called if location services are turned off
+  }).then(function(success) {
+      console.log(success); // success => {alreadyEnabled: false, enabled: true, status: 'enabled'}
+      return dispatch(getCurrentPosition());
+  }).catch((error) => {
+      console.log(error.message); // error.message => 'disabled'
+
+      // just resolve dummy promise, no location :(
+      return dispatch(Promie.resolve());
+  });
+}
+
+const getCurrentPosition = () => (dispatch) => {
   var locationPromise = new Promise(function(resolve, reject) {
     navigator.geolocation.getCurrentPosition(
-      position => resolve(dispatch(updateLocation(position))),
-      error => resolve(error.message),
+      position => console.log('got location') || resolve(dispatch(updateLocation(position))),
+      error => console.log('did not get location', error) || resolve(error.message),
       locationOpts
     );
   });
 
   return locationPromise;
 }
-
 
 // # Location Watcher
 export const startLocationWatcher = () => (dispatch) => {
@@ -97,6 +122,8 @@ export const startLocationWatcher = () => (dispatch) => {
   }
 }
 
+
+// Not used ATM
 export const initLocationWatcher = () => (dispatch) => {
 	navigator.geolocation.getCurrentPosition(
 		position => dispatch(updateLocation(position)),

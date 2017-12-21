@@ -1,7 +1,7 @@
 import { PermissionsAndroid } from 'react-native';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
-async function requestLocationPermission(callback, error) {
+async function requestLocationPermission(callback = noop, error = noop) {
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -12,10 +12,10 @@ async function requestLocationPermission(callback, error) {
       }
     )
     if (granted) {
-      console.log("You can use the Location")
+      console.log('You can use the Location')
       callback();
     } else {
-      console.log("Location permission denied")
+      console.log('Location permission denied')
       error();
     }
   } catch (err) {
@@ -24,43 +24,21 @@ async function requestLocationPermission(callback, error) {
   }
 }
 
-async function requestCameraPermission(callback) {
+async function requestCameraPermission(callback = noop) {
   try {
-    /*
-    const grantCamera = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-      {
-        'title': 'Vask Camera Permission',
-        'message': 'Vask needs access to camera ' +
-                   'to post images to feed.'
-      }
-    );
-
-    const grantWrite = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        'title': 'Vask Storage Permission',
-        'message': 'Vask needs access to storage ' +
-        'to post images to feed.'
-      }
-    );
-    */
-
     const grantCamera = await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.CAMERA,
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
     ], {
       'title': 'Vask Camera Permission',
       'message': 'Vask needs access to camera and storage to post images to feed.'
-    })/*.then((response) => {
-      console.log('PERMISSIONS: ', response);
-    });*/
+    })
 
     if (grantCamera) {
-      console.log("You can use the Camera and storage")
+      console.log('You can use the Camera and storage')
       callback();
     } else {
-      console.log("Camera permission denied")
+      console.log('Camera permission denied')
     }
   } catch (err) {
     console.warn(err)
