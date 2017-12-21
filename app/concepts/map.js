@@ -224,6 +224,7 @@ const initialState = fromJS({
   selectedMarkerType: null,
   posts: [],
   loadingPosts: false,
+  showPostsSince: null,
 });
 
 export default function usermap(state = initialState, action) {
