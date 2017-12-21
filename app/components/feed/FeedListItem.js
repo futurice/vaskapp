@@ -16,6 +16,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ParsedText from 'react-native-parsed-text';
 import LinearGradient from 'react-native-linear-gradient';
+import autobind from 'autobind-decorator';
 
 import { isEmpty, get } from 'lodash';
 import abuse from '../../services/abuse';
@@ -42,6 +43,9 @@ const styles = StyleSheet.create({
     paddingBottom: IOS ? 15 : 12,
     paddingTop: 8,
     alignItems: isIpad ? 'center' : null,
+  },
+  firstItem: {
+    marginTop: IOS ? 0 : 56,
   },
   itemTouchable: {
     flexGrow: 1,
@@ -174,6 +178,7 @@ class FeedListItem extends Component {
     return userTeam && get(item, ['author','team']) === userTeam.get('name');
   }
 
+  @autobind
   selectItem() {
     this.setState({ selected: true });
     this.showRemoveDialog(this.props.item);
@@ -213,10 +218,10 @@ class FeedListItem extends Component {
     this.props.removeFeedItem(this.props.item);
   }
 
-  renderAdminItem(item, ago) {
+  renderAdminItem(item, ago, isFirst) {
 
     return (
-      <View style={styles.itemWrapper}>
+      <View style={[styles.itemWrapper, isFirst && styles.firstItem]}>
         <View style={[styles.itemContent, styles.itemContent__admin]}>
           <View style={[styles.feedItemListItemInfo, styles.feedItemListItemInfo__admin]}>
             <View style={[styles.feedItemListItemAuthor, styles.feedItemListItemAuthor__admin]}>
@@ -243,7 +248,7 @@ class FeedListItem extends Component {
   }
 
   render() {
-    const { item, openUserView, openComments, opacity } = this.props;
+    const { item, openUserView, openComments, isFirst, opacity } = this.props;
 
     if (item.type === 'SKELETON') {
       return <FeedItemSkeleton opacity={opacity} />;
@@ -253,7 +258,7 @@ class FeedListItem extends Component {
     const ago = time.getTimeAgo(item.createdAt);
 
     if (item.author.type === 'SYSTEM') {
-      return this.renderAdminItem(item, ago);
+      return this.renderAdminItem(item, ago, isFirst);
     }
 
     const itemByMyTeam = this.itemIsCreatedByMyTeam(item);
@@ -262,9 +267,7 @@ class FeedListItem extends Component {
     const avatar = item.author.profilePicture;
 
     return (
-      <View style={styles.itemWrapper}>
-
-
+      <View style={[styles.itemWrapper, isFirst && styles.firstItem]}>
         <View
           style={[styles.itemContent,
             itemByMyTeam ? styles.itemContent_byMyTeam : {},
@@ -275,7 +278,7 @@ class FeedListItem extends Component {
           <TouchableOpacity
             activeOpacity={1}
             style={styles.itemTouchable}
-            onLongPress={() => this.selectItem() }
+            onLongPress={this.selectItem}
           >
             <FeedItemHeader
               ago={ago}

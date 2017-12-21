@@ -29,6 +29,7 @@ import { fetchFeed,
 import { openLightBox } from '../../concepts/lightbox';
 import { openComments } from '../../concepts/comments';
 import { openUserView } from '../../concepts/user';
+import { fetchUnreadConversationCount } from '../../concepts/conversations';
 
 import { openRegistrationView, getUserTeam, getUserName } from '../../concepts/registration';
 import permissions from '../../services/android-permissions';
@@ -175,6 +176,7 @@ class FeedList extends Component {
   @autobind
   onRefreshFeed() {
     this.props.refreshFeed();
+    this.props.fetchUnreadConversationCount();
   }
 
   @autobind
@@ -279,7 +281,7 @@ class FeedList extends Component {
     const item = { type: 'SKELETON' };
     return (
     <View style={styles.feedContainer}>
-      <View style={styles.listView}>
+      <View style={[styles.listView, !IOS && { paddingTop: 56 }]}>
         <FeedListItem item={item} />
         <FeedListItem item={item} opacity={0.75} />
         <FeedListItem item={item} opacity={0.5} />
@@ -289,16 +291,20 @@ class FeedList extends Component {
 
   @autobind
   renderFeed(feedListState, isLoadingActionTypes, isLoadingUserData) {
+    const { feed, isRefreshing, isSending } = this.props;
+
     const refreshControl = <RefreshControl
-      refreshing={this.props.isRefreshing || this.props.isSending}
+      refreshing={isRefreshing || isSending}
       onRefresh={this.onRefreshFeed}
       colors={[theme.secondary]}
       tintColor={theme.secondary}
+      progressViewOffset={56}
+      size={RefreshControl.SIZE.LARGE}
       progressBackgroundColor={theme.light} />;
 
     const isLoading = isLoadingActionTypes || isLoadingUserData;
     const { dataSource } = this.state;
-    const isFeedEmpty = !this.props.feed || this.props.feed.size <= 0;
+    const isFeedEmpty = !feed || feed.size <= 0;
 
     switch (feedListState) {
       case LoadingStates.LOADING:
@@ -322,6 +328,7 @@ class FeedList extends Component {
               renderRow={item => <FeedListItem
                 item={item}
                 key={item.id}
+                isFirst={!isFeedEmpty && feed.getIn([0, 'id']) === item.id}
                 userTeam={this.props.userTeam}
                 removeFeedItem={this.props.removeFeedItem}
                 voteFeedItem={this.props.voteFeedItem}
@@ -395,6 +402,7 @@ const mapDispatchToProps = {
   openComments,
   openRegistrationView,
   openUserView,
+  fetchUnreadConversationCount,
 };
 
 const select = store => {
