@@ -131,6 +131,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-android-location-services-dialog-box')
     compile project(':react-native-auth0')
     compile project(':react-native-android-location-enabler')
     compile project(':react-native-vector-icons')

@@ -32,6 +32,7 @@
     "react-mixin": "^3.0.5",
     "react-native": "0.44.0",
     "react-native-android-location-enabler": "^1.0.2",
+    "react-native-android-location-services-dialog-box": "^2.3.2",
     "react-native-app-intro": "git+https://github.com/palampinen/react-native-app-intro.git",
     "react-native-auth0": "^1.2.1",
     "react-native-blur": "^3.0.0-alpha",
