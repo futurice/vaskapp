@@ -23,7 +23,7 @@ export const SET_TOKEN = 'SET_TOKEN';
 export const {
   REFRESH_TOKEN_REQUEST,
   REFRESH_TOKEN_SUCCESS,
-  REFRESH_TOKEN_FAILURE
+  REFRESH_TOKEN_FAILURE,
 } = createRequestActionTypes('REFRESH_TOKEN');
 export const SHOW_LOGIN_ERROR = 'SHOW_LOGIN_ERROR';
 export const HIDE_LOGIN_ERROR = 'HIDE_LOGIN_ERROR';
@@ -53,59 +53,58 @@ export const openLoginView = () => (dispatch, getState) => {
   dispatch({ type: SHOW_LOGIN_LOADER });
   dispatch(startLoginProcess());
 
-  auth0
-  .webAuth
-  .authorize({ scope: 'openid profile email'/*, audience: `https://${AUTH0_DOMAIN}/userinfo` */})
-  .then((credentials) => {
-    tokens = credentials;
-    const { accessToken } = credentials;
+  auth0.webAuth
+    .authorize({
+      scope: 'openid profile email' /*, audience: `https://${AUTH0_DOMAIN}/userinfo` */,
+    })
+    .then(credentials => {
+      tokens = credentials;
+      const { accessToken } = credentials;
 
-    return auth0
-      .auth
-      .userInfo({ token: accessToken })
-  })
-  .then(profile => {
-    const userFields = {
-      profilePicture: profile.picture,
-      name: profile.name,
-      selectedTeam: 1,
-    };
+      return auth0.auth.userInfo({ token: accessToken });
+    })
+    .then(profile => {
+      const userFields = {
+        profilePicture: profile.picture,
+        name: profile.name,
+        selectedTeam: 1,
+      };
 
-    // Create userToken from email
-    const email = profile.emailVerified ? profile.email : null;
-    tokens.userToken = md5((email || '').toLowerCase());
+      // Create userToken from email
+      const email = profile.emailVerified ? profile.email : null;
+      tokens.userToken = md5((email || '').toLowerCase());
 
-    // Save profile to state
-    // (we don't have user id yet, because user is not created)
-    Promise.resolve(dispatch(updateProfile(userFields)))
-    .then(() => {
-      // Save profile to Storage
-      AsyncStorage.setItem(STORAGE_KEYS.token, JSON.stringify(tokens), () => {
-        // Set storage info to state
-        // needed for user creation already (putUser)
-        dispatch(setTokenToStore(tokens));
+      // Save profile to state
+      // (we don't have user id yet, because user is not created)
+      Promise.resolve(dispatch(updateProfile(userFields))).then(() => {
+        // Save profile to Storage
+        AsyncStorage.setItem(STORAGE_KEYS.token, JSON.stringify(tokens), () => {
+          // Set storage info to state
+          // needed for user creation already (putUser)
+          dispatch(setTokenToStore(tokens));
 
-        // If user already exists
-        dispatch(fetchUser())
-        .then(user => {
-          // If user is not found create user
-          if (!user) {
-            return dispatch(openLoginTeamSelector())
-          }
+          // If user already exists
+          dispatch(fetchUser())
+            .then(user => {
+              // If user is not found create user
+              if (!user) {
+                return dispatch(openLoginTeamSelector());
+              }
 
-          dispatch(endLoginProcess());
-          return Promise.resolve();
-        })
-        .then(() => dispatch(onLoginReady()))
-        .catch(() => dispatch(onLoginError()))
+              dispatch(endLoginProcess());
+              return Promise.resolve();
+            })
+            .then(() => dispatch(onLoginReady()))
+            .catch(() => dispatch(onLoginError()));
+        });
       });
-    });
-  })
-  .catch((err) => dispatch(onLoginError()));
-}
+    })
+    .catch(err => dispatch(onLoginError()));
+};
 
 // Need to keep flags of login completion in order to make sure user is cretated
-const startLoginProcess = () => dispatch => AsyncStorage.setItem(STORAGE_KEYS.loginInProgress, 'true');
+const startLoginProcess = () => dispatch =>
+  AsyncStorage.setItem(STORAGE_KEYS.loginInProgress, 'true');
 const endLoginProcess = () => dispatch => AsyncStorage.removeItem(STORAGE_KEYS.loginInProgress);
 
 export const saveInitialTeamSelection = () => dispatch =>
@@ -116,16 +115,15 @@ export const saveInitialTeamSelection = () => dispatch =>
 
 const onLoginReady = () => dispatch => {
   return dispatch(fetchAppContent()).then(() => dispatch({ type: HIDE_LOGIN_LOADER }));
-}
+};
 
 const onLoginError = () => dispatch => {
   dispatch(logoutUser());
-  dispatch({ type: SHOW_LOGIN_ERROR })
+  dispatch({ type: SHOW_LOGIN_ERROR });
   dispatch({ type: HIDE_LOGIN_LOADER });
-}
+};
 
-
-const updateAuthToken = (idToken) => dispatch => {
+const updateAuthToken = idToken => dispatch => {
   dispatch({ type: REFRESH_TOKEN_REQUEST });
 
   // Get current token
@@ -144,8 +142,7 @@ const updateAuthToken = (idToken) => dispatch => {
       dispatch(fetchAppContent());
     });
   });
-}
-
+};
 
 export const refreshAuthToken = () => (dispatch, getState) => {
   return;
@@ -158,13 +155,14 @@ export const refreshAuthToken = () => (dispatch, getState) => {
     return;
   }
 
-  return AsyncStorage.getItem(STORAGE_KEYS.token).then((token) => {
+  return AsyncStorage.getItem(STORAGE_KEYS.token).then(token => {
     const tokenObj = token ? JSON.parse(token) : {};
     const { refreshToken } = tokenObj;
 
     dispatch({ type: REFRESH_TOKEN_REQUEST });
 
-    return api.refreshAuthToken(refreshToken)
+    return api
+      .refreshAuthToken(refreshToken)
       .then(response => {
         const { id_token } = response;
 
@@ -173,18 +171,18 @@ export const refreshAuthToken = () => (dispatch, getState) => {
       })
       .catch(() => dispatch({ type: REFRESH_TOKEN_FAILURE }));
   });
-}
+};
 
 // # Logout
 // Remove user from AsyncStorage and state
-export const logoutUser = () => (dispatch) => {
+export const logoutUser = () => dispatch => {
   AsyncStorage.removeItem(STORAGE_KEYS.token, () => {
     dispatch(setTokenToStore(null));
     AsyncStorage.clear();
   });
-}
+};
 
-export const checkUserLogin = () => (dispatch) => {
+export const checkUserLogin = () => dispatch => {
   // Check that login is not in progress
   // This can happen when user has closed app
   // on login process before user is created but token already is stored
@@ -205,8 +203,6 @@ export const checkUserLogin = () => (dispatch) => {
     });
   });
 };
-
-
 
 const initialState = fromJS({
   isRefreshingToken: false,
