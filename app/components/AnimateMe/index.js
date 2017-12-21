@@ -82,6 +82,14 @@ const getAnimationStyles = (type, animation) => {
         transform: [{ translateX: animation.interpolate({ inputRange: [0, 1], outputRange: [5, 0] }) }],
       };
     }
+
+    case 'small-slide-from-top': {
+      return {
+        opacity: animation,
+        transform: [{ translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [-5, 0] }) }],
+      };
+    }
+
     case 'comment-image': {
       return {
         opacity: animation,
