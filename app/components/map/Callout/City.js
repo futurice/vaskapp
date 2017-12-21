@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.transparent
   },
   calloutButton: {
-    top: 12,
+    top: 9,
     maxHeight: 36,
     maxWidth: 150,
     justifyContent: 'center',

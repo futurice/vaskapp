@@ -40,6 +40,8 @@ import permissions from '../../services/android-permissions';
 import location from '../../services/location';
 import PostCallout from './Callout/Post';
 import CityCallout from './Callout/City';
+import MapTimeSelector from './MapTimeSelector';
+import LocateButton from './LocateButton';
 
 import { CITY_CATEGORIES, HELSINKI } from '../../constants/Cities';
 
@@ -228,16 +230,6 @@ class UserMap extends Component {
       );
   }
 
-  renderLocateMe() {
-    return (
-      <View style={styles.locateButton}>
-        <TouchableOpacity onPress={this.onLocatePress} style={styles.locateButtonText}>
-          <MDIcon size={20} style={{ color: this.props.locateMe ? theme.secondary : '#aaa' }} name='navigation' />
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   onCheckInPress() {
     location.getLocation((position) => {
       alert(`Latitude: ${position.coords.latitude} Longitude: ${position.coords.longitude}`)
@@ -362,11 +354,6 @@ class UserMap extends Component {
         style={isSelectedMarker ? { zIndex: markersJS.length + 1, transform: [{ scale: 1.2 }] } : { zIndex: parseInt(location.id) }}
       >
         <View style={styles.avatarMarker}>
-          {/*index === 0 &&
-          <View style={{ position: 'absolute', flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.secondary, width: 14, height: 14, borderRadius: 7, top: -3, right: -3, zIndex: 2 }}>
-            <MDIcon name="whatshot" style={{ color: theme.white, fontSize: 10, backgroundColor: theme.transparent }} />
-          </View>
-          */}
           <Image
             style={styles.avatarMarkerImage}
             source={this.getMarker(location, selectedMarker)}
@@ -403,11 +390,12 @@ class UserMap extends Component {
           </View>
 
           {this.maybeRenderLoading()}
-          {this.renderLocateMe()}
+
+          <LocateButton onPress={this.onLocatePress} isLocating={this.props.locateMe} />
+
           {this.renderCustomCallout(selectedMarker)}
-
-
-          {/*this.renderCheckIn() */}
+          {/* !selectedMarker && <MapTimeSelector /> */}
+          {/* this.renderCheckIn() */}
           {/*this.renderCloseLayer(selectedMarker)*/}
         </View>
       </View>
@@ -527,31 +515,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: theme.transparent,
     color: theme.secondary
-  },
-  locateButton:{
-    backgroundColor: 'rgba(255,255,255,.99)',
-    shadowColor: '#000000',
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    shadowOffset: {
-      height: 5,
-      width: 0
-    },
-    elevation: 2,
-    borderRadius: 20,
-    justifyContent: 'center',
-    position: 'absolute',
-    right: 12,
-    top: 12,
-    width: 40,
-    height: 40
-  },
-  locateButtonText:{
-    backgroundColor: 'transparent',
-    flex:1,
-    alignItems:'center',
-    justifyContent:'center',
-    transform: [{ rotate: '0deg' }],
   },
   emptyWrap: {
     flex: 1,
