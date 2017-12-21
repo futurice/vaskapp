@@ -43,12 +43,22 @@ class InstructionView extends Component {
     };
   }
 
+  // # Change Statusbar Background Color
+  //
+  // This view might be rendered in startup
+  // before user token is got from AsyncStorage.
+  // To prevent statusbar flickering after user has logged in
+  // we add little delay to coloring.
+  delayedStatusbarColor = null
   componentDidMount() {
-    StatusBar.setBackgroundColor(theme.gold);
+    this.delayedStatusbarColor = setTimeout(() => StatusBar.setBackgroundColor(theme.gold), 500);
   }
 
   componentWillUnmount() {
     StatusBar.setBackgroundColor(theme.grey1);
+    if (this.delayedStatusbarColor) {
+      clearTimeout(this.delayedStatusbarColor)
+    }
   }
 
   @autobind
