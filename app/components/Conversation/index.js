@@ -32,6 +32,7 @@ const Conversation = ({ item, last, showDelay, onPress }) => {
     <AnimateMe delay={showDelay} animationType={'fade-from-bottom'}>
     <PlatformTouchable activeOpacity={0.7} delayPressIn={1} onPress={() => onPress(item.get('id'))}>
       <View style={styles.container}>
+        {item.get('new') && <View style={styles.newIndicator} />}
         <View style={styles.avatar}>
         {profilePicture
           ? <Image source={{ uri: profilePicture }} style={styles.avatarImage} />
@@ -144,6 +145,16 @@ const styles = StyleSheet.create({
   commentIcon: {
     color: '#ccc',
     fontSize: 16,
+  },
+  newIndicator: {
+    backgroundColor: theme.red,
+    position: 'absolute',
+    left: 10,
+    top: 40,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    zIndex: 10,
   }
 
 });

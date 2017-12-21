@@ -21,6 +21,7 @@ const EndpointUrls = {
   radio: `${ROOT_URL}/radio`,
   mood: `${ROOT_URL}/mood`,
   conversations: `${ROOT_URL}/conversations`,
+  conversationsCount: `${ROOT_URL}/conversations_count`,
   userProfile: (userId) => `${ROOT_URL}/users?userId=${userId}`,
   refreshToken: (token) => `${ROOT_URL}/auth/${token}`,
 };

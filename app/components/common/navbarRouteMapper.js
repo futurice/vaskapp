@@ -22,6 +22,7 @@ import Share from 'react-native-share';
 import Text from './MyText';
 import theme from '../../style/theme';
 import SortSelector from '../header/SortSelector';
+import AnimateMe from '../AnimateMe';
 import Icon from 'react-native-vector-icons/Ionicons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import MDIcon from 'react-native-vector-icons/MaterialIcons';
@@ -79,6 +80,11 @@ let NavigationBarRouteMapper = props => ({
                 source={require('../../../assets/icons/conversation.png')}
                 style={styles.navBarIconImage} />
             </View>
+            {props.unreadConversationCount > 0 &&
+              <AnimateMe animationType="small-slide-from-top" duration={150}>
+                <View style={styles.unreadIndicator} />
+              </AnimateMe>
+            }
           </TouchableOpacity>
         </View>
         );
@@ -171,6 +177,16 @@ var styles = StyleSheet.create({
     color: theme.primary,
     textAlign: 'center',
     fontWeight: 'normal',
+  },
+  unreadIndicator: {
+    backgroundColor: theme.red,
+    position: 'absolute',
+    right: 19,
+    bottom: 7,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    zIndex: 10,
   }
 });
 

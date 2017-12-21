@@ -10,6 +10,7 @@ import errorAlert from '../utils/error-alert';
 
 import { isUserLoggedIn } from '../concepts/registration';
 import { isLoadingAppAuth } from '../concepts/auth';
+import { getUnreadConversationCount } from '../concepts/conversations';
 import { isIphoneX } from '../services/device-info';
 
 import IOSTabNavigation from './Navigation';
@@ -31,7 +32,8 @@ class MainView extends Component {
   }
 
   render() {
-    const { showCitySelection, errors, dispatch, isUserLogged, isLoginLoading } = this.props;
+    const { showCitySelection, errors, dispatch,
+      unreadConversationCount, isUserLogged, isLoginLoading } = this.props;
     const showUserLoginView = !isUserLogged || isLoginLoading;
 
     const immutableError = errors.get('error');
@@ -98,6 +100,7 @@ const select = state => {
     currentTab: state.navigation.get('currentTab'),
     isUserLogged: isUserLoggedIn(state),
     isLoginLoading: isLoadingAppAuth(state),
+    unreadConversationCount: getUnreadConversationCount(state),
   }
 };
 

@@ -4,6 +4,7 @@ import { fetchEvents } from '../actions/event';
 import { fetchFeed } from '../actions/feed';
 import { fetchTeams } from '../actions/team';
 import { fetchUser } from '../concepts/registration';
+import { fetchUnreadConversationCount } from '../concepts/conversations';
 import { fetchMarkers } from '../actions/marker';
 
 // # Action types
@@ -20,6 +21,7 @@ export const fetchAppContent = () => dispatch =>
     // dispatch(fetchEvents()),
     dispatch(fetchTeams()),
     dispatch(fetchApps()),
+    dispatch(fetchUnreadConversationCount()),
   ])
   .then(() => dispatch({ type: APP_CONTENT_LOADED }));
 

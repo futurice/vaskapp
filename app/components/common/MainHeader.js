@@ -13,7 +13,7 @@ import { openSettings, openConversations } from '../../services/router';
 const styles = StyleSheet.create({
   toolbar: {
     backgroundColor: theme.white,
-    elevation: 2,
+    elevation: 0,
     height: 56,
   }
 });
@@ -21,26 +21,36 @@ const styles = StyleSheet.create({
 const logo = require('../../../assets/logo/vaskapp.png');
 const iconColor = theme.primary;
 const selectedActionIcon = '‣'; //‣ • ● ♥
+const unreadConversationsIcon = require('../../../assets/icons/conversation-alert.png');
+const conversationsIcon = require('../../../assets/icons/conversation.png');
 
 const getElevation = (tab) => {
   switch (tab) {
+    case Tabs.FEED:
     case Tabs.MAP:
     case Tabs.SETTINGS: {
       return 0;
     }
-    default:{
-      return 1;
+
+    default: {
+      return 0;
     }
   }
 };
 
-const getActions = (tab, sortType) => {
+const getActions = (tab, { sortType, unreadMessages }) => {
   switch (tab) {
     case Tabs.FEED: {
       return [
         { title: `${sortType === SortTypes.SORT_NEW ? selectedActionIcon : '  '} 🌟 NEW`, id: SortTypes.SORT_NEW, show: 'never' },
         { title: `${sortType === SortTypes.SORT_HOT ? selectedActionIcon : '  '} 🔥 HOT`, id: SortTypes.SORT_HOT, show: 'never' },
-        { title: 'Conversations', id: 'conversations', show: 'always', iconName: 'chat', icon: require('../../../assets/icons/conversation.png') },
+        {
+          title: 'Conversations',
+          id: 'conversations',
+          show: 'always',
+          iconName: 'chat',
+          icon: !!unreadMessages ? unreadConversationsIcon : conversationsIcon
+        },
       ];
     }
     case Tabs.SETTINGS: {
@@ -95,16 +105,17 @@ class MainHeader extends Component {
       titleColor,
       currentTab,
       selectedSortType,
+      unreadConversationCount,
     } = this.props;
 
-    const elevation = getElevation(currentTab);
+    const elevation = 0; // getElevation(currentTab);
     if (backgroundColor) {
       toolbarStyles.push({ backgroundColor, elevation })
     }
 
     return (
       <ToolbarAndroid
-        actions={getActions(currentTab, selectedSortType)}
+        actions={getActions(currentTab, { sortType: selectedSortType, unreadMessages: unreadConversationCount })}
         logo={logo}
         // overflowIconName={'sort'}
         // title={''}

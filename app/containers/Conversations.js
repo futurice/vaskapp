@@ -71,7 +71,7 @@ class Conversations extends Component {
   }
 
   render() {
-    const { conversations, isLoading, navigator } = this.props;
+    const { navigator } = this.props;
     return (
       <View style={styles.container}>
         {!IOS &&
